@@ -1,0 +1,550 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes true
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\author -190403614 "Aleksandar Zlateski" 
+\end_header
+
+\begin_body
+
+\begin_layout Abstract
+The watershed transform is the method of choice for hierarchical image segmentat
+ion.
+ The intuitive idea about the method comes from geography.
+ The standard watershed algorithm and it's applications had been thoroughly
+ studied [cite], but can lead to undesirable results in a case of noisy
+ data.
+ We present a modified (extended) watershed algorithm(s) that can overcome
+ the issue of noisy data, and take advantage of the possibly known nature
+ of the data to achieve much better results.
+ Our algorithm(s) are as efficient as the most efficient regular watershed
+ algorithms.
+\end_layout
+
+\begin_layout Section
+
+\series bold
+Introduction
+\end_layout
+
+\begin_layout Standard
+The watershed algorithm has been widely used for topological surfaces (grayscale
+ images) has been widely used.
+ However the watershed algorithm can be applied to any graph (specifically
+ affinity graphs) [cite].
+ In this paper we will focus on affinity graphs, however with little or
+ no modification the algorithm can be applied to an arbitrary graph or surface.
+\end_layout
+
+\begin_layout Standard
+The standard watershed algorithm produces the number of segments equal to
+ the number of local minima.
+ In a case of noisy data (e.g.
+ images) there will be a lot of local minima leading to lots of small segments
+ [image].
+ A proposed solution to deal with the noisy data is to, instead of applying
+ regular watershed, first connected components are applied to the thresholded
+ graph, after which marker watershed is performed.
+ The number of components will be equal to the number of components of the
+ thresholded graph.
+ The problem with this approach is that it doesn’t generate a hierarchical
+ segmentation - it pre-determines the number of segments.
+ Moreover, the same result can be generated from the hierarchy obtained
+ with our algorithm by merging segments until we reach the same number of
+ segments.
+\end_layout
+
+\begin_layout Standard
+The standard watershed algorithm produces a set of segments (set of nodes)
+ from which we can easily obtain a region graph and a hierarchical segmentation
+ (MST of the region graph).
+ The edges of the graph connecting the segment are the min-max edges between
+ the pairs of the nodes in the two component.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Degeneracy Issue
+\end_layout
+
+\begin_layout Standard
+We solve the degeneracy problem by assigning a graph node to be part of
+ the same segment as the closest node at the edge of the non-minima plateau.
+ In the 2D or 3D affinity graph case that would be equal to the closest
+ border node by manhattan distance.
+ In a case of tie we pick a random segment.
+ The details of the algorithm are explained in the Algorithm section.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Extending the Watershed Algorithm
+\end_layout
+
+\begin_layout Standard
+We extend the watershed algorithm by adding a set of rules about merging
+ the original watershed segments.
+ Some of the rules can be applied during the initial phase, while the original
+ watershed segmentation is computed and thus it doesn’t have any additional
+ computational cost.
+ Other can be applied on the applied by a single linear pass through the
+ region graph.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Introducing Thresholds.
+\end_layout
+
+\begin_layout Standard
+The first set of extensions we introduce is a set of thresholds.
+ Specifically we will introduce the following thresholds.
+ High threshold, the edges with the value greater or equal to the high threshold
+ value will be collapsed.
+ Low threshold - the edges with the value lower than the low threshold will
+ never be collapsed.
+ Size threshold - if any of the two segments that are connected in the resulting
+ region graph are smaller than the size threshold will be merged.
+ The order of the merging will be decided by the value of the edges - higher
+ values will be merged first.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Arbitrary Properties and Merging Function
+\end_layout
+
+\begin_layout Standard
+We further extend the watershed algorithm by introducing merging functions
+ and properties.
+ The function F(a,b), where a and b are the properties of two connected
+ segments in the region graph represents the lowest possible value of the
+ edge for which the two component should be merged.
+ The function F(a,b) has to be strictly non decreasing in order to avoid
+ ambiguous results.
+ a and b are properties of the two segments (e.g.
+ sizes in number of nodes, center of mass, etc..).
+ In order to keep the efficiency of the algorithm we require that computing
+ the property of the segments created by merging two segments must be done
+ in constant time.
+ In the case of the size it is a simple sum of two numbers.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Recursive Application (Extending it even further)
+\end_layout
+
+\begin_layout Standard
+Another approach to deal with the excessive noise is to recursively apply
+ the watershed algorithm on the obtained region graph.
+ As described our watershed algorithm can be applied to an arbitrary graph,
+ and therefore it can be applied on the results of a watershed.
+ The approach is especially useful for very noisy data for which we don’t
+ have any prior knowledge.
+ This approach can be combined with the previously described extensions.
+\end_layout
+
+\begin_layout Section
+
+\series bold
+Algorithm
+\end_layout
+
+\begin_layout Standard
+In this section we will first describe our algorithm for the standard watershed
+ transform on a weighted graph 
+\begin_inset Formula $G=(V,E,W)$
+\end_inset
+
+, with weight function 
+\begin_inset Formula $W:E\rightarrow\mathtt{\mathrm{R}}$
+\end_inset
+
+.
+ The algorithm will produce a set of segments 
+\begin_inset Formula $S$
+\end_inset
+
+ and a mapping function 
+\begin_inset Formula $F_{s}:V\to S$
+\end_inset
+
+.
+ Our algorithm has linear complexity (in number of edges in the graph) and
+ resolves the degeneracy issue.
+ 
+\end_layout
+
+\begin_layout Subsection
+
+\series bold
+Standard Watershed Transform Algorithm
+\end_layout
+
+\begin_layout Standard
+Our watershed transform algorithm consists of three steps.
+ In the first step we examine the given weighted graph 
+\begin_inset Formula $G=(V,E,W)$
+\end_inset
+
+ [figure] and create a directed graph 
+\begin_inset Formula $G'=(V,E',W')$
+\end_inset
+
+ [figure] in the following way.
+ For every edge 
+\begin_inset Formula $e\in E$
+\end_inset
+
+, 
+\begin_inset Formula $e=\{u,v\}$
+\end_inset
+
+ we'll include the edge 
+\begin_inset Formula $e_{1}=(u,v)$
+\end_inset
+
+ in 
+\begin_inset Formula $E'$
+\end_inset
+
+ if and only if the weight of the edge 
+\begin_inset Formula $e$
+\end_inset
+
+ is equal to the maximal weight of all the edges in 
+\begin_inset Formula $E$
+\end_inset
+
+ containing 
+\begin_inset Formula $u$
+\end_inset
+
+.
+ Similarly we'll include the edge 
+\begin_inset Formula $e_{2}=(v,u)$
+\end_inset
+
+ if and only if the weight of 
+\begin_inset Formula $e$
+\end_inset
+
+ is equal to the maximal weight of all the edges in 
+\begin_inset Formula $E$
+\end_inset
+
+ containing 
+\begin_inset Formula $v$
+\end_inset
+
+.
+ The set of edges in 
+\begin_inset Formula $G'$
+\end_inset
+
+ represent the direction of the steepest ascent, as described in [ref].
+ Each vertex will have at least one outgoing edge.
+ The vertices with exactly one outgoing edge will belong to the same segment
+ as the vertex on the other end of the edge.
+ The vertices with more than one outgoing edge are on a plateau and can
+ belong to the same segment as any of the vertices pointed to by outgoing
+ edges.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Figures/Watershed First Steps.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In the next step we will divide non-maxima plateaus based on the distance.
+ The vertices that have only bi-directional edges are situated on a plateau
+ (either maximal or non-maximal).
+ The vertices that have some purely outgoing edges and some bi-directional
+ edges are situated on the corners of the non-maximal plateaus..
+ These vertices will belong to the same segment as any of the vertices on
+ the other end of the purely outgoing edges.
+ In the following step we locate all the vertices on the corners of non-maximal
+ plateaus and for each of them we will pick a single purely outgoing edge
+ to keep and remove all the other edges.
+ If the vertex has more than one purely outgoing edges we can employ different
+ strategies in picking one of the outgoing edges.
+ Picking any of the outgoing edges will produce correct watershed transform
+ and will correctly deal with the degeneracy case.
+ We chose to pick one at random.
+ In this step we have assigned the corners of the non-maximal plateaus to
+ corresponding segments.
+ The modified graph will have the same properties [figure].
+ We repeat the procedure until there are no more vertices with both purely
+ outgoing and bi-directional edges.
+ This procedure can be applied efficiently by simple BFS search through
+ the graph [ref explanation?].
+\end_layout
+
+\begin_layout Standard
+The final modified graph [figure 1d] will uniquely define the watershed
+ transform.
+ The directional edges represent the relation of belonging to the same final
+ segment.
+ Running connected components [ref] algorithm on the final graph, while
+ ignoring the directionality of the edges will give us the final watershed
+ transform [figure 1e] with 
+\begin_inset Formula $S$
+\end_inset
+
+ being the set of connected components and 
+\begin_inset Formula $F_{s}$
+\end_inset
+
+ being the function that maps a vertex to its connected component
+\end_layout
+
+\begin_layout Standard
+The method described above needs to visit every edge constant number of
+ times, and is therefore linear in the number of edges.
+ In the case of affinity graphs, where the number of edges is constant function
+ of the number of vertices we get that our method performs in linear time
+ on the number of vertices.
+\end_layout
+
+\begin_layout Subsection
+
+\series bold
+Creating the Region Graph
+\end_layout
+
+\begin_layout Standard
+Given 
+\begin_inset Formula $S$
+\end_inset
+
+ and 
+\begin_inset Formula $F_{s}$
+\end_inset
+
+, we define the region graph of the segmentation 
+\begin_inset Formula $G_{s}=(S,E_{s},W_{s})$
+\end_inset
+
+ such that for every 
+\begin_inset Formula $e_{s}=\{s_{u},s_{v}\}\in E_{s}$
+\end_inset
+
+ there exist an edge 
+\begin_inset Formula $e=\{u,v\}\in E$
+\end_inset
+
+ in the original graph such that 
+\begin_inset Formula $F_{s}(u)=s_{u}$
+\end_inset
+
+ and 
+\begin_inset Formula $F_{s}(v)=s_{v}$
+\end_inset
+
+ and for every other edge 
+\begin_inset Formula $e'=\{u',v'\}\in E$
+\end_inset
+
+ such that 
+\begin_inset Formula $F_{s}(u')=s_{u}$
+\end_inset
+
+ and 
+\begin_inset Formula $F_{s}(v')=s_{v}$
+\end_inset
+
+ it must be true that 
+\begin_inset Formula $W(e')\le W(e)$
+\end_inset
+
+.
+ Furthermore we assign the weight of the edge 
+\begin_inset Formula $W'(e_{s})=W(e)$
+\end_inset
+
+.
+ Note that the region graph is also a weighted graph on which we can recursively
+ apply the watershed algorithm.
+ More about that in the next section.
+ The values of the edges of the region graph will have the following interesting
+ property.
+ For an edge 
+\begin_inset Formula $e_{s}=\{s_{u},s_{v}\}\in E_{s}$
+\end_inset
+
+, and every pair of vertices 
+\begin_inset Formula $(u,v)$
+\end_inset
+
+ in the original graph 
+\begin_inset Formula $G$
+\end_inset
+
+ such that 
+\begin_inset Formula $F_{s}(u)=s_{u}$
+\end_inset
+
+ and 
+\begin_inset Formula $F_{s}(v)=s_{v}$
+\end_inset
+
+ the value of the edge 
+\begin_inset Formula $e_{s}$
+\end_inset
+
+, 
+\begin_inset Formula $W'(e_{s})$
+\end_inset
+
+ will equal to the minimal value of the edges between 
+\begin_inset Formula $u$
+\end_inset
+
+ and 
+\begin_inset Formula $v$
+\end_inset
+
+ on the minimax path in the original graph - the minimax edge.
+ The minimax path between two vertices in a weighted graph is a path where
+ the minimal value of all the edges on the path is maximized.
+\change_inserted -190403614 1398734625
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1398734649
+Explan the actual algorithm.
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsection
+Creating the Hierarchical Segmentation
+\end_layout
+
+\begin_layout Standard
+A hierarchical segmentation is a set of segmentations at different detail
+ levels in which the segmentations at coarser detail levels can be produced
+ from simple merges of segments from segmentations at ﬁner detail levels.
+ Therefore, the segmentations at ﬁner levels are nested with respect to
+ those at coarser levels.
+ Hierarchical methods have the interesting property of preserving neighboring
+ information among segmented regions [ref].
+ A hierarchy can be represented with a spanning tree [ref Zahn].
+ Starting from the set of segments produced by our watershed transform,
+ we create a hierarchical segmentation by finding the maximum cost spanning
+ tree of the region graph.
+\change_inserted -190403614 1398151414
+
+\end_layout
+
+\begin_layout Section
+
+\change_inserted -190403614 1398151432
+Modified Algorithm
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1398151453
+Min and Max Thresholds
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1398151467
+Size Threshold
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1398151497
+Arbitrary Function of an Arbitrary Property Threshold
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1398151517
+Recursive Application of the Modified Algorithm
+\change_unchanged
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
