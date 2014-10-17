@@ -2,8 +2,13 @@
 \lyxformat 413
 \begin_document
 \begin_header
-\textclass article
+\textclass amsart
 \use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -25,6 +30,7 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -50,15 +56,19 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -190403614 "Aleksandar Zlateski" 
+\author 1172979425 "Sebastian Seung" 
 \end_header
 
 \begin_body
+
+\begin_layout Title
+A modified watershed transform on graphs
+\end_layout
 
 \begin_layout Abstract
 The watershed transform is the method of choice for hierarchical image segmentat
@@ -81,17 +91,21 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-The watershed algorithm has been widely used for topological surfaces (grayscale
- images) has been widely used.
- However the watershed algorithm can be applied to any graph (specifically
- affinity graphs) [cite].
- In this paper we will focus on affinity graphs, however with little or
- no modification the algorithm can be applied to an arbitrary graph or surface.
+The watershed algorithm is widely used for segmenting images (cite), and
+ has also been generalized to the partitioning of graphs (cite).
+
+\change_deleted 1172979425 1412601357
+ 
+\change_unchanged
+ In this paper we will focus on watershed for affinity graphs, which is
+ relevant for the special case of images.
+ However our results are applicable to arbitrary graphs.
+ 
 \end_layout
 
 \begin_layout Standard
-The standard watershed algorithm produces the number of segments equal to
- the number of local minima.
+The standard watershed algorithm produces as many segments as there are
+ local minima.
  In a case of noisy data (e.g.
  images) there will be a lot of local minima leading to lots of small segments
  [image].
@@ -206,21 +220,206 @@ Another approach to deal with the excessive noise is to recursively apply
 \begin_layout Section
 
 \series bold
-Algorithm
+Standard algorithm
 \end_layout
 
 \begin_layout Standard
-In this section we will first describe our algorithm for the standard watershed
- transform on a weighted graph 
+We start by describing the standard watershed algorithm on a weighted undirected
+ graph 
 \begin_inset Formula $G=(V,E,W)$
 \end_inset
 
-, with weight function 
-\begin_inset Formula $W:E\rightarrow\mathtt{\mathrm{R}}$
+, where 
+\begin_inset Formula $V$
 \end_inset
 
-.
- The algorithm will produce a set of segments 
+ denotes vertices, 
+\begin_inset Formula $E$
+\end_inset
+
+ edges, and 
+\begin_inset Formula $W:E\rightarrow\mathbb{R}$
+\end_inset
+
+ weights.
+ The central quantity in the watershed algorithm is the steepest ascent
+ graph, defined as follows.
+\end_layout
+
+\begin_layout Definition
+Given an undirected graph 
+\begin_inset Formula $G$
+\end_inset
+
+, define the directed graph 
+\begin_inset Formula $G'$
+\end_inset
+
+ in which each undirected edge of 
+\begin_inset Formula $G$
+\end_inset
+
+ is replaced by both directed edges between the same vertices.
+ The 
+\emph on
+steepest ascent graph
+\emph default
+ 
+\begin_inset Formula $A$
+\end_inset
+
+ is a subgraph of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with the property that each edge of 
+\begin_inset Formula $A$
+\end_inset
+
+ is an edge of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with maximal weight of all edges outgoing from the same vertex.
+ 
+\end_layout
+
+\begin_layout Standard
+A directed path in 
+\begin_inset Formula $A$
+\end_inset
+
+ is a path of steepest ascent, in the sense that every step is along an
+ edge with locally maximal weight.
+ The steepest descent graph can be defined analogously using edges of minimal
+ weight.
+ The watershed algorithm is named because a drop of water is imagined to
+ take a path of steepest descent on a landscape.
+ Either steepest ascent or descent can be used without loss of generality.
+\end_layout
+
+\begin_layout Standard
+Assuming that 
+\begin_inset Formula $G$
+\end_inset
+
+ contains no disconnected vertices, each vertex of 
+\begin_inset Formula $A$
+\end_inset
+
+ will have at least one outgoing edge.
+ and can be assigned to the same segment as any of the vertices pointed
+ to by outgoing edges.
+ A vertex with exactly one outgoing edge is assigned to the same segment
+ as the vertex at the other end of the edge.
+ 
+\end_layout
+
+\begin_layout Definition
+A 
+\emph on
+plateau
+\emph default
+ vertex of the steepest ascent graph has more than one outgoing edge but
+ not containing any bidercional edges.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Definition
+A 
+\emph on
+plateau
+\emph default
+ is a connected component of the subgraph of 
+\begin_inset Formula $G'$
+\end_inset
+
+ containing only bidirectional edges.
+\end_layout
+
+\begin_layout Remark
+The smallest possible plateau consists of two vertices, with a bidirectional
+ edge between them.
+\end_layout
+
+\begin_layout Lemma
+Strongly connected components of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with more than one vertex are the plateaux of 
+\begin_inset Formula $G'$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+Strongly connected components of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with one vertex will either be plateau vertices or non-plateau vertices.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Definition
+A 
+\emph on
+local maximum
+\emph default
+ is a plateau with no outgoing edges.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Definition
+A plateau corner is a vertex of a non maximum plateau that has a directed
+ edge towards a vertex outside of that plateau.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Remark
+A vertex with more than one outgoing edge is either a plateau vertex or
+ belongs to a plateau.
+\end_layout
+
+\begin_layout Remark
+In the steepest ascent graph there is a path from every vertex to at least
+ one local maxima.
+\end_layout
+
+\begin_layout Enumerate
+Steepest ascent graph.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Plateau division.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Region graph
+\end_layout
+
+\begin_layout Enumerate
+hierarchical segmentation
+\end_layout
+
+\begin_layout Standard
+The algorithm will produce a set of segments 
 \begin_inset Formula $S$
 \end_inset
 
@@ -237,82 +436,103 @@ In this section we will first describe our algorithm for the standard watershed
 \begin_layout Subsection
 
 \series bold
-Standard Watershed Transform Algorithm
+Steepest ascent graph
 \end_layout
 
 \begin_layout Standard
-Our watershed transform algorithm consists of three steps.
- In the first step we examine the given weighted graph 
-\begin_inset Formula $G=(V,E,W)$
+The steepest ascent graph 
+\begin_inset Formula $A$
 \end_inset
 
- [figure] and create a directed graph 
-\begin_inset Formula $G'=(V,E',W')$
+ is constructed from 
+\begin_inset Formula $G$
 \end_inset
 
- [figure] in the following way.
- For every edge 
-\begin_inset Formula $e\in E$
-\end_inset
-
-, 
-\begin_inset Formula $e=\{u,v\}$
-\end_inset
-
- we'll include the edge 
-\begin_inset Formula $e_{1}=(u,v)$
+ as follows.
+ Loop over all edges 
+\begin_inset Formula $(u,v)$
 \end_inset
 
  in 
-\begin_inset Formula $E'$
+\begin_inset Formula $G$
 \end_inset
 
- if and only if the weight of the edge 
-\begin_inset Formula $e$
+.
+ If the weight of 
+\begin_inset Formula $(u,v)$
 \end_inset
 
- is equal to the maximal weight of all the edges in 
-\begin_inset Formula $E$
+ is equal to the maximal weight of all edges in 
+\begin_inset Formula $G$
 \end_inset
 
  containing 
 \begin_inset Formula $u$
 \end_inset
 
+, include the edge 
+\begin_inset Formula $u\rightarrow v$
+\end_inset
+
+ in 
+\begin_inset Formula $A$
+\end_inset
+
 .
- Similarly we'll include the edge 
-\begin_inset Formula $e_{2}=(v,u)$
+ If the weight of 
+\begin_inset Formula $(u,v)$
 \end_inset
 
- if and only if the weight of 
-\begin_inset Formula $e$
-\end_inset
-
- is equal to the maximal weight of all the edges in 
-\begin_inset Formula $E$
+ is equal to the maximal weight of all edges in 
+\begin_inset Formula $G$
 \end_inset
 
  containing 
 \begin_inset Formula $v$
 \end_inset
 
-.
- The set of edges in 
-\begin_inset Formula $G'$
+, include the edge 
+\begin_inset Formula $u\leftarrow v$
 \end_inset
 
- represent the direction of the steepest ascent, as described in [ref].
- Each vertex will have at least one outgoing edge.
- The vertices with exactly one outgoing edge will belong to the same segment
- as the vertex on the other end of the edge.
- The vertices with more than one outgoing edge are on a plateau and can
- belong to the same segment as any of the vertices pointed to by outgoing
- edges.
+ in 
+\begin_inset Formula $A$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
+If both edges 
+\begin_inset Formula $u\rightarrow v$
+\end_inset
+
+ and 
+\begin_inset Formula $u\leftarrow v$
+\end_inset
+
+ are included in 
+\begin_inset Formula $A$
+\end_inset
+
+, we will refer to them together as a bidirectional edge.
+ The edges of any vertex of 
+\begin_inset Formula $A$
+\end_inset
+
+ can be categorized as outgoing, incoming, or bidirectional with respect
+ to that vetex.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/Watershed First Steps.png
+	filename ../../../Downloads/Figures/Watershed First Steps.png
 	width 10cm
 
 \end_inset
@@ -320,12 +540,46 @@ Our watershed transform algorithm consists of three steps.
 
 \end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\series bold
+a
+\series default
+ Weighted undirected graph 
+\series bold
+b
+\series default
+ steepest ascent graph 
+\series bold
+c
+\series default
+ Regular plateau vertices (purple) vs.
+ corner vertices (pink) 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Plateau division
+\end_layout
+
 \begin_layout Standard
 In the next step we will divide non-maxima plateaus based on the distance.
- The vertices that have only bi-directional edges are situated on a plateau
- (either maximal or non-maximal).
- The vertices that have some purely outgoing edges and some bi-directional
- edges are situated on the corners of the non-maximal plateaus..
+ Vertices with only bi-directional edges are situated on a plateau (either
+ maximal or non-maximal).
+ A vertex with a mixture of purely outgoing edges and bi-directional edges
+ is defined as a corner of the non-maximal plateaus.
  These vertices will belong to the same segment as any of the vertices on
  the other end of the purely outgoing edges.
  In the following step we locate all the vertices on the corners of non-maximal
@@ -343,6 +597,10 @@ In the next step we will divide non-maxima plateaus based on the distance.
  outgoing and bi-directional edges.
  This procedure can be applied efficiently by simple BFS search through
  the graph [ref explanation?].
+\end_layout
+
+\begin_layout Subsection
+Segmentation
 \end_layout
 
 \begin_layout Standard
@@ -374,7 +632,7 @@ The method described above needs to visit every edge constant number of
 \begin_layout Subsection
 
 \series bold
-Creating the Region Graph
+Region Graph
 \end_layout
 
 \begin_layout Standard
@@ -431,61 +689,31 @@ Given
  Note that the region graph is also a weighted graph on which we can recursively
  apply the watershed algorithm.
  More about that in the next section.
- The values of the edges of the region graph will have the following interesting
- property.
- For an edge 
-\begin_inset Formula $e_{s}=\{s_{u},s_{v}\}\in E_{s}$
+ The algorithm for obtaining the region graph is straight forward.
+ We consider all original edges connecting vertices in different segments.
+ For every pair of segments we keep the edge with the highest value.
+ Using a simple hash-map [ref] we can obtain the region graph in 
+\begin_inset Formula $O(E)$
 \end_inset
 
-, and every pair of vertices 
-\begin_inset Formula $(u,v)$
-\end_inset
-
- in the original graph 
-\begin_inset Formula $G$
-\end_inset
-
- such that 
-\begin_inset Formula $F_{s}(u)=s_{u}$
-\end_inset
-
- and 
-\begin_inset Formula $F_{s}(v)=s_{v}$
-\end_inset
-
- the value of the edge 
-\begin_inset Formula $e_{s}$
-\end_inset
-
-, 
-\begin_inset Formula $W'(e_{s})$
-\end_inset
-
- will equal to the minimal value of the edges between 
-\begin_inset Formula $u$
-\end_inset
-
- and 
-\begin_inset Formula $v$
-\end_inset
-
- on the minimax path in the original graph - the minimax edge.
- The minimax path between two vertices in a weighted graph is a path where
- the minimal value of all the edges on the path is maximized.
-\change_inserted -190403614 1398734625
-
+.
 \end_layout
 
 \begin_layout Standard
+Note that the number of segments (watershed domains) in the segmentation
+ will be equal to the number of local maxima in the original graph.
+ Every watershed domain will have it's local maxima [ref].
+ The region graph will have the following interesting property - the edges
+ of the region graph will be maximin edges between the local maximas of
+ the connected segments.
+\end_layout
 
-\change_inserted -190403614 1398734649
-Explan the actual algorithm.
-\change_unchanged
-
+\begin_layout Standard
+.
 \end_layout
 
 \begin_layout Subsection
-Creating the Hierarchical Segmentation
+Hierarchical Segmentation
 \end_layout
 
 \begin_layout Standard
@@ -500,40 +728,112 @@ A hierarchical segmentation is a set of segmentations at different detail
  Starting from the set of segments produced by our watershed transform,
  we create a hierarchical segmentation by finding the maximum cost spanning
  tree of the region graph.
-\change_inserted -190403614 1398151414
-
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -190403614 1398151432
 Modified Algorithm
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+As the number of watershed domains depends on the number of local maxima
+ of the graph, noisy data would produce a large number of small segments.
+ In this section we propose a modification of the original watershed algorithm
+ that will deal with possible noisy input, as well as, take advantage of
+ the prior knowledge of the data.
+ We focus on segmenting neural tissue data using affinity graphs obtained
+ by CNN [ref], but the approach can be used for other application with little
+ or no modification.
+\end_layout
 
-\change_inserted -190403614 1398151453
+\begin_layout Subsection
 Min and Max Thresholds
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+The edges of affinity graphs represent probabilities of the two nodes belonging
+ to same segment.
+ As a first and natural modification we introduce Min and Max thresholds.
+ Mainly we modify the graph such that all the edges with value 
+\begin_inset Formula $W(e)\ge T_{max}$
+\end_inset
 
-\change_inserted -190403614 1398151467
-Size Threshold
+ get a new value 
+\begin_inset Formula $W(e)=\infty$
+\end_inset
+
+, and all the edges with 
+\begin_inset Formula $W(e)<T_{min}$
+\end_inset
+
+ get a new value 
+\begin_inset Formula $W(e)=-\infty$
+\end_inset
+
+.
+ In the case of affinity graphs instead of 
+\begin_inset Formula $\infty$
+\end_inset
+
+ and 
+\begin_inset Formula $-\infty$
+\end_inset
+
+ we use 0 and 1.
+ This can be done by a single pass through the edges 
+\begin_inset Formula $O(E)$
+\end_inset
+
+ and therefore does not increase the running time of the original algorithm.
+ By applying the Min and Max threshold we flatten the input near the minimal
+ and maximal values and reduce the number of local minima.
+ As shown on [figure 2] the number of segments dramatically reduces, however
+ we still have to deal with the noise between the two threshold values.
 \end_layout
 
 \begin_layout Subsection
+Size Thresholds
+\end_layout
 
-\change_inserted -190403614 1398151497
+\begin_layout Standard
+As in the case of segmenting electron microscopy images of neural tissue,
+ quite often we have a prior knowledge about the minimal size of the segments
+ in the desired segmentation.
+ The voxel in the center of the volume belongs to a neuron either fully
+ contained in the volume in which case we can guarantee that the segment
+ it belongs to is at least the size of the minimal neuron [figure 3a].
+ Alternatively it can belong to a cell partially contained in the volume
+ in which case we can guarantee that the minimal size is equal to the distance
+ to the edge of the volume times the minimal width of the process [figure
+ 3b].
+\end_layout
+
+\begin_layout Standard
+We propose the following simplified modification (or rather extension?)
+ of the watershed algorithm in order to produce better segmentation based
+ on the prior knowledge about the size of the desired segments.
+ We observe the edges of the region graph in decreasing order.
+ The higher value of the edge means higher probability of the two segments
+ actually belonging to a single larger segment.
+ If any of the two segments connected by the observed edge is smaller than
+ 
+\begin_inset Formula $T_{size}$
+\end_inset
+
+ we merge the two segments into a new one with the size equal to the sum
+ of the sizes of the two segments.
+ Further we never consider edges with the value smaller than 
+\begin_inset Formula $T_{size,min}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
 Arbitrary Function of an Arbitrary Property Threshold
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -190403614 1398151517
 Recursive Application of the Modified Algorithm
-\change_unchanged
-
 \end_layout
 
 \begin_layout Bibliography
