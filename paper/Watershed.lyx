@@ -320,8 +320,8 @@ A
 \emph on
 plateau
 \emph default
- vertex of the steepest ascent graph has more than one outgoing edge but
- not containing any bidercional edges.
+ vertex of the steepest ascent graph has more than one outgoing edge and
+ no bidirectional edges.
 \end_layout
 
 \begin_layout --Separator--
@@ -532,7 +532,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../../../Downloads/Figures/Watershed First Steps.png
+	filename Figures/Watershed First Steps.png
 	width 10cm
 
 \end_inset
