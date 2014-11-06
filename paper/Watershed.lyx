@@ -306,7 +306,13 @@ Assuming that
 \begin_inset Formula $G$
 \end_inset
 
- contains no disconnected vertices, each vertex of 
+ contains no 
+\change_deleted -190403614 1415223203
+disconnected
+\change_inserted -190403614 1415223205
+isolated
+\change_unchanged
+ vertices, each vertex of 
 \begin_inset Formula $A$
 \end_inset
 
@@ -546,14 +552,50 @@ Strongly connected components of
 
 \begin_layout --Separator--
 
+\change_inserted -190403614 1415223136
+
+\end_layout
+
+\begin_layout Subsection*
+
+\change_inserted -190403614 1415223170
+The Algorithm
+\end_layout
+
+\begin_layout Section
+
+\change_inserted -190403614 1415223188
+Modified watershed algorithm
+\change_unchanged
+
 \end_layout
 
 \begin_layout Definition
+
+\change_deleted -190403614 1415223225
 A 
 \emph on
 local maximum
 \emph default
  is a plateau with no outgoing edges.
+\change_inserted -190403614 1415223226
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1415223267
+Minimum and maximum thresholds
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1415223308
+The first modification of the watershed algorithm is by introducing minimum
+ and maximum thresholds.
+ 
+\change_unchanged
+
 \end_layout
 
 \begin_layout --Separator--
