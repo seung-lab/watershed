@@ -56,7 +56,7 @@ figs-within-sections
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
@@ -255,11 +255,12 @@ We start by describing the standard watershed algorithm on a weighted undirected
 \end_layout
 
 \begin_layout Definition
-Given an undirected graph 
+Consider an undirected graph 
 \begin_inset Formula $G$
 \end_inset
 
-, define the directed graph 
+.
+ Define the directed graph 
 \begin_inset Formula $G'$
 \end_inset
 
@@ -306,39 +307,12 @@ A directed path in
  Either steepest ascent or descent can be used without loss of generality.
 \end_layout
 
-\begin_layout Standard
-Assuming that 
-\begin_inset Formula $G$
-\end_inset
-
- contains no isolated vertices, each vertex of 
-\begin_inset Formula $A$
-\end_inset
-
- will have at least one outgoing edge or one bidirectional edge, and can
- be assigned to the same segment as any of the vertices pointed to by outgoing
- or bidirectional edges.
- A vertex with exactly one outgoing edge is assigned to the same segment
- as the vertex at the other end of the edge.
- 
-\end_layout
-
 \begin_layout Definition
 A 
 \emph on
 saddle vertex
 \emph default
  of the steepest ascent graph has more than one outgoing edge.
-\end_layout
-
-\begin_layout Definition
-Saddle vertices can be assigned to the same segment as any of the vertices
- pointed to by outgoing edges.
- The outgoing edges can be chosen at random, or in some consistent fashion
- by introducing a strict order of the edges.
- (e.g.
- coordinates and direction in the case of volumetric graphs).
- 
 \end_layout
 
 \begin_layout --Separator--
@@ -391,16 +365,6 @@ plateau corners.
  
 \end_layout
 
-\begin_layout Definition
-All vertices in a 
-\emph on
-locally maximal plateau
-\emph default
- will be assigned to the same segment.
- Vertices in different local maximum plateaus will be assigned to different
- segments.
-\end_layout
-
 \begin_layout --Separator--
 
 \end_layout
@@ -417,121 +381,12 @@ plateau corner
 .
 \end_layout
 
-\begin_layout Definition
-All the vertices in a 
-\emph on
-non-maximal plateau 
-\emph default
-containing exactly one 
-\emph on
-plateau corner
-\emph default
- will be assigned to the same segment as the 
-\emph on
-plateau corner
-\emph default
-.
- The vertices in the 
-\emph on
-non-maximal plateaus
-\emph default
- with more than one 
-\emph on
-plateau corners 
-\emph default
-will be assigned to the same segment as the nearest 
-\emph on
-plateau corner
-\emph default
- in terms of graph distance.
- (discuss ties)
-\end_layout
-
-\begin_layout Lemma
-
-\emph on
-Each vertex in 
-\emph default
-
-\begin_inset Formula $A$
-\end_inset
-
- 
-\emph on
-will be assigned to a segment and the total number of segments will be equal
- to the number of 
-\emph default
-locally maximal plateaus
-\emph on
-.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1416332350
-
-\end_layout
-
-\begin_layout Definition
-
-\change_inserted -190403614 1416332698
-A 
-\emph on
-watershed transform
-\emph default
- of a graph 
-\begin_inset Formula $G$
-\end_inset
-
- is an ordered 3-tuple 
-\begin_inset Formula $W=(G,S,s)$
-\end_inset
-
- where 
-\begin_inset Formula $S$
-\end_inset
-
- is a set of segments and 
-\begin_inset Formula $s$
-\end_inset
-
- is the segmentation function such that for each vertex 
-\begin_inset Formula $v\in G$
-\end_inset
-
-, 
-\begin_inset Formula $s(v)\in S\cup\emptyset$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Remark
-
-\change_inserted -190403614 1416332733
-If 
-\begin_inset Formula $s(v)=\emptyset$
-\end_inset
-
- we say that the vertex 
-\begin_inset Formula $v$
-\end_inset
-
- is not assigned a segment.
-\change_unchanged
-
-\end_layout
-
 \begin_layout Subsection*
 The Algorithm
-\change_inserted -190403614 1415755108
-
 \end_layout
 
-\begin_layout Standard
-
-\change_inserted -190403614 1416332842
-We start by creating the steepest ascent graph 
+\begin_layout Enumerate
+Create the steepest ascent graph 
 \begin_inset Formula $A$
 \end_inset
 
@@ -586,26 +441,32 @@ We start by creating the steepest ascent graph
 \end_inset
 
 .
- We then modify 
+ 
+\end_layout
+
+\begin_layout Enumerate
+Transform saddle vertices of 
 \begin_inset Formula $A$
 \end_inset
 
- to get rid of the saddle vertices; for each saddle vertex we pick one outgoing
- edge and remove all other outgoing edges.
+ into non-saddle vertices.
+ For each saddle vertex, remove all outgoing edges except for one.
+ The choice may be random, or by introducing some system for strict ordering
+ of edges, e.g.
+ coordinates and direction in the case of volumetric graphs.
 \end_layout
 
-\begin_layout Standard
-
-\change_inserted -190403614 1415823620
-In the next step we proceed to dividing 
+\begin_layout Enumerate
+Divide
 \emph on
-non-maximal plateaus 
+ non-maximal plateaus 
 \emph default
-by performing breath first search from the 
+by removing all bidirectional edges.
+ Starting from the 
 \emph on
 plateau corners
 \emph default
- following only bidirectional edges.
+ perform breadth first search following only bidirectional edges.
  We mark all the 
 \emph on
 plateau corners 
@@ -657,52 +518,35 @@ vertex
  from the front of the queue.
 \end_layout
 
-\begin_layout Standard
-
-\change_inserted -190403614 1416332326
-In the final step we create a modified ascent graph 
-\begin_inset Formula $A'$
-\end_inset
-
- by replace all the remaining edges in 
-\begin_inset Formula $A$
-\end_inset
-
- with undirected edges.
- The connected components of 
-\begin_inset Formula $A'$
-\end_inset
-
- will be our set of segments 
+\begin_layout Enumerate
+The connected components of the resulting graph, now regarded as undirected,
+ will be called watsershed domains, or simply domains.
+ The set of domains constitutes a partitioning 
 \begin_inset Formula $S$
 \end_inset
 
- and each vertex 
-\begin_inset Formula $v$
-\end_inset
-
  of 
-\begin_inset Formula $A'$
+\begin_inset Formula $V$
 \end_inset
 
- will be assigned a segment 
-\begin_inset Formula $s(v)\in S$
+, which is the output of the 
+\emph on
+watershed transform
+\emph default
+ of the graph 
+\begin_inset Formula $G$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1415755052
 \begin_inset Float algorithm
 wide false
 sideways false
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted -190403614 1415755052
 \begin_inset Caption
 
 \begin_layout Plain Layout
@@ -712,14 +556,120 @@ status open
 \end_inset
 
 
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
 
-\change_unchanged
+\end_layout
+
+\begin_layout Lemma
+
+\emph on
+Each vertex in 
+\emph default
+
+\begin_inset Formula $G$
+\end_inset
+
+ 
+\emph on
+will be assigned to a unique domain.
+\end_layout
+
+\begin_layout Lemma
+
+\emph on
+The total number of domains will be equal to the number of 
+\emph default
+locally maximal plateaus 
+\emph on
+plus the number of isolated vertices in 
+\begin_inset Formula $G$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Remark*
+All vertices in a 
+\emph on
+locally maximal plateau
+\emph default
+ will be assigned to the same domain.
+ Vertices in different local maximum plateaus will be assigned to different
+ domains.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Remark*
+Each isolated vertex will be assigned its own domain.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Remark*
+All the vertices in a 
+\emph on
+non-maximal plateau 
+\emph default
+containing exactly one 
+\emph on
+plateau corner
+\emph default
+ will be assigned to the same domain as the corner.
+ 
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Remark*
+The vertices in a 
+\emph on
+non-maximal plateau
+\emph default
+ with more than one 
+\emph on
+plateau corner 
+\emph default
+will be assigned to the same domain as the nearest 
+\emph on
+plateau corner
+\emph default
+ in terms of graph distance.
+ (discuss ties)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+May use text for informal explanation later: Assuming that 
+\begin_inset Formula $G$
+\end_inset
+
+ contains no isolated vertices, each vertex of 
+\begin_inset Formula $A$
+\end_inset
+
+ will have at least one outgoing edge or one bidirectional edge, and can
+ be assigned to the same segment as any of the vertices pointed to by outgoing
+ or bidirectional edges.
+ A vertex with exactly one outgoing edge is assigned to the same segment
+ as the vertex at the other end of the edge.
+ 
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
@@ -851,20 +801,6 @@ watershed transform
 
 \begin_layout --Separator--
 
-\end_layout
-
-\begin_layout Definition
-A plateau corner is a vertex of a non maximum plateau that has a directed
- edge towards a vertex outside of that plateau.
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Remark
-A vertex with more than one outgoing edge is either a plateau vertex or
- belongs to a plateau.
 \end_layout
 
 \begin_layout Remark
