@@ -61,6 +61,7 @@ figs-within-sections
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -190403614 "Aleksandar Zlateski" 
 \author 1172979425 "Sebastian Seung" 
 \end_header
 
@@ -80,8 +81,15 @@ ion.
  We present a modified (extended) watershed algorithm(s) that can overcome
  the issue of noisy data, and take advantage of the possibly known nature
  of the data to achieve much better results.
- Our algorithm(s) are as efficient as the most efficient regular watershed
- algorithms.
+ Our algorithm
+\change_deleted -190403614 1415823866
+(
+\change_unchanged
+s
+\change_deleted -190403614 1415823868
+)
+\change_unchanged
+ are as efficient as the most efficient regular watershed algorithms.
 \end_layout
 
 \begin_layout Section
@@ -460,10 +468,259 @@ locally maximal plateaus
 
 \begin_layout --Separator--
 
+\change_inserted -190403614 1416332350
+
+\end_layout
+
+\begin_layout Definition
+
+\change_inserted -190403614 1416332698
+A 
+\emph on
+watershed transform
+\emph default
+ of a graph 
+\begin_inset Formula $G$
+\end_inset
+
+ is an ordered 3-tuple 
+\begin_inset Formula $W=(G,S,s)$
+\end_inset
+
+ where 
+\begin_inset Formula $S$
+\end_inset
+
+ is a set of segments and 
+\begin_inset Formula $s$
+\end_inset
+
+ is the segmentation function such that for each vertex 
+\begin_inset Formula $v\in G$
+\end_inset
+
+, 
+\begin_inset Formula $s(v)\in S\cup\emptyset$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Remark
+
+\change_inserted -190403614 1416332733
+If 
+\begin_inset Formula $s(v)=\emptyset$
+\end_inset
+
+ we say that the vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ is not assigned a segment.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection*
 The Algorithm
+\change_inserted -190403614 1415755108
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1416332842
+We start by creating the steepest ascent graph 
+\begin_inset Formula $A$
+\end_inset
+
+.
+ For each edge 
+\begin_inset Formula $(u,v)$
+\end_inset
+
+ in 
+\begin_inset Formula $G$
+\end_inset
+
+ we create an edge 
+\begin_inset Formula $u\rightarrow v$
+\end_inset
+
+ if the weight of 
+\begin_inset Formula $(u,v)$
+\end_inset
+
+ is equal to the maximal edge in 
+\begin_inset Formula $G$
+\end_inset
+
+ containing 
+\begin_inset Formula $u$
+\end_inset
+
+, and an edge 
+\begin_inset Formula $u\leftarrow v$
+\end_inset
+
+ if 
+\begin_inset Formula $(u,v)$
+\end_inset
+
+ is equal to the maximal edge in 
+\begin_inset Formula $G$
+\end_inset
+
+ containing 
+\begin_inset Formula $v$
+\end_inset
+
+.
+ If both directed edges are included we say that 
+\begin_inset Formula $A$
+\end_inset
+
+ contains a bidirectional edge 
+\begin_inset Formula $u\leftrightarrow v$
+\end_inset
+
+.
+ We then modify 
+\begin_inset Formula $A$
+\end_inset
+
+ to get rid of the saddle vertices; for each saddle vertex we pick one outgoing
+ edge and remove all other outgoing edges.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1415823620
+In the next step we proceed to dividing 
+\emph on
+non-maximal plateaus 
+\emph default
+by performing breath first search from the 
+\emph on
+plateau corners
+\emph default
+ following only bidirectional edges.
+ We mark all the 
+\emph on
+plateau corners 
+\emph default
+as visited and put them on a global FIFO queue.
+ While the queue is not empty, we get the 
+\emph on
+vertex
+\emph default
+ 
+\begin_inset Formula $u$
+\end_inset
+
+ from the front of the queue and consider all bidirectional edges 
+\begin_inset Formula $u\leftrightarrow v$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $v$
+\end_inset
+
+ has not been visited, we mark 
+\begin_inset Formula $v$
+\end_inset
+
+ as visited, put 
+\begin_inset Formula $v$
+\end_inset
+
+ on the queue and change the edge to be directional 
+\begin_inset Formula $u\leftarrow v$
+\end_inset
+
+.
+ Otherwise, if 
+\begin_inset Formula $v$
+\end_inset
+
+ has been visited, we erase the 
+\begin_inset Formula $u\leftrightarrow v$
+\end_inset
+
+ edge.
+ We then remove 
+\begin_inset Formula $u$
+\end_inset
+
+ from the front of the queue.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1416332326
+In the final step we create a modified ascent graph 
+\begin_inset Formula $A'$
+\end_inset
+
+ by replace all the remaining edges in 
+\begin_inset Formula $A$
+\end_inset
+
+ with undirected edges.
+ The connected components of 
+\begin_inset Formula $A'$
+\end_inset
+
+ will be our set of segments 
+\begin_inset Formula $S$
+\end_inset
+
+ and each vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ of 
+\begin_inset Formula $A'$
+\end_inset
+
+ will be assigned a segment 
+\begin_inset Formula $s(v)\in S$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1415755052
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1415755052
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
@@ -476,8 +733,120 @@ Minimum and maximum thresholds
 
 \begin_layout Standard
 The first modification of the watershed algorithm is by introducing minimum
- and maximum thresholds.
+\change_inserted -190403614 1416331029
+ threshold
+\change_unchanged
  
+\change_inserted -190403614 1416331020
+
+\begin_inset Formula $T_{min}$
+\end_inset
+
+
+\change_unchanged
+and maximum thresholds
+\change_inserted -190403614 1416331033
+ 
+\begin_inset Formula $T_{max}$
+\end_inset
+
+
+\change_unchanged
+.
+ 
+\change_inserted -190403614 1416332769
+Given an undirected graph 
+\begin_inset Formula $G$
+\end_inset
+
+, define the modified graph 
+\begin_inset Formula $M$
+\end_inset
+
+ in which each edge of 
+\begin_inset Formula $G$
+\end_inset
+
+ erased if its value is lower than 
+\begin_inset Formula $T_{min}$
+\end_inset
+
+ and replaced by an edge with a value 
+\begin_inset Formula $\infty$
+\end_inset
+
+ if its value is greater than 
+\begin_inset Formula $T_{max}$
+\end_inset
+
+.
+ The graph 
+\begin_inset Formula $M$
+\end_inset
+
+ might contain isolated vertices.
+ Typically such vertices are not assigned a segment, or each assigned a
+ separate segment.
+ Let 
+\begin_inset Formula $M'$
+\end_inset
+
+ be an undirected graph same as 
+\begin_inset Formula $M$
+\end_inset
+
+ but excluding the isolated vertices of 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1416332801
+The first modified watershed transform of 
+\begin_inset Formula $G$
+\end_inset
+
+ using thresholds 
+\begin_inset Formula $T_{min}$
+\end_inset
+
+and 
+\begin_inset Formula $T_{max}$
+\end_inset
+
+ is the standard watershed transform of the graph 
+\begin_inset Formula $M'$
+\end_inset
+
+ produced from 
+\begin_inset Formula $G$
+\end_inset
+
+ as described above.
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1416331930
+Size threshold, etc..
+\end_layout
+
+\begin_layout Definition
+
+\change_inserted -190403614 1416332886
+Given a 
+\emph on
+watershed transform 
+\emph default
+
+\begin_inset Formula $(G,S,s)$
+\end_inset
+
+ we define..
 \end_layout
 
 \begin_layout --Separator--
@@ -624,7 +993,13 @@ If both edges
 \end_inset
 
  can be categorized as outgoing, incoming, or bidirectional with respect
- to that vetex.
+ to that 
+\change_deleted -190403614 1416332808
+vetex
+\change_inserted -190403614 1416332808
+vertex
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Standard
@@ -853,8 +1228,8 @@ Min and Max Thresholds
 \end_layout
 
 \begin_layout Standard
-The edges of affinity graphs represent probabilities of the two nodes belonging
- to same segment.
+The edges of affinity graphs represent probabilities of the two vertices
+ belonging to same segment.
  As a first and natural modification we introduce Min and Max thresholds.
  Mainly we modify the graph such that all the edges with value 
 \begin_inset Formula $W(e)\ge T_{max}$
