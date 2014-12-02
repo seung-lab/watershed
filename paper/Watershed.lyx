@@ -56,7 +56,7 @@ figs-within-sections
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes false
+\tracking_changes true
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
@@ -520,7 +520,13 @@ vertex
 
 \begin_layout Enumerate
 The connected components of the resulting graph, now regarded as undirected,
- will be called watsershed domains, or simply domains.
+ will be called 
+\change_deleted -190403614 1417544006
+watsershed
+\change_inserted -190403614 1417544006
+watershed
+\change_unchanged
+ domains, or simply domains.
  The set of domains constitutes a partitioning 
 \begin_inset Formula $S$
 \end_inset
@@ -645,6 +651,26 @@ plateau corner
 \emph default
  in terms of graph distance.
  (discuss ties)
+\change_inserted -190403614 1417543842
+
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1417543842
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1417543979
+The size of each domain is equal to the number of vertices in 
+\begin_inset Formula $G$
+\end_inset
+
+ assigned to that domain.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -671,6 +697,176 @@ May use text for informal explanation later: Assuming that
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Domain region graph
+\end_layout
+
+\begin_layout Standard
+
+\change_deleted -190403614 1417542853
+A watershed region graph is a weighted undirected graph 
+\begin_inset Formula $R=(D,E_{r},W_{r})$
+\end_inset
+
+ where 
+\begin_inset Formula $D$
+\end_inset
+
+ is the set of watershed domains
+\change_inserted -190403614 1417542857
+
+\end_layout
+
+\begin_layout Definition
+
+\change_inserted -190403614 1417543219
+The watershed region graph 
+\begin_inset Formula $R=(D,E_{r},W_{r})$
+\end_inset
+
+ of the graph 
+\begin_inset Formula $G$
+\end_inset
+
+ is an undirected weighted graph defined as follows
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1417543496
+The set of vertices 
+\begin_inset Formula $D$
+\end_inset
+
+ is the set of watershed domains of 
+\begin_inset Formula $G$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1417543518
+\begin_inset Formula $E_{r}\subset D\times D$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1417543982
+The edge 
+\begin_inset Formula $\{d_{a},d_{b}\}\in D\times D$
+\end_inset
+
+ exists iff 
+\begin_inset Formula $d_{a}\neq d_{b}$
+\end_inset
+
+ and there exist an edge 
+\begin_inset Formula $\{v_{x},v_{y}\}$
+\end_inset
+
+ in the original graph such that 
+\begin_inset Formula $v_{x}$
+\end_inset
+
+and 
+\begin_inset Formula $v_{y}$
+\end_inset
+
+ are assigned to domains 
+\begin_inset Formula $d_{a}$
+\end_inset
+
+and 
+\begin_inset Formula $d_{b}$
+\end_inset
+
+ accordingly.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1417544037
+The weight of the edge 
+\begin_inset Formula $\{d_{a},d_{b}\}$
+\end_inset
+
+ is a real number determined by 
+\begin_inset Formula $W_{r}(C_{a,b})$
+\end_inset
+
+.
+ Where 
+\begin_inset Formula $C_{a,b}$
+\end_inset
+
+is a set of all edges 
+\begin_inset Formula $\{v_{x},v_{y}\}$
+\end_inset
+
+ in the original graph such that 
+\begin_inset Formula $v_{x}$
+\end_inset
+
+and 
+\begin_inset Formula $v_{y}$
+\end_inset
+
+ are assigned to domains 
+\begin_inset Formula $d_{a}$
+\end_inset
+
+and 
+\begin_inset Formula $d_{b}$
+\end_inset
+
+ accordingly.
+\end_layout
+
+\begin_layout Remark*
+
+\change_inserted -190403614 1417544130
+Typically 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $W_{r}(C_{a,b})$
+\end_inset
+
+ is equal to the maximal value of all the edges in 
+\begin_inset Formula $C_{a,b}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1417544280
+The watershed merge tree is the 
+\emph on
+maximum cost spanning forest 
+\emph default
+of 
+\begin_inset Formula $R$
+\end_inset
+
+, which is a union of maximum cost spanning trees for its connected components.
 \end_layout
 
 \begin_layout Section
