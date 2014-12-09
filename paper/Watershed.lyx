@@ -861,14 +861,14 @@ Watershed hierarchical segmentation
 
 \begin_layout Standard
 
-\change_inserted -190403614 1418150795
+\change_inserted -190403614 1418151879
 Applying standard techniques for weighted graph clustering on the watershed
  domain graph we obtain the watershed hierarchical segmentation.
  We can do this in the following way: we consider all the edges in the watershed
  domain graph in decreasing order.
  If the edge is connecting two different domains we merge the two domains
  into a new domain.
- The resulting partition of the graph will be our new level of hierarchical
+ The resulting partitioning of the graph will be our new level of hierarchical
  segmentation.
  This algorithm is equivalent to the Kruskal's algorithm for obtaining the
  maximum cost spanning forest so we can get both the hierarchical segmentation
@@ -877,7 +877,7 @@ Applying standard techniques for weighted graph clustering on the watershed
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1418150088
+\change_inserted -190403614 1418151933
 In the special case when 
 \family roman
 \series medium
@@ -905,6 +905,7 @@ we can obtain the watershed domain forest and the watershed hierarchical
 \end_inset
 
  in decreasing order and applying the same technique as above.
+ Note this is computationally more expensive.
 \end_layout
 
 \begin_layout --Separator--
@@ -928,7 +929,7 @@ Watershed transform as a voronoi diagram on maximin distance
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1418145971
+\change_inserted -190403614 1418152829
 
 \emph on
 Maxi-min
@@ -937,8 +938,8 @@ Maxi-min
 \emph on
 path
 \emph default
- between two vertices in a graph is a path where the maximal weight of all
- the edges on the path is minimized.
+ between two vertices in a graph is a path that maximizes the minimal weight
+ of all the edges on the path.
 \end_layout
 
 \begin_layout --Separator--
@@ -949,22 +950,48 @@ path
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1418150584
+\change_inserted -190403614 1418153809
 
 \emph on
 Maxi-min distance 
 \emph default
-between two vertices in a graph is equal to the minimal weight of all the
- edges on the 
+between two vertices in a graph is equal to the minimal edge weight on a
+ 
 \emph on
 maxi-min path
 \emph default
 .
 \end_layout
 
+\begin_layout --Separator--
+
+\change_inserted -190403614 1418153816
+
+\end_layout
+
 \begin_layout Remark*
 
-\change_inserted -190403614 1418150766
+\change_inserted -190403614 1418154027
+A 
+\emph on
+maxi-min distance 
+\emph default
+of a vertex to a set of points equals to the 
+\emph on
+maximal maxi-min distance
+\emph default
+ to any of the vertices in the given set.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1418153916
+
+\end_layout
+
+\begin_layout Remark*
+
+\change_inserted -190403614 1418154238
 In the special case when 
 \family roman
 \series medium
@@ -988,6 +1015,8 @@ In the special case when
  the weights of the edges of the watershed domain graph will equal to the
  maximal maxi-min distance in the original graph between any pair of vertices
  from the two domains.
+ And it will equal to the maxi-min distance between the two locally maximal
+ plateaus.
 \end_layout
 
 \begin_layout --Separator--
@@ -998,7 +1027,7 @@ In the special case when
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1418147726
+\change_inserted -190403614 1418154716
 
 \emph on
 Maxi-min distance 
@@ -1008,6 +1037,7 @@ satisfies the
 ultrametric 
 \emph default
 properties (ref).
+ Check this (vs mini-max)
 \end_layout
 
 \begin_layout Definition*
@@ -1038,9 +1068,15 @@ voronoi cell
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1418148015
+\change_inserted -190403614 1418155355
 Similarly we can define a voronoi cell of a set of vertices as union of
  all voronoi cells of the individual vertices.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1418155361
+
 \end_layout
 
 \begin_layout Lemma*
@@ -1069,7 +1105,7 @@ Let
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1418150319
+\change_inserted -190403614 1418154345
 The voronoi cell centers can also be arbitrary chosen.
  In that case the voronoi diagram corresponds to a marker based watershed
  transform of 
@@ -1077,6 +1113,8 @@ The voronoi cell centers can also be arbitrary chosen.
 \end_inset
 
 .
+ Maybe elaborate a bit more on this.
+ Give more efficient algorithm later?
 \end_layout
 
 \begin_layout --Separator--
@@ -1087,11 +1125,24 @@ The voronoi cell centers can also be arbitrary chosen.
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1418150533
+\change_inserted -190403614 1418154441
 One way to partition a graph is to apply marker based watershed with the
  cell centers being connected components of the tresholded graph.
- The resulting domains will equal to a union of one or more watershed domains....
+ The resulting domains will equal to a union of one or more of the standard
+ watershed domains....
  this is tricky....
+\end_layout
+
+\begin_layout Remark*
+
+\change_inserted -190403614 1418154968
+Note: it's not the same as thresholding the watershed domain graph.
+\end_layout
+
+\begin_layout Example
+
+\change_inserted -190403614 1418154987
+NOTE: CC and single vertices
 \end_layout
 
 \begin_layout Section*
