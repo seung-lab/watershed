@@ -259,7 +259,7 @@ We start by describing the standard watershed algorithm on a weighted undirected
 \end_inset
 
  weights.
- The central quantity in the watershed algorithm is the steepest ascent
+ The central quantity in the watershed algorithm is the steepest descent
  graph, defined as follows.
 \end_layout
 
@@ -280,7 +280,7 @@ Consider an undirected graph
  is replaced by both directed edges between the same vertices.
  The 
 \emph on
-steepest ascent graph
+steepest descent graph
 \emph default
  
 \begin_inset Formula $A$
@@ -298,7 +298,7 @@ steepest ascent graph
 \begin_inset Formula $G'$
 \end_inset
 
- with maximal weight of all edges outgoing from the same vertex.
+ with minimal weight of all edges outgoing from the same vertex.
  
 \end_layout
 
@@ -307,13 +307,19 @@ A directed path in
 \begin_inset Formula $A$
 \end_inset
 
- is a path of steepest ascent, in the sense that every step is along an
- edge with locally maximal weight.
- The steepest descent graph can be defined analogously using edges of minimal
+ is a path of steepest descent, in the sense that every step is along an
+ edge with locally minimal weight.
+ The steepest ascent graph can be defined analogously using edges of meximal
  weight.
  The watershed algorithm is named because a drop of water is imagined to
  take a path of steepest descent on a landscape.
  Either steepest ascent or descent can be used without loss of generality.
+\change_inserted -190403614 1419862797
+
+\end_layout
+
+\begin_layout --Separator--
+
 \end_layout
 
 \begin_layout Definition
@@ -343,6 +349,12 @@ plateau
 \begin_layout Remark*
 The smallest possible plateau consists of two vertices, with a bidirectional
  edge between them.
+\change_inserted -190403614 1419862806
+
+\end_layout
+
+\begin_layout --Separator--
+
 \end_layout
 
 \begin_layout Definition
@@ -366,7 +378,7 @@ vertex with one or more outgoing edges
 \begin_layout Definition
 A 
 \emph on
-locally maximal plateau 
+locally minimal plateau 
 \emph default
 contains no 
 \emph on
@@ -381,13 +393,15 @@ plateau corners.
 \begin_layout Definition
 A 
 \emph on
-non-maximal plateau 
+non-minimal plateau 
 \emph default
 contains at least one 
 \emph on
 plateau corner
 \emph default
 .
+\change_inserted -190403614 1419863185
+
 \end_layout
 
 \begin_layout Subsection
@@ -395,7 +409,7 @@ The algorithm
 \end_layout
 
 \begin_layout Enumerate
-Create the steepest ascent graph 
+Create the steepest descent graph 
 \begin_inset Formula $A$
 \end_inset
 
@@ -416,7 +430,7 @@ Create the steepest ascent graph
 \begin_inset Formula $(u,v)$
 \end_inset
 
- is equal to the maximal edge in 
+ is equal to the minimal edge in 
 \begin_inset Formula $G$
 \end_inset
 
@@ -432,7 +446,7 @@ Create the steepest ascent graph
 \begin_inset Formula $(u,v)$
 \end_inset
 
- is equal to the maximal edge in 
+ is equal to the minimal edge in 
 \begin_inset Formula $G$
 \end_inset
 
@@ -468,7 +482,7 @@ Transform saddle vertices of
 \begin_layout Enumerate
 Divide
 \emph on
- non-maximal plateaus 
+ non-minimal plateaus 
 \emph default
 by removing all bidirectional edges.
  Starting from the 
@@ -568,7 +582,7 @@ will be assigned to a unique domain.
 \emph on
 The total number of domains will be equal to the number of 
 \emph default
-locally maximal plateaus 
+locally minimal plateaus 
 \emph on
 plus the number of isolated vertices in 
 \begin_inset Formula $G$
@@ -580,10 +594,10 @@ plus the number of isolated vertices in
 \begin_layout Remark*
 All vertices in a 
 \emph on
-locally maximal plateau
+locally minimal plateau
 \emph default
  will be assigned to the same domain.
- Vertices in different local maximum plateaus will be assigned to different
+ Vertices in different locally minimal plateaus will be assigned to different
  domains.
 \end_layout
 
@@ -602,7 +616,7 @@ Each isolated vertex will be assigned its own domain.
 \begin_layout Remark*
 All the vertices in a 
 \emph on
-non-maximal plateau 
+non-minimal plateau 
 \emph default
 containing exactly one 
 \emph on
@@ -619,15 +633,15 @@ plateau corner
 \begin_layout Remark*
 The vertices in a 
 \emph on
-non-maximal plateau
+non-minimal plateau
 \emph default
  with more than one 
 \emph on
 plateau corner 
 \emph default
-will be assigned to the same domain as the nearest 
+will be assigned to the same domain as one of the nearest 
 \emph on
-plateau corner
+plateau corners
 \emph default
  in terms of graph distance.
  (discuss ties)
@@ -639,11 +653,11 @@ plateau corner
 
 \begin_layout Definition*
 The size of a domain 
-\begin_inset Formula $A$
+\begin_inset Formula $d$
 \end_inset
 
 , 
-\begin_inset Formula $S_{A}$
+\begin_inset Formula $S_{d}$
 \end_inset
 
  is equal to the number of vertices in 
@@ -677,10 +691,49 @@ May use text for informal explanation later: Assuming that
 \end_inset
 
 
+\change_inserted -190403614 1419864667
+
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1419864750
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1419864702
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1419866099
+The non-minimal plateaus and the saddle vertices are the source of degeneracies.
+ For the rest of this chapter we will assume that the steepest descent graph
+ has no non-minimal plateaus or saddle vertices.
+ Later we'll discuss how to augment the original graph, or the steepest
+ ascent graph so that we solve the degeneracy issues in a consistent way.
+\end_layout
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1419866139
+Properties of such graphs
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
 Domain graph and forest
+\change_inserted -190403614 1419864664
+
 \end_layout
 
 \begin_layout Definition
