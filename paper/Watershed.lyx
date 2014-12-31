@@ -588,9 +588,9 @@ g a border.
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1420038746
+\change_inserted -190403614 1420045837
 Mark all the vertices on the non-minimal palteaus containing more than one
- lateau corner as visited and also assign them a special ID representing
+ plateau corner as visited and also assign them a special ID representing
  a border.
 \end_layout
 
@@ -1147,16 +1147,16 @@ For a given set of dijunctive markers
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1420037043
+\change_inserted -190403614 1420045544
 A border vertex 
 \begin_inset Formula $v$
 \end_inset
 
  is a vertex such that 
-\begin_inset Formula $\exists i,j\vert i\neq j,d(v,M_{i})=d(v,M_{j})$
+\begin_inset Formula $\exists i,j\vert i\neq j,d(v,M_{i})=d(v,M_{j})=\min_{k}\{d(v,M_{k})\}$
 \end_inset
 
-
+ 
 \end_layout
 
 \begin_layout --Separator--
@@ -1165,7 +1165,7 @@ A border vertex
 
 \end_layout
 
-\begin_layout Claim*
+\begin_layout Definition*
 
 \change_inserted -190403614 1420037560
 If the set of markers is chosen to be the set of locally minimal plateaus,
