@@ -473,10 +473,10 @@ if its weight is not smaller than the weights of all the edges containing
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1420065871
+\change_inserted -190403614 1420066772
 A 
 \emph on
-locally minimal plateau 
+regional minimum 
 \emph default
 is a connected component of 
 \begin_inset Formula $G$
@@ -495,7 +495,7 @@ locally minimal edges.
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1420065971
+\change_inserted -190403614 1420066784
 The 
 \emph on
 standard watershed transform 
@@ -506,7 +506,7 @@ of the graph
 
  is the voronoi tessalation with markers chosen to be the 
 \emph on
-locally minimal plateaus.
+regional minima.
 \end_layout
 
 \begin_layout --Separator--
