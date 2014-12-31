@@ -236,11 +236,298 @@ Another approach to deal with the excessive noise is to recursively apply
 
 \begin_layout Section
 
-\series bold
-Standard algorithm
+\change_inserted -190403614 1420065985
+Watershed transform definition
 \end_layout
 
 \begin_layout Standard
+
+\change_inserted -190403614 1420065162
+We start by formally describing the watershed transform on a weighted undirected
+ graph 
+\begin_inset Formula $G=(V,E,W)$
+\end_inset
+
+, where 
+\begin_inset Formula $V$
+\end_inset
+
+ denotes vertices, 
+\begin_inset Formula $E$
+\end_inset
+
+ edges, and 
+\begin_inset Formula $W:E\rightarrow\mathbb{R}$
+\end_inset
+
+ weights; as the voronoi tesselation of the graph based on the mini-max
+ distance.
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420065163
+
+\emph on
+Mini-max
+\emph default
+ 
+\emph on
+path
+\emph default
+ between two vertices in a graph is a path that minimizes the maximal weight
+ of all the edges on the path.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065163
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420065163
+
+\emph on
+Mini-max distance 
+\emph default
+between two vertices in a graph 
+\begin_inset Formula $d(u,v)$
+\end_inset
+
+ is equal to the maximal edge weight on a 
+\emph on
+mini-max path
+\emph default
+.
+ If there's no path between the two vertices 
+\begin_inset Formula $d(u,v)=\infty$
+\end_inset
+
+
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065163
+
+\end_layout
+
+\begin_layout Remark*
+
+\change_inserted -190403614 1420065163
+A 
+\emph on
+mini-max distance 
+\emph default
+of a vertex to a set of points 
+\begin_inset Formula $d(u,V)$
+\end_inset
+
+ equals to the 
+\emph on
+minimal mini-max distance
+\emph default
+ to any of the vertices in the given set, 
+\begin_inset Formula $d(u,V)=min\{d(u,v)\},v\in V$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065163
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420065163
+A 
+\emph on
+marker 
+\begin_inset Formula $M$
+\end_inset
+
+ 
+\emph default
+is a non-empty connected subset of 
+\begin_inset Formula $V$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065163
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420065163
+For a given set of dijunctive markers 
+\begin_inset Formula $M_{1},M_{2},...$
+\end_inset
+
+ a vornoi cell of 
+\begin_inset Formula $M_{i}$
+\end_inset
+
+ is 
+\begin_inset Formula $\{v\in V\backslash\{M_{1},M_{2},...\}\vert d(v,M_{i})<d(v,M_{j})\},i\neq j$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065163
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420065277
+A border vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ is a vertex such that 
+\begin_inset Formula $\exists i,j\vert i\neq j,d(v,M_{i})=d(v,M_{j})=\min_{k}\{d(v,M_{k})\}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065277
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420065587
+Given a set of dijunctive markers 
+\begin_inset Formula $M_{1},M_{2},...$
+\end_inset
+
+ the voronoi tesselation of the graph represents its 
+\emph on
+marker based watershed 
+\emph default
+transform.
+ The union of each marker and its voronoi cell is defined as a 
+\emph on
+watershed domain
+\emph default
+ or just a 
+\emph on
+domain.
+
+\emph default
+ The border vertices are defined as the crests of the watershed transform.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065589
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420065788
+An edge 
+\begin_inset Formula $\{u,v\}$
+\end_inset
+
+ 
+\emph on
+is locally minimal edge 
+\emph default
+if its weight is not smaller than the weights of all the edges containing
+ either 
+\begin_inset Formula $u$
+\end_inset
+
+ or 
+\begin_inset Formula $v$
+\end_inset
+
+.
+\change_unchanged
+
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065797
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420065871
+A 
+\emph on
+locally minimal plateau 
+\emph default
+is a connected component of 
+\begin_inset Formula $G$
+\end_inset
+
+ containing only the 
+\emph on
+locally minimal edges.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065876
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420065971
+The 
+\emph on
+standard watershed transform 
+\emph default
+of the graph 
+\begin_inset Formula $G$
+\end_inset
+
+ is the voronoi tessalation with markers chosen to be the 
+\emph on
+locally minimal plateaus.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420065885
+
+\end_layout
+
+\begin_layout Section
+
+\series bold
+Standard
+\change_inserted -190403614 1420065991
+ watershed
+\change_unchanged
+ algorithm
+\end_layout
+
+\begin_layout Standard
+
+\change_deleted -190403614 1420066004
 We start by describing the standard watershed algorithm on a weighted undirected
  graph 
 \begin_inset Formula $G=(V,E,W)$
@@ -259,7 +546,9 @@ We start by describing the standard watershed algorithm on a weighted undirected
 \end_inset
 
  weights.
- The central quantity in the watershed algorithm is the steepest descent
+ 
+\change_unchanged
+The central quantity in the watershed algorithm is the steepest descent
  graph, defined as follows.
 \end_layout
 
@@ -405,10 +694,14 @@ plateau corner
 \end_layout
 
 \begin_layout Subsection
+
+\change_deleted -190403614 1420066030
 The algorithm
 \end_layout
 
 \begin_layout Enumerate
+
+\change_deleted -190403614 1420066030
 Create the steepest descent graph 
 \begin_inset Formula $A$
 \end_inset
@@ -468,6 +761,8 @@ Create the steepest descent graph
 \end_layout
 
 \begin_layout Enumerate
+
+\change_deleted -190403614 1420066030
 Transform saddle vertices of 
 \begin_inset Formula $A$
 \end_inset
@@ -480,6 +775,8 @@ Transform saddle vertices of
 \end_layout
 
 \begin_layout Enumerate
+
+\change_deleted -190403614 1420066030
 Divide
 \emph on
  non-minimal plateaus 
@@ -542,6 +839,8 @@ vertex
 \end_layout
 
 \begin_layout Enumerate
+
+\change_deleted -190403614 1420066030
 The connected components of the resulting graph, now regarded as undirected,
  will be called watershed domains, or simply domains.
  The set of domains constitutes a partitioning 
