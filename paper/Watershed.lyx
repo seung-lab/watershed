@@ -561,6 +561,45 @@ watershed transform
 \end_inset
 
 .
+\change_inserted -190403614 1420038431
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1420038450
+The algorithm
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1420038661
+Assign all the locally minimal lateaus an unique domain ID.
+ Mark all the vertices of the locally minimal plateaus as visited, put them
+ on a global FIFO queue and assign them the corresponding ID.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1420038708
+Mark all the saddle vertices as visited and assign them a special ID representin
+g a border.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1420038746
+Mark all the vertices on the non-minimal palteaus containing more than one
+ lateau corner as visited and also assign them a special ID representing
+ a border.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1420038858
+Using BFS traverse the graph following only incoming edges.
+ Every time a vertex is visited it is assigned the same ID as the ID of
+ the vertex on the other side of the edge.
 \end_layout
 
 \begin_layout Lemma
@@ -982,16 +1021,16 @@ Watershed transform as a voronoi diagram on maximin distance
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1418152829
+\change_inserted -190403614 1420034844
 
 \emph on
-Maxi-min
+Mini-max
 \emph default
  
 \emph on
 path
 \emph default
- between two vertices in a graph is a path that maximizes the minimal weight
+ between two vertices in a graph is a path that minimizes the maximal weight
  of all the edges on the path.
 \end_layout
 
@@ -1003,17 +1042,25 @@ path
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1418153809
+\change_inserted -190403614 1420037861
 
 \emph on
-Maxi-min distance 
+Mini-max distance 
 \emph default
-between two vertices in a graph is equal to the minimal edge weight on a
- 
+between two vertices in a graph 
+\begin_inset Formula $d(u,v)$
+\end_inset
+
+ is equal to the maximal edge weight on a 
 \emph on
-maxi-min path
+mini-max path
 \emph default
 .
+ If there's no path between the two vertices 
+\begin_inset Formula $d(u,v)=\infty$
+\end_inset
+
+
 \end_layout
 
 \begin_layout --Separator--
@@ -1024,21 +1071,165 @@ maxi-min path
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1418154027
+\change_inserted -190403614 1420036494
 A 
 \emph on
-maxi-min distance 
+mini-max distance 
 \emph default
-of a vertex to a set of points equals to the 
+of a vertex to a set of points 
+\begin_inset Formula $d(u,V)$
+\end_inset
+
+ equals to the 
 \emph on
-maximal maxi-min distance
+minimal mini-max distance
 \emph default
- to any of the vertices in the given set.
+ to any of the vertices in the given set, 
+\begin_inset Formula $d(u,V)=min\{d(u,v)\},v\in V$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1418153916
+\change_inserted -190403614 1420036132
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420036361
+A 
+\emph on
+marker 
+\begin_inset Formula $M$
+\end_inset
+
+ 
+\emph default
+is a non-empty connected subset of 
+\begin_inset Formula $V$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420036571
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420036805
+For a given set of dijunctive markers 
+\begin_inset Formula $M_{1},M_{2},...$
+\end_inset
+
+ a vornoi cell of 
+\begin_inset Formula $M_{i}$
+\end_inset
+
+ is 
+\begin_inset Formula $\{v\in V\backslash\{M_{1},M_{2},...\}\vert d(v,M_{i})<d(v,M_{j})\},i\neq j$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420036856
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420037043
+A border vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ is a vertex such that 
+\begin_inset Formula $\exists i,j\vert i\neq j,d(v,M_{i})=d(v,M_{j})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420037228
+
+\end_layout
+
+\begin_layout Claim*
+
+\change_inserted -190403614 1420037560
+If the set of markers is chosen to be the set of locally minimal plateaus,
+ the voronoi tessellation of the graph will correspond to the watershed
+ transform.
+ The voronoi cells will correspond to the watershed domains.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420037392
+
+\end_layout
+
+\begin_layout Remark*
+
+\change_inserted -190403614 1420037597
+If the steepest descent graph does not contain saddle vertices or non-minimal
+ plateaus with more than one plateau edge the watershed transform and the
+ voronoi tesselation will not contain berder vertices.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420037602
+
+\end_layout
+
+\begin_layout Remark*
+
+\change_inserted -190403614 1420037823
+For a single marker 
+\begin_inset Formula $M$
+\end_inset
+
+, all the vertices in the graph will belong the voronoi cell of 
+\begin_inset Formula $M$
+\end_inset
+
+, given there's a path between the vertex and 
+\begin_inset Formula $M$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420037915
+
+\end_layout
+
+\begin_layout Remark*
+
+\change_inserted -190403614 1420038418
+When having more than one marker it is possible that all the vertices not
+ beloning to any of the markers are border vertices.
+ (Example image).
+ Note that it is hard to find an image equivalent of this.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420037929
 
 \end_layout
 
