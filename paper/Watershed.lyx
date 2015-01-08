@@ -260,16 +260,15 @@ We start by formally describing the watershed transform on a weighted undirected
 \begin_inset Formula $W:E\rightarrow\mathbb{R}$
 \end_inset
 
- weights; as the voronoi tesselation of the graph based on the mini-max
- distance.
+ weights as the voronoi tesselation of the graph based on the mini-max distance.
 \end_layout
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1420065163
+\change_inserted -190403614 1420744921
 
 \emph on
-Mini-max
+Minimax
 \emph default
  
 \emph on
@@ -277,6 +276,12 @@ path
 \emph default
  between two vertices in a graph is a path that minimizes the maximal weight
  of all the edges on the path.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420745043
+
 \end_layout
 
 \begin_layout --Separator--
@@ -368,8 +373,26 @@ is a non-empty connected subset of
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1420065163
-For a given set of dijunctive markers 
+\change_inserted -190403614 1420745056
+For a given set of dijunctive mark
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420745056
+
+\emph on
+Minimax distance 
+\emph default
+between 
+\begin_inset Formula $u$
+\end_inset
+
+ and 
+\begin_inset Formula $v$
+\end_inset
+
+ is the largest weight of an edge on.ers 
 \begin_inset Formula $M_{1},M_{2},...$
 \end_inset
 
@@ -598,8 +621,31 @@ A directed path in
 
  is a path of steepest descent, in the sense that every step is along an
  edge with locally minimal weight.
- The steepest ascent graph can be defined analogously using edges of meximal
- weight.
+ The steepest ascent graph can be defined analogously using edges of m
+\change_inserted -190403614 1420745057
+
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1420745057
+
+\emph on
+Minimax distance 
+\emph default
+between 
+\begin_inset Formula $u$
+\end_inset
+
+ and 
+\begin_inset Formula $v$
+\end_inset
+
+ is the largest weight of an edge on.
+\end_layout
+
+\begin_layout Standard
+eximal weight.
  The watershed algorithm is named because a drop of water is imagined to
  take a path of steepest descent on a landscape.
  Either steepest ascent or descent can be used without loss of generality.
@@ -1047,12 +1093,21 @@ status open
 
 \begin_layout Plain Layout
 
-\change_inserted -190403614 1419866099
+\change_inserted -190403614 1420750157
 The non-minimal plateaus and the saddle vertices are the source of degeneracies.
  For the rest of this chapter we will assume that the steepest descent graph
  has no non-minimal plateaus or saddle vertices.
  Later we'll discuss how to augment the original graph, or the steepest
- ascent graph so that we solve the degeneracy issues in a consistent way.
+ ascent graph so that we solve the degeneracy issues in a consisteA border
+ vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ is a vertex such that 
+\begin_inset Formula $\exists i,j\vert i\neq j,d(v,M_{i})=d(v,M_{j})=\min_{k}\{d(v,M_{k})\}$
+\end_inset
+
+ nt way.
 \end_layout
 
 \begin_layout Plain Layout
@@ -2379,6 +2434,144 @@ Arbitrary Function of an Arbitrary Property Threshold
 
 \begin_layout Subsection
 Recursive Application of the Modified Algorithm
+\change_inserted -190403614 1420747606
+
+\end_layout
+
+\begin_layout Section
+
+\change_inserted -190403614 1420747683
+Modified metric
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1420747949
+We start by introducing an ordering function 
+\begin_inset Formula $O$
+\end_inset
+
+ of a graph 
+\begin_inset Formula $G=(V,E,W)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $O:V\to N$
+\end_inset
+
+ such that 
+\begin_inset Formula $O(u)\neq O(v)$
+\end_inset
+
+ iff 
+\begin_inset Formula $u\neq v$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420747953
+
+\end_layout
+
+\begin_layout Definition
+
+\change_inserted -190403614 1420748112
+
+\emph on
+A minmax graph distance 
+\emph default
+
+\begin_inset Formula $g(u,v)$
+\end_inset
+
+ between two vertices is equal to the number of edges on the shortest 
+\emph on
+minmax path
+\emph default
+ between 
+\begin_inset Formula $u$
+\end_inset
+
+and 
+\begin_inset Formula $v$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $u=v$
+\end_inset
+
+ then 
+\begin_inset Formula $g(u,v)=0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Definition
+
+\emph on
+An ordering distance 
+\emph default
+between two vertices 
+\begin_inset Formula $u$
+\end_inset
+
+and 
+\begin_inset Formula $v$
+\end_inset
+
+is defined as follows:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $n(u,v)=\begin{cases}
+0 & u=v\\
+\max\left\{ N(u),N(v)\right\}  & u\neq v
+\end{cases}$
+\end_inset
+
+
+\change_inserted -190403614 1420748373
+
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1420748378
+
+\end_layout
+
+\begin_layout Definition
+
+\change_inserted -190403614 1420749200
+We introduce a new metric 
+\begin_inset Formula $m(u,v)=d(u,v)+\epsilon g(u,v)+\epsilon^{2}n(u,v)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark*
+
+\change_inserted -190403614 1420749320
+\begin_inset Formula $m(a,b)\neq m(a,c)$
+\end_inset
+
+ iff 
+\begin_inset Formula $a\neq b\neq c$
+\end_inset
+
+.
+ Which means no border vertices.
 \end_layout
 
 \begin_layout Bibliography
