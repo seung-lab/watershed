@@ -235,16 +235,25 @@ Another approach to deal with the excessive noise is to recursively apply
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -190403614 1420065985
 Watershed transform definition
 \end_layout
 
 \begin_layout Standard
+We start by 
+\change_deleted 1172979425 1420953905
+formally describing
+\change_inserted 1172979425 1420953905
+defining
+\change_unchanged
+ the watershed transform o
+\change_inserted 1172979425 1420953909
+f
+\change_deleted 1172979425 1420953909
+n
+\change_unchanged
+ a weighted undirected graph 
+\change_deleted 1172979425 1420954703
 
-\change_inserted -190403614 1420065162
-We start by formally describing the watershed transform on a weighted undirected
- graph 
 \begin_inset Formula $G=(V,E,W)$
 \end_inset
 
@@ -260,53 +269,160 @@ We start by formally describing the watershed transform on a weighted undirected
 \begin_inset Formula $W:E\rightarrow\mathbb{R}^{+}$
 \end_inset
 
- weights as the voronoi tesselation of the graph based on the minimax distance.
+ weights
+\change_inserted 1172979425 1420954709
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted 1172979425 1420954723
+Removed notation as it conflicts with V later on, and not necessary in this
+ section anyway.
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ as 
+\change_deleted 1172979425 1420954754
+the
+\change_inserted 1172979425 1420954754
+its
+\change_unchanged
+ 
+\change_inserted 1172979425 1420953937
+V
+\change_deleted 1172979425 1420953936
+v
+\change_unchanged
+oronoi tessel
+\change_inserted 1172979425 1420953939
+l
+\change_unchanged
+ation 
+\change_deleted 1172979425 1420954760
+of the graph
+\change_unchanged
+ based on the minimax distance.
 \end_layout
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1420744921
-
+\change_inserted 1172979425 1420953964
+A
 \emph on
-Minimax
+ m
+\change_deleted 1172979425 1420953964
+M
+\change_unchanged
+inimax
 \emph default
  
 \emph on
 path
 \emph default
- between two vertices in a graph is a path that minimizes the maximal weight
- of all the edges on the path.
+ between two vertices 
+\change_inserted 1172979425 1420954845
+of
+\change_deleted 1172979425 1420954844
+in
+\change_unchanged
+ a graph is a 
+\change_inserted 1172979425 1420954909
+minimum with respect to 
+\change_unchanged
+path
+\change_inserted 1172979425 1420954850
+s between the two vertices
+\change_unchanged
+ 
+\change_deleted 1172979425 1420954911
+that
+\change_inserted 1172979425 1420954911
+of
+\change_unchanged
+ 
+\change_deleted 1172979425 1420954919
+minimizes
+\change_unchanged
+ the maximal weight of 
+\change_deleted 1172979425 1420954991
+all the
+\change_unchanged
+ edges on the path.
 \end_layout
 
 \begin_layout --Separator--
-
-\change_inserted -190403614 1420745043
-
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420065163
 
 \end_layout
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1420065163
-
+\change_inserted 1172979425 1420953984
+The
 \emph on
-Minimax distance 
+ m
+\change_deleted 1172979425 1420953984
+M
+\change_unchanged
+inimax distance
 \emph default
-between two vertices in a graph 
+ 
+\change_inserted 1172979425 1420954068
+
 \begin_inset Formula $d(u,v)$
 \end_inset
 
+
+\change_unchanged
+ between two vertices 
+\change_inserted 1172979425 1420954076
+
+\begin_inset Formula $u$
+\end_inset
+
+ and 
+\begin_inset Formula $v$
+\end_inset
+
+ 
+\change_deleted 1172979425 1420954051
+in a graph 
+\begin_inset Formula $d(u,v)$
+\end_inset
+
+
+\change_unchanged
  is equal to the maximal edge weight on a 
 \emph on
-mini-max path
+mini
+\change_deleted 1172979425 1420954091
+-
+\change_unchanged
+max path
+\change_deleted 1172979425 1420955005
+
 \emph default
 .
- If there's no path between the two vertices 
+
+\change_inserted 1172979425 1420954103
+ between the vertices.
+
+\change_unchanged
+ If 
+\change_deleted 1172979425 1420954112
+there's 
+\change_unchanged
+no path between the two vertices
+\change_inserted 1172979425 1420954118
+ exists, then
+\change_unchanged
+ 
 \begin_inset Formula $d(u,v)=\infty$
 \end_inset
 
@@ -315,27 +431,89 @@ mini-max path
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420065163
-
 \end_layout
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1420065163
-A 
+\change_inserted 1172979425 1420954126
+The
+\change_deleted 1172979425 1420954125
+A
+\change_unchanged
+ 
 \emph on
 minimax distance 
+\change_inserted 1172979425 1420954148
+
 \emph default
-of a vertex to a set of points 
+
 \begin_inset Formula $d(u,V)$
 \end_inset
 
- equals to the 
-\emph on
-minimal mini-max distance
-\emph default
- to any of the vertices in the given set, 
-\begin_inset Formula $d(u,V)=min\{d(u,v)\},v\in V$
+ 
+\change_unchanged
+of a vertex
+\change_inserted 1172979425 1420954129
+ 
+\begin_inset Formula $u$
+\end_inset
+
+
+\change_unchanged
+ to a set of 
+\change_deleted 1172979425 1420954138
+points
+\change_inserted 1172979425 1420954139
+vertices 
+\begin_inset Formula $V$
+\end_inset
+
+
+\change_unchanged
+ 
+\change_deleted 1172979425 1420954145
+
+\begin_inset Formula $d(u,V)$
+\end_inset
+
+
+\change_unchanged
+ 
+\change_inserted 1172979425 1420954156
+is 
+\change_unchanged
+equal
+\change_deleted 1172979425 1420954155
+s
+\change_unchanged
+ to the minimal mini
+\change_deleted 1172979425 1420954159
+-
+\change_unchanged
+max distance 
+\change_inserted 1172979425 1420954225
+from 
+\begin_inset Formula $u$
+\end_inset
+
+ 
+\change_unchanged
+to 
+\change_deleted 1172979425 1420954236
+any of the
+\change_unchanged
+ vertices in 
+\change_deleted 1172979425 1420954240
+the given set
+\change_inserted 1172979425 1420954242
+
+\begin_inset Formula $V$
+\end_inset
+
+
+\change_unchanged
+, 
+\begin_inset Formula $d(u,V)=\min_{v\in V}d(u,v)$
 \end_inset
 
 .
@@ -343,13 +521,9 @@ minimal mini-max distance
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420065163
-
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted -190403614 1420065163
 A 
 \emph on
 marker 
@@ -358,7 +532,26 @@ marker
 
  
 \emph default
-is a non-empty connected subset of 
+is a non-empty connected
+\change_inserted 1172979425 1420955142
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted 1172979425 1420955164
+Why does it have to be connected? To exclude the possibility of disconnected
+ domains?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ subset of 
 \begin_inset Formula $V$
 \end_inset
 
@@ -367,23 +560,57 @@ is a non-empty connected subset of
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420065163
-
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted -190403614 1420756617
-For a given set of disjunctive markers 
+For a 
+\change_deleted 1172979425 1420955971
+given
+\change_unchanged
+ set of disj
+\change_inserted 1172979425 1420954257
+oint
+\change_deleted 1172979425 1420954256
+unctive
+\change_unchanged
+ markers 
 \begin_inset Formula $M_{1},M_{2},...$
 \end_inset
 
- a vornoi cell of 
+
+\change_inserted 1172979425 1420954370
+,
+\change_unchanged
+ 
+\change_inserted 1172979425 1420954359
+the
+\change_deleted 1172979425 1420954358
+a
+\change_unchanged
+ 
+\change_inserted 1172979425 1420954260
+V
+\change_deleted 1172979425 1420954260
+v
+\change_unchanged
+or
+\change_inserted 1172979425 1420954262
+o
+\change_unchanged
+noi cell of 
 \begin_inset Formula $M_{i}$
 \end_inset
 
- is 
-\begin_inset Formula $\{v\in V\backslash\{M_{1},M_{2},...\}\vert d(v,M_{i})<d(v,M_{j})\},i\neq j$
+ is
+\change_inserted 1172979425 1420956205
+ the set of all vertices closer to 
+\begin_inset Formula $M_{i}$
+\end_inset
+
+ than to any other marker,
+\change_unchanged
+ 
+\begin_inset Formula $\{v\in V\vert d(v,M_{i})<d(v,M_{j})\forall j\neq i\}$
 \end_inset
 
 .
@@ -391,43 +618,118 @@ For a given set of disjunctive markers
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420065163
-
 \end_layout
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1420065277
-A border vertex 
+\emph on
+A border vertex
+\emph default
+ 
 \begin_inset Formula $v$
 \end_inset
 
- is a vertex such that 
+ is 
+\change_deleted 1172979425 1420955790
+a vertex
+\change_inserted 1172979425 1420955790
+one
+\change_unchanged
+ such that
+\change_inserted 1172979425 1420955932
+ the closest marker is nonunique, i.e., 
+\begin_inset Formula $d\left(v,M_{i}\right)$
+\end_inset
+
+ has multiple minima with respect to 
+\begin_inset Formula $i$
+\end_inset
+
+.
+
+\change_deleted 1172979425 1420955910
+ 
 \begin_inset Formula $\exists i,j\vert i\neq j,d(v,M_{i})=d(v,M_{j})=\min_{k}\{d(v,M_{k})\}$
 \end_inset
 
  
+\change_unchanged
+
 \end_layout
 
 \begin_layout --Separator--
-
-\change_inserted -190403614 1420065277
 
 \end_layout
 
 \begin_layout Definition*
 
-\change_inserted -190403614 1420757129
+\change_deleted 1172979425 1420955273
 Given a set of disjunctive markers 
 \begin_inset Formula $M_{1},M_{2},...$
 \end_inset
 
- the voronoi tesselation of the graph represents its 
+ the voronoi tesselation of the graph represents its
+\change_inserted 1172979425 1420955216
+The
+\change_unchanged
+ 
+\change_deleted 1172979425 1420955317
+
 \emph on
-marker based watershed 
+marker based
+\change_unchanged
+ 
 \emph default
-transform.
- The union of each marker and its voronoi cell is defined as a 
+watershed
+\emph on
+ 
+\emph default
+transform
+\change_inserted 1172979425 1420956099
+ of a graph based on a set of disjoint markers 
+\begin_inset Formula $M_{1},M_{2},\ldots$
+\end_inset
+
+ is defined as the collection of watershed domains, where a domain is defined
+ as 
+\change_deleted 1172979425 1420956088
+.
+ T
+\change_inserted 1172979425 1420956088
+t
+\change_unchanged
+he union of 
+\change_deleted 1172979425 1420956090
+each
+\change_inserted 1172979425 1420956090
+a
+\change_unchanged
+ marker and its 
+\change_inserted 1172979425 1420955293
+V
+\change_deleted 1172979425 1420954451
+v
+\change_unchanged
+oronoi cell
+\change_inserted 1172979425 1420956123
+.
+ 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted 1172979425 1420956153
+The marker might not be contained in its cell because of border vertices?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_deleted 1172979425 1420956109
+ is defined as a 
 \emph on
 watershed domain
 \emph default
@@ -436,28 +738,57 @@ watershed domain
 domain.
 
 \emph default
- The border vertices are defined as the ridges of the watershed transform.
+ 
+\change_unchanged
+The border vertices are 
+\change_deleted 1172979425 1420954468
+defined as
+\change_inserted 1172979425 1420955293
+called
+\change_unchanged
+ the ridges of the watershed transform.
 \end_layout
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420065589
-
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted -190403614 1420756921
 An edge 
+\change_inserted 1172979425 1420955414
+between vertices 
+\begin_inset Formula $u$
+\end_inset
+
+ and 
+\begin_inset Formula $v$
+\end_inset
+
+
+\change_deleted 1172979425 1420955417
+
 \begin_inset Formula $\{u,v\}$
 \end_inset
 
+
+\change_inserted 1172979425 1420955663
  
+\change_deleted 1172979425 1420955417
+ 
+\change_unchanged
+
 \emph on
-is locally minimal edge 
+is locally minimal 
+\change_deleted 1172979425 1420954498
+edge
+\change_unchanged
+ 
 \emph default
-if its weight is not larger than the weights of all the edges containing
- either 
+if its weight is not larger than the weights of all 
+\change_deleted 1172979425 1420955676
+the
+\change_unchanged
+ edges containing either 
 \begin_inset Formula $u$
 \end_inset
 
@@ -466,64 +797,96 @@ if its weight is not larger than the weights of all the edges containing
 \end_inset
 
 .
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Definition*
+A 
+\emph on
+regional minimum 
+\change_inserted 1172979425 1420955595
+
+\emph default
+of a graph 
+\change_unchanged
+is a connected component of 
+\change_deleted 1172979425 1420955598
+
+\begin_inset Formula $G$
+\end_inset
+
+
+\change_inserted 1172979425 1420955626
+ the subgraph
+\change_unchanged
+ containing only the locally minimal edges
+\emph on
+.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Definition*
+The 
+\emph on
+standard watershed transform 
+\emph default
+of 
+\change_deleted 1172979425 1420955517
+the
+\change_inserted 1172979425 1420955517
+a
+\change_unchanged
+ graph 
+\change_deleted 1172979425 1420955520
+
+\begin_inset Formula $G$
+\end_inset
+
+ 
+\change_unchanged
+is 
+\change_inserted 1172979425 1420955582
+its watershed transform
+\change_deleted 1172979425 1420955533
+the voronoi tessalation 
+\change_inserted 1172979425 1420955555
+ based on 
+\change_deleted 1172979425 1420955550
+with
+\change_unchanged
+ markers chosen 
+\change_deleted 1172979425 1420955561
+to be
+\change_inserted 1172979425 1420955561
+as
+\change_unchanged
+ the regional minima
+\change_inserted 1172979425 1420955571
+ of the graph
+\change_deleted 1172979425 1420955565
+.
 \change_unchanged
 
 \end_layout
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420065797
-
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1420066772
-A 
-\emph on
-regional minimum 
-\emph default
-is a connected component of 
-\begin_inset Formula $G$
-\end_inset
-
- containing only the 
-\emph on
-locally minimal edges.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420065876
-
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1420066784
-The 
-\emph on
-standard watershed transform 
-\emph default
-of the graph 
-\begin_inset Formula $G$
-\end_inset
-
- is the voronoi tessalation with markers chosen to be the 
-\emph on
-regional minima.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420846337
-
 \end_layout
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1420846482
-When 
+\change_deleted 1172979425 1420956272
+When
+\change_inserted 1172979425 1420956272
+If the edge weights of a graph are distinct, then 
+\change_deleted 1172979425 1420956263
+ 
 \begin_inset Formula $W(e_{1})\neq W(e_{2})$
 \end_inset
 
@@ -531,42 +894,18 @@ When
 \begin_inset Formula $e_{1}\neq e_{2}$
 \end_inset
 
- the watershed transform will not have any border vertices.
+ 
+\change_unchanged
+the watershed transform will not have any border vertices.
 \end_layout
 
 \begin_layout Section
 
 \series bold
-Standard
-\change_inserted -190403614 1420065991
- watershed
-\change_unchanged
- algorithm
+Standard watershed algorithm
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted -190403614 1420066004
-We start by describing the standard watershed algorithm on a weighted undirected
- graph 
-\begin_inset Formula $G=(V,E,W)$
-\end_inset
-
-, where 
-\begin_inset Formula $V$
-\end_inset
-
- denotes vertices, 
-\begin_inset Formula $E$
-\end_inset
-
- edges, and 
-\begin_inset Formula $W:E\rightarrow\mathbb{R}$
-\end_inset
-
- weights.
- 
-\change_unchanged
 The central quantity in the watershed algorithm is the steepest descent
  graph, defined as follows.
 \end_layout
@@ -1211,6 +1550,10 @@ The edge
 \begin_inset Formula $v_{x}$
 \end_inset
 
+
+\change_inserted 1172979425 1420954675
+ 
+\change_unchanged
 and 
 \begin_inset Formula $v_{y}$
 \end_inset
@@ -1219,6 +1562,10 @@ and
 \begin_inset Formula $d_{a}$
 \end_inset
 
+
+\change_inserted 1172979425 1420954678
+ 
+\change_unchanged
 and 
 \begin_inset Formula $d_{b}$
 \end_inset
