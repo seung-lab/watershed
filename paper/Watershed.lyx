@@ -239,122 +239,32 @@ Watershed transform definition
 \end_layout
 
 \begin_layout Standard
-We start by 
-\change_deleted 1172979425 1420953905
-formally describing
-\change_inserted 1172979425 1420953905
-defining
-\change_unchanged
- the watershed transform o
-\change_inserted 1172979425 1420953909
-f
-\change_deleted 1172979425 1420953909
-n
-\change_unchanged
- a weighted undirected graph 
-\change_deleted 1172979425 1420954703
-
-\begin_inset Formula $G=(V,E,W)$
-\end_inset
-
-, where 
-\begin_inset Formula $V$
-\end_inset
-
- denotes vertices, 
-\begin_inset Formula $E$
-\end_inset
-
- edges, and 
-\begin_inset Formula $W:E\rightarrow\mathbb{R}^{+}$
-\end_inset
-
- weights
-\change_inserted 1172979425 1420954709
-
+We start by defining the watershed transform of a weighted undirected graph
+ 
 \begin_inset Note Note
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted 1172979425 1420954723
 Removed notation as it conflicts with V later on, and not necessary in this
  section anyway.
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_unchanged
- as 
-\change_deleted 1172979425 1420954754
-the
-\change_inserted 1172979425 1420954754
-its
-\change_unchanged
- 
-\change_inserted 1172979425 1420953937
-V
-\change_deleted 1172979425 1420953936
-v
-\change_unchanged
-oronoi tessel
-\change_inserted 1172979425 1420953939
-l
-\change_unchanged
-ation 
-\change_deleted 1172979425 1420954760
-of the graph
-\change_unchanged
- based on the minimax distance.
+ as its Voronoi tessellation based on the minimax distance.
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted 1172979425 1420953964
 A
 \emph on
- m
-\change_deleted 1172979425 1420953964
-M
-\change_unchanged
-inimax
+ minimax
 \emph default
  
 \emph on
 path
 \emph default
- between two vertices 
-\change_inserted 1172979425 1420954845
-of
-\change_deleted 1172979425 1420954844
-in
-\change_unchanged
- a graph is a 
-\change_inserted 1172979425 1420954909
-minimum with respect to 
-\change_unchanged
-path
-\change_inserted 1172979425 1420954850
-s between the two vertices
-\change_unchanged
- 
-\change_deleted 1172979425 1420954911
-that
-\change_inserted 1172979425 1420954911
-of
-\change_unchanged
- 
-\change_deleted 1172979425 1420954919
-minimizes
-\change_unchanged
- the maximal weight of 
-\change_deleted 1172979425 1420954991
-all the
-\change_unchanged
- edges on the path.
+ between two vertices of a graph is a minimum with respect to paths between
+ the two vertices of the maximal weight of edges on the path.
 \end_layout
 
 \begin_layout --Separator--
@@ -362,27 +272,15 @@ all the
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted 1172979425 1420953984
 The
 \emph on
- m
-\change_deleted 1172979425 1420953984
-M
-\change_unchanged
-inimax distance
+ minimax distance
 \emph default
  
-\change_inserted 1172979425 1420954068
-
 \begin_inset Formula $d(u,v)$
 \end_inset
 
-
-\change_unchanged
  between two vertices 
-\change_inserted 1172979425 1420954076
-
 \begin_inset Formula $u$
 \end_inset
 
@@ -390,42 +288,28 @@ inimax distance
 \begin_inset Formula $v$
 \end_inset
 
- 
-\change_deleted 1172979425 1420954051
-in a graph 
-\begin_inset Formula $d(u,v)$
-\end_inset
-
-
-\change_unchanged
  is equal to the maximal edge weight on a 
 \emph on
-mini
-\change_deleted 1172979425 1420954091
--
-\change_unchanged
-max path
-\change_deleted 1172979425 1420955005
-
+minimax path
 \emph default
-.
-
-\change_inserted 1172979425 1420954103
  between the vertices.
-
-\change_unchanged
- If 
-\change_deleted 1172979425 1420954112
-there's 
-\change_unchanged
-no path between the two vertices
-\change_inserted 1172979425 1420954118
- exists, then
-\change_unchanged
- 
+ If no path between the two vertices exists, then 
 \begin_inset Formula $d(u,v)=\infty$
 \end_inset
 
+
+\change_inserted -190403614 1421080259
+.
+ The 
+\emph on
+minimax 
+\emph default
+distance of a vertex to itself is defined to be 
+\begin_inset Formula $0$
+\end_inset
+
+.
+\change_unchanged
 
 \end_layout
 
@@ -434,89 +318,48 @@ no path between the two vertices
 \end_layout
 
 \begin_layout Remark*
-
-\change_inserted 1172979425 1420954126
-The
-\change_deleted 1172979425 1420954125
-A
-\change_unchanged
- 
+The 
 \emph on
 minimax distance 
-\change_inserted 1172979425 1420954148
-
 \emph default
 
 \begin_inset Formula $d(u,V)$
 \end_inset
 
- 
-\change_unchanged
-of a vertex
-\change_inserted 1172979425 1420954129
- 
+ of a vertex 
 \begin_inset Formula $u$
 \end_inset
 
-
-\change_unchanged
- to a set of 
-\change_deleted 1172979425 1420954138
-points
-\change_inserted 1172979425 1420954139
-vertices 
+ to a set of vertices 
 \begin_inset Formula $V$
 \end_inset
 
-
-\change_unchanged
- 
-\change_deleted 1172979425 1420954145
-
-\begin_inset Formula $d(u,V)$
-\end_inset
-
-
-\change_unchanged
- 
-\change_inserted 1172979425 1420954156
-is 
-\change_unchanged
-equal
-\change_deleted 1172979425 1420954155
-s
-\change_unchanged
- to the minimal mini
-\change_deleted 1172979425 1420954159
--
-\change_unchanged
-max distance 
-\change_inserted 1172979425 1420954225
-from 
+ is equal to the minimal minimax distance from 
 \begin_inset Formula $u$
 \end_inset
 
- 
-\change_unchanged
-to 
-\change_deleted 1172979425 1420954236
-any of the
-\change_unchanged
- vertices in 
-\change_deleted 1172979425 1420954240
-the given set
-\change_inserted 1172979425 1420954242
-
+ to vertices in 
 \begin_inset Formula $V$
 \end_inset
 
-
-\change_unchanged
 , 
 \begin_inset Formula $d(u,V)=\min_{v\in V}d(u,v)$
 \end_inset
 
 .
+
+\change_inserted -190403614 1421080297
+ If 
+\begin_inset Formula $u\in V$
+\end_inset
+
+ then 
+\begin_inset Formula $d(u,V)=0$
+\end_inset
+
+.
+\change_unchanged
+
 \end_layout
 
 \begin_layout --Separator--
@@ -533,24 +376,22 @@ marker
  
 \emph default
 is a non-empty connected
-\change_inserted 1172979425 1420955142
-
 \begin_inset Note Note
 status open
 
 \begin_layout Plain Layout
 
-\change_inserted 1172979425 1420955164
+\change_deleted -190403614 1420990694
 Why does it have to be connected? To exclude the possibility of disconnected
  domains?
+\change_inserted -190403614 1420990694
+x
 \change_unchanged
 
 \end_layout
 
 \end_inset
 
-
-\change_unchanged
  subset of 
 \begin_inset Formula $V$
 \end_inset
@@ -563,53 +404,19 @@ Why does it have to be connected? To exclude the possibility of disconnected
 \end_layout
 
 \begin_layout Definition*
-For a 
-\change_deleted 1172979425 1420955971
-given
-\change_unchanged
- set of disj
-\change_inserted 1172979425 1420954257
-oint
-\change_deleted 1172979425 1420954256
-unctive
-\change_unchanged
- markers 
+For a set of disjoint markers 
 \begin_inset Formula $M_{1},M_{2},...$
 \end_inset
 
-
-\change_inserted 1172979425 1420954370
-,
-\change_unchanged
- 
-\change_inserted 1172979425 1420954359
-the
-\change_deleted 1172979425 1420954358
-a
-\change_unchanged
- 
-\change_inserted 1172979425 1420954260
-V
-\change_deleted 1172979425 1420954260
-v
-\change_unchanged
-or
-\change_inserted 1172979425 1420954262
-o
-\change_unchanged
-noi cell of 
+, the Voronoi cell of 
 \begin_inset Formula $M_{i}$
 \end_inset
 
- is
-\change_inserted 1172979425 1420956205
- the set of all vertices closer to 
+ is the set of all vertices closer to 
 \begin_inset Formula $M_{i}$
 \end_inset
 
- than to any other marker,
-\change_unchanged
- 
+ than to any other marker, 
 \begin_inset Formula $\{v\in V\vert d(v,M_{i})<d(v,M_{j})\forall j\neq i\}$
 \end_inset
 
@@ -629,15 +436,7 @@ A border vertex
 \begin_inset Formula $v$
 \end_inset
 
- is 
-\change_deleted 1172979425 1420955790
-a vertex
-\change_inserted 1172979425 1420955790
-one
-\change_unchanged
- such that
-\change_inserted 1172979425 1420955932
- the closest marker is nonunique, i.e., 
+ is one such that the closest marker is nonunique, i.e., 
 \begin_inset Formula $d\left(v,M_{i}\right)$
 \end_inset
 
@@ -646,15 +445,6 @@ one
 \end_inset
 
 .
-
-\change_deleted 1172979425 1420955910
- 
-\begin_inset Formula $\exists i,j\vert i\neq j,d(v,M_{i})=d(v,M_{j})=\min_{k}\{d(v,M_{k})\}$
-\end_inset
-
- 
-\change_unchanged
-
 \end_layout
 
 \begin_layout --Separator--
@@ -662,91 +452,31 @@ one
 \end_layout
 
 \begin_layout Definition*
-
-\change_deleted 1172979425 1420955273
-Given a set of disjunctive markers 
-\begin_inset Formula $M_{1},M_{2},...$
-\end_inset
-
- the voronoi tesselation of the graph represents its
-\change_inserted 1172979425 1420955216
 The
-\change_unchanged
- 
-\change_deleted 1172979425 1420955317
-
 \emph on
-marker based
-\change_unchanged
  
 \emph default
 watershed
 \emph on
  
 \emph default
-transform
-\change_inserted 1172979425 1420956099
- of a graph based on a set of disjoint markers 
+transform of a graph based on a set of disjoint markers 
 \begin_inset Formula $M_{1},M_{2},\ldots$
 \end_inset
 
  is defined as the collection of watershed domains, where a domain is defined
- as 
-\change_deleted 1172979425 1420956088
-.
- T
-\change_inserted 1172979425 1420956088
-t
-\change_unchanged
-he union of 
-\change_deleted 1172979425 1420956090
-each
-\change_inserted 1172979425 1420956090
-a
-\change_unchanged
- marker and its 
-\change_inserted 1172979425 1420955293
-V
-\change_deleted 1172979425 1420954451
-v
-\change_unchanged
-oronoi cell
-\change_inserted 1172979425 1420956123
-.
+ as the union of a marker and its Voronoi cell.
  
 \begin_inset Note Note
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted 1172979425 1420956153
 The marker might not be contained in its cell because of border vertices?
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_deleted 1172979425 1420956109
- is defined as a 
-\emph on
-watershed domain
-\emph default
- or just a 
-\emph on
-domain.
-
-\emph default
- 
-\change_unchanged
-The border vertices are 
-\change_deleted 1172979425 1420954468
-defined as
-\change_inserted 1172979425 1420955293
-called
-\change_unchanged
- the ridges of the watershed transform.
+The border vertices are called the ridges of the watershed transform.
 \end_layout
 
 \begin_layout --Separator--
@@ -754,9 +484,7 @@ called
 \end_layout
 
 \begin_layout Definition*
-An edge 
-\change_inserted 1172979425 1420955414
-between vertices 
+An edge between vertices 
 \begin_inset Formula $u$
 \end_inset
 
@@ -764,31 +492,12 @@ between vertices
 \begin_inset Formula $v$
 \end_inset
 
-
-\change_deleted 1172979425 1420955417
-
-\begin_inset Formula $\{u,v\}$
-\end_inset
-
-
-\change_inserted 1172979425 1420955663
  
-\change_deleted 1172979425 1420955417
- 
-\change_unchanged
-
 \emph on
 is locally minimal 
-\change_deleted 1172979425 1420954498
-edge
-\change_unchanged
- 
 \emph default
-if its weight is not larger than the weights of all 
-\change_deleted 1172979425 1420955676
-the
-\change_unchanged
- edges containing either 
+if its weight is not larger than the weights of all edges containing either
+ 
 \begin_inset Formula $u$
 \end_inset
 
@@ -807,22 +516,9 @@ the
 A 
 \emph on
 regional minimum 
-\change_inserted 1172979425 1420955595
-
 \emph default
-of a graph 
-\change_unchanged
-is a connected component of 
-\change_deleted 1172979425 1420955598
-
-\begin_inset Formula $G$
-\end_inset
-
-
-\change_inserted 1172979425 1420955626
- the subgraph
-\change_unchanged
- containing only the locally minimal edges
+of a graph is a connected component of the subgraph containing only the
+ locally minimal edges
 \emph on
 .
 \end_layout
@@ -836,43 +532,8 @@ The
 \emph on
 standard watershed transform 
 \emph default
-of 
-\change_deleted 1172979425 1420955517
-the
-\change_inserted 1172979425 1420955517
-a
-\change_unchanged
- graph 
-\change_deleted 1172979425 1420955520
-
-\begin_inset Formula $G$
-\end_inset
-
- 
-\change_unchanged
-is 
-\change_inserted 1172979425 1420955582
-its watershed transform
-\change_deleted 1172979425 1420955533
-the voronoi tessalation 
-\change_inserted 1172979425 1420955555
- based on 
-\change_deleted 1172979425 1420955550
-with
-\change_unchanged
- markers chosen 
-\change_deleted 1172979425 1420955561
-to be
-\change_inserted 1172979425 1420955561
-as
-\change_unchanged
- the regional minima
-\change_inserted 1172979425 1420955571
- of the graph
-\change_deleted 1172979425 1420955565
-.
-\change_unchanged
-
+of a graph is its watershed transform based on markers chosen as the regional
+ minima of the graph
 \end_layout
 
 \begin_layout --Separator--
@@ -880,29 +541,75 @@ as
 \end_layout
 
 \begin_layout Remark*
-
-\change_deleted 1172979425 1420956272
-When
-\change_inserted 1172979425 1420956272
-If the edge weights of a graph are distinct, then 
-\change_deleted 1172979425 1420956263
- 
-\begin_inset Formula $W(e_{1})\neq W(e_{2})$
-\end_inset
-
- iff 
-\begin_inset Formula $e_{1}\neq e_{2}$
-\end_inset
-
- 
-\change_unchanged
-the watershed transform will not have any border vertices.
+If the edge weights of a graph are distinct, then the watershed transform
+ will not have any border vertices.
 \end_layout
 
 \begin_layout Section
 
+\change_deleted -190403614 1421089615
+
 \series bold
-Standard watershed algorithm
+Standard 
+\change_unchanged
+watershed algorithm
+\change_inserted -190403614 1421089617
+s
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1421088449
+Marker based watershed algorithm
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421088602
+Unefficient algorithm that can be done for arbitrary markers
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421088655
+Assign a different ID for each marker.
+ All vertices of a marker will be assigned to the same ID.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421088744
+For each unasigned vertex we find the 
+\emph on
+minimax 
+\emph default
+distance to all the markers.
+ This can be done in linear time [1-s2.0-0377221791900735-main.pdf].
+ If there is a unique marker with the minimal distance then we assign the
+ vertex to the same ID as that marker, otherwise we assign the vertex as
+ border vertex - a special ID.
+\change_unchanged
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1421088533
+Optimized standard watershed algorithm
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421088587
+For the case of the standard watershed algorithm, where markers are the
+ 
+\emph on
+regional minima 
+\emph default
+we can significantly improve the complexity of the algorithm.
+ 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -979,13 +686,7 @@ A
 \emph on
 saddle vertex
 \emph default
- of the steepest 
-\change_deleted -190403614 1420757237
-ascent
-\change_inserted -190403614 1420757238
-descent
-\change_unchanged
- graph has more than one outgoing edge.
+ of the steepest descent graph has more than one outgoing edge.
 \end_layout
 
 \begin_layout --Separator--
@@ -1075,173 +776,20 @@ plateau corner
 
 \begin_layout Subsection
 
-\change_deleted -190403614 1420066030
+\change_inserted -190403614 1421080712
 The algorithm
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Standard
 
-\change_deleted -190403614 1420066030
-Create the steepest descent graph 
-\begin_inset Formula $A$
-\end_inset
-
-.
- For each edge 
-\begin_inset Formula $(u,v)$
-\end_inset
-
- in 
-\begin_inset Formula $G$
-\end_inset
-
- we create an edge 
-\begin_inset Formula $u\rightarrow v$
-\end_inset
-
- if the weight of 
-\begin_inset Formula $(u,v)$
-\end_inset
-
- is equal to the minimal edge in 
-\begin_inset Formula $G$
-\end_inset
-
- containing 
-\begin_inset Formula $u$
-\end_inset
-
-, and an edge 
-\begin_inset Formula $u\leftarrow v$
-\end_inset
-
- if 
-\begin_inset Formula $(u,v)$
-\end_inset
-
- is equal to the minimal edge in 
-\begin_inset Formula $G$
-\end_inset
-
- containing 
-\begin_inset Formula $v$
-\end_inset
-
-.
- If both directed edges are included we say that 
-\begin_inset Formula $A$
-\end_inset
-
- contains a bidirectional edge 
-\begin_inset Formula $u\leftrightarrow v$
-\end_inset
-
-.
+\change_inserted -190403614 1421080783
+The straight forward implementation is to find the 
+\emph on
+minimax
+\emph default
+ edge from each vertex to each of the markers.
+ First we mark all the vertices of the markers to unique IDs.
  
-\end_layout
-
-\begin_layout Enumerate
-
-\change_deleted -190403614 1420066030
-Transform saddle vertices of 
-\begin_inset Formula $A$
-\end_inset
-
- into non-saddle vertices.
- For each saddle vertex, remove all outgoing edges except for one.
- The choice may be random, or by introducing some system for strict ordering
- of edges, e.g.
- coordinates and direction in the case of volumetric graphs.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_deleted -190403614 1420066030
-Divide
-\emph on
- non-minimal plateaus 
-\emph default
-by removing all bidirectional edges.
- Starting from the 
-\emph on
-plateau corners
-\emph default
- perform breadth first search following only bidirectional edges.
- We mark all the 
-\emph on
-plateau corners 
-\emph default
-as visited and put them on a global FIFO queue.
- While the queue is not empty, we get the 
-\emph on
-vertex
-\emph default
- 
-\begin_inset Formula $u$
-\end_inset
-
- from the front of the queue and consider all bidirectional edges 
-\begin_inset Formula $u\leftrightarrow v$
-\end_inset
-
-.
- If 
-\begin_inset Formula $v$
-\end_inset
-
- has not been visited, we mark 
-\begin_inset Formula $v$
-\end_inset
-
- as visited, put 
-\begin_inset Formula $v$
-\end_inset
-
- on the queue and change the edge to be directional 
-\begin_inset Formula $u\leftarrow v$
-\end_inset
-
-.
- Otherwise, if 
-\begin_inset Formula $v$
-\end_inset
-
- has been visited, we erase the 
-\begin_inset Formula $u\leftrightarrow v$
-\end_inset
-
- edge.
- We then remove 
-\begin_inset Formula $u$
-\end_inset
-
- from the front of the queue.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_deleted -190403614 1420066030
-The connected components of the resulting graph, now regarded as undirected,
- will be called watershed domains, or simply domains.
- The set of domains constitutes a partitioning 
-\begin_inset Formula $S$
-\end_inset
-
- of 
-\begin_inset Formula $V$
-\end_inset
-
-, which is the output of the 
-\emph on
-watershed transform
-\emph default
- of the graph 
-\begin_inset Formula $G$
-\end_inset
-
-.
-\change_inserted -190403614 1420038431
-
 \end_layout
 
 \begin_layout Subsection
@@ -1277,16 +825,10 @@ Mark all the vertices on the non-minimal plateaus containing more than one
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1420757760
-Using BFS traverse the graph following only incoming edges.
+\change_inserted -190403614 1421090814
+Using BFS traverse the graph following only incoming and bidirectional edges.
  Every time a vertex is visited it is assigned the same ID as the ID of
  the vertex on the other side of the edge.
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1420757778
-The drop of water principle does not hold for the marker based watershed.
 \end_layout
 
 \begin_layout Lemma
@@ -1301,57 +843,69 @@ Each vertex in
  
 \emph on
 will be assigned to a unique domain.
-\end_layout
 
-\begin_layout Lemma
-
-\emph on
+\change_inserted -190403614 1421088996
+ 
+\change_unchanged
 The total number of domains will be equal to the number of 
 \emph default
 locally minimal plateaus
-\change_deleted -190403614 1420757825
- 
 \emph on
-plus the number of isolated vertices in 
-\begin_inset Formula $G$
-\end_inset
-
-
-\change_unchanged
 .
-\change_inserted -190403614 1420757890
 
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1420757948
-Since an isolated vertex has an infinite distance to every other vertex
- it will be considered a border vertex.
- TODO: explain the two cases - one marker vs more than one marker.
-\change_unchanged
-
-\end_layout
-
-\begin_layout Remark*
+\change_inserted -190403614 1421089074
+ 
+\emph default
 All vertices in a 
 \emph on
 locally minimal plateau
 \emph default
- will be assigned to the same domain.
- Vertices in different locally minimal plateaus will be assigned to different
- domains.
-\end_layout
-
-\begin_layout --Separator--
+ 
+\emph on
+will be assigned to the same 
+\emph default
+domain.
+ 
+\emph on
+Vertices in different l
+\emph default
+ocally minimal plateaus
+\emph on
+ will be assigned to different 
+\emph default
+domains
+\emph on
+.
+\change_unchanged
 
 \end_layout
 
 \begin_layout Remark*
 
-\change_deleted -190403614 1420757961
-Each isolated vertex will be assigned its own domain.
-\change_unchanged
+\change_inserted -190403614 1421089234
+The isolated vertices of the original graph have an infinite distance to
+ all the other vertices.
+ If the graph contains only one 
+\emph on
+locally minimal plateau
+\emph default
+ we will have only one 
+\emph on
+domain, 
+\emph default
+and all the vertices including the isolated ones will be assigned to it.
+ If the graph contains more than one 
+\emph on
+locally minimal plateau
+\emph default
+ the isolated vertices will be assigned as borders.
+\change_deleted -190403614 1421089261
+
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1421089272
 
 \end_layout
 
@@ -1368,15 +922,8 @@ containing exactly one
 \emph on
 plateau corner
 \emph default
- will be assigned to the same domain as the corner
-\change_inserted -190403614 1420758019
-, if the corner belongs to a domain, or as borders if the corner vertex
- is a border vertex.
-\change_deleted -190403614 1420757977
-.
- 
-\change_unchanged
-
+ will be assigned to the same domain as that corner, if the corner belongs
+ to a domain, or as borders if the corner vertex is a border vertex.
 \end_layout
 
 \begin_layout --Separator--
@@ -1392,16 +939,121 @@ non-minimal plateau
 \emph on
 plateau corner 
 \emph default
-will be assigned to the same domain as one of the nearest 
-\emph on
-plateau corners
-\emph default
- in terms of graph distance.
- (discuss ties)
+will be assigned the special ID representing a border.
 \end_layout
 
 \begin_layout --Separator--
 
+\change_inserted -190403614 1421089755
+
+\end_layout
+
+\begin_layout Section
+
+\change_inserted -190403614 1421089771
+Assigning border vertices
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421090149
+The number of border vertices can be arbitrarly large.
+ We would like to assign the non-isolated border vertices to the domains
+ in some consistant and intuitive way.
+ We set the following three goals.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421090209
+All but isolated border vertices should be assigned to a domain.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421090216
+The domains have to be connected.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421090310
+A vertex inside a non-minimal plateau will be assigned to the same domain
+ as the nearest plateau corner.
+ The ties will be dealt with in a deterministic way.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421090583
+The saddle vertices will be assigned to the same domain as one of the vertices
+ of the outgoing edges, also in a deterministic way.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421090622
+The regular vertices, with just one outgoing edge, will be assigned to the
+ same domain as the vertex on the other end of the edge.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421091018
+In order to achieve our goals we have to introduce an ordering function
+ 
+\begin_inset Formula $O$
+\end_inset
+
+ of a graph 
+\begin_inset Formula $G=(V,E,W)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $O:V\to N$
+\end_inset
+
+ such that 
+\begin_inset Formula $O(u)\neq O(v)$
+\end_inset
+
+ iff 
+\begin_inset Formula $u\neq v$
+\end_inset
+
+.
+ We'll refer to 
+\begin_inset Formula $O(u)$
+\end_inset
+
+ as the index of 
+\begin_inset Formula $u$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421091017
+We then modify the domain graph and the original graph such that the standard
+ watershed transform on the modified graph yields no border vertices.
+ This can be done by simply removing some of the edges.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421091062
+For saddle vertices we keep only one outgoing edge pointing to 
+\begin_inset Formula $u$
+\end_inset
+
+ with the minimal index.
+ For the vertices inside non-minimal plateaus that have equal distance to
+ more than one plateau corner we keep only one bidirectional edge so that
+ there is a unique closest plateau corner - the one with the smallest index.
 \end_layout
 
 \begin_layout Definition*
