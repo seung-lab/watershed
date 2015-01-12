@@ -956,11 +956,17 @@ Assigning border vertices
 
 \begin_layout Standard
 
-\change_inserted -190403614 1421090149
+\change_inserted -190403614 1421092084
 The number of border vertices can be arbitrarly large.
  We would like to assign the non-isolated border vertices to the domains
  in some consistant and intuitive way.
  We set the following three goals.
+\end_layout
+
+\begin_layout Problem
+
+\change_inserted -190403614 1421092113
+Requirements:
 \end_layout
 
 \begin_layout Enumerate
@@ -971,14 +977,14 @@ All but isolated border vertices should be assigned to a domain.
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421090216
-The domains have to be connected.
+\change_inserted -190403614 1421092126
+The domains should be connected.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421090310
-A vertex inside a non-minimal plateau will be assigned to the same domain
+\change_inserted -190403614 1421092136
+A vertex inside a non-minimal plateau should be assigned to the same domain
  as the nearest plateau corner.
  The ties will be dealt with in a deterministic way.
 \end_layout
@@ -992,17 +998,16 @@ The saddle vertices will be assigned to the same domain as one of the vertices
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421090622
-The regular vertices, with just one outgoing edge, will be assigned to the
- same domain as the vertex on the other end of the edge.
+\change_inserted -190403614 1421092175
+??The regular vertices, with just one outgoing edge, will be assigned to
+ the same domain as the vertex on the other end of the edge.??
 \end_layout
 
 \begin_layout Standard
 
 \change_inserted -190403614 1421091018
-In order to achieve our goals we have to introduce an ordering function
- 
-\begin_inset Formula $O$
+In order to achieve our goals we introduce an ordering function 
+\begin_inset Formula $I$
 \end_inset
 
  of a graph 
@@ -1011,11 +1016,11 @@ In order to achieve our goals we have to introduce an ordering function
 
 .
  
-\begin_inset Formula $O:V\to N$
+\begin_inset Formula $I:V\to N$
 \end_inset
 
  such that 
-\begin_inset Formula $O(u)\neq O(v)$
+\begin_inset Formula $I(u)\neq I(v)$
 \end_inset
 
  iff 
@@ -1024,7 +1029,7 @@ In order to achieve our goals we have to introduce an ordering function
 
 .
  We'll refer to 
-\begin_inset Formula $O(u)$
+\begin_inset Formula $I(u)$
 \end_inset
 
  as the index of 
@@ -1037,23 +1042,47 @@ In order to achieve our goals we have to introduce an ordering function
 
 \begin_layout Standard
 
-\change_inserted -190403614 1421091017
+\change_inserted -190403614 1421092261
 We then modify the domain graph and the original graph such that the standard
  watershed transform on the modified graph yields no border vertices.
  This can be done by simply removing some of the edges.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Enumerate
 
-\change_inserted -190403614 1421091062
+\change_inserted -190403614 1421092280
 For saddle vertices we keep only one outgoing edge pointing to 
 \begin_inset Formula $u$
 \end_inset
 
  with the minimal index.
- For the vertices inside non-minimal plateaus that have equal distance to
- more than one plateau corner we keep only one bidirectional edge so that
- there is a unique closest plateau corner - the one with the smallest index.
+ 
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421092296
+Vertices inside non-minimal plateaus that have equal distance to more than
+ one plateau corner we keep only one bidirectional edge so that there is
+ a unique closest plateau corner - the one with the smallest index.
+\end_layout
+
+\begin_layout Claim
+
+\change_inserted -190403614 1421092375
+The watershed transform of the modified graph will:
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421092394
+Assign all non-isolated vertices to a domain.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421092393
+All the domains will be connected.
 \end_layout
 
 \begin_layout Definition*
