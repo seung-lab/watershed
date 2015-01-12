@@ -236,17 +236,26 @@ Another approach to deal with the excessive noise is to recursively apply
 
 \begin_layout Section
 Watershed transform definition
+\change_inserted -190403614 1421101254
+
 \end_layout
 
 \begin_layout Standard
-We start by defining the watershed transform of a weighted undirected graph
+We start by defining the watershed transform of a weighted undirected graphs
+\change_inserted -190403614 1421105698
+ with positive edge weights
+\change_unchanged
  
 \begin_inset Note Note
-status open
+status collapsed
 
 \begin_layout Plain Layout
 Removed notation as it conflicts with V later on, and not necessary in this
- section anyway.
+ section anywa
+\change_deleted -190403614 1421105655
+y.
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -300,6 +309,8 @@ minimax path
 
 \change_inserted -190403614 1421080259
 .
+
+\change_unchanged
  The 
 \emph on
 minimax 
@@ -309,8 +320,6 @@ distance of a vertex to itself is defined to be
 \end_inset
 
 .
-\change_unchanged
-
 \end_layout
 
 \begin_layout --Separator--
@@ -377,15 +386,13 @@ marker
 \emph default
 is a non-empty connected
 \begin_inset Note Note
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
 \change_deleted -190403614 1420990694
 Why does it have to be connected? To exclude the possibility of disconnected
  domains?
-\change_inserted -190403614 1420990694
-x
 \change_unchanged
 
 \end_layout
@@ -464,11 +471,20 @@ transform of a graph based on a set of disjoint markers
 \begin_inset Formula $M_{1},M_{2},\ldots$
 \end_inset
 
- is defined as the collection of watershed domains, where a domain is defined
- as the union of a marker and its Voronoi cell.
+ is defined as the collection of watershed domains, where a domain is 
+\change_deleted -190403614 1421105788
+defined as the union o
+\change_inserted -190403614 1421105791
+a voronoi cell o
+\change_unchanged
+f a marker
+\change_deleted -190403614 1421105798
+ and its Voronoi cell
+\change_unchanged
+.
  
 \begin_inset Note Note
-status open
+status collapsed
 
 \begin_layout Plain Layout
 The marker might not be contained in its cell because of border vertices?
@@ -547,26 +563,27 @@ If the edge weights of a graph are distinct, then the watershed transform
 
 \begin_layout Section
 
-\change_deleted -190403614 1421089615
-
 \series bold
-Standard 
-\change_unchanged
-watershed algorithm
-\change_inserted -190403614 1421089617
-s
+Watershed algorithms
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -190403614 1421088449
 Marker based watershed algorithm
+\change_inserted -190403614 1421105857
+
 \end_layout
 
 \begin_layout Standard
 
-\change_inserted -190403614 1421088602
-Unefficient algorithm that can be done for arbitrary markers
+\change_inserted -190403614 1421105873
+Just in words from the definition.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421104328
+A straight forward algorithm (should we explain a more complicated, but
+ more efficient algorithm, it's not trivial)
 \end_layout
 
 \begin_layout Enumerate
@@ -584,7 +601,6 @@ For each unasigned vertex we find the
 minimax 
 \emph default
 distance to all the markers.
- This can be done in linear time [1-s2.0-0377221791900735-main.pdf].
  If there is a unique marker with the minimal distance then we assign the
  vertex to the same ID as that marker, otherwise we assign the vertex as
  border vertex - a special ID.
@@ -776,26 +792,8 @@ plateau corner
 
 \begin_layout Subsection
 
-\change_inserted -190403614 1421080712
-The algorithm
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1421080783
-The straight forward implementation is to find the 
-\emph on
-minimax
-\emph default
- edge from each vertex to each of the markers.
- First we mark all the vertices of the markers to unique IDs.
- 
-\end_layout
-
-\begin_layout Subsection
-
-\change_inserted -190403614 1420757728
-The algorithm (TODO: define for markers and mention the special case)
+\change_inserted -190403614 1421099260
+The standard watershed algorithm 
 \end_layout
 
 \begin_layout Enumerate
@@ -956,11 +954,11 @@ Assigning border vertices
 
 \begin_layout Standard
 
-\change_inserted -190403614 1421092084
+\change_inserted -190403614 1421106032
 The number of border vertices can be arbitrarly large.
  We would like to assign the non-isolated border vertices to the domains
  in some consistant and intuitive way.
- We set the following three goals.
+ We set the following requirements
 \end_layout
 
 \begin_layout Problem
@@ -972,28 +970,29 @@ Requirements:
 \begin_layout Enumerate
 
 \change_inserted -190403614 1421090209
-All but isolated border vertices should be assigned to a domain.
+All but isolated border vertices should be assigned a domain.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421092126
-The domains should be connected.
+\change_inserted -190403614 1421099354
+All domains should be connected.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421092136
+\change_inserted -190403614 1421099394
 A vertex inside a non-minimal plateau should be assigned to the same domain
  as the nearest plateau corner.
- The ties will be dealt with in a deterministic way.
+ The vertices equidistant to more than one plateau corner should be assigned
+ to one of the corners in a deterministic way.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421090583
-The saddle vertices will be assigned to the same domain as one of the vertices
- of the outgoing edges, also in a deterministic way.
+\change_inserted -190403614 1421099402
+The saddle vertices should be assigned to the same domain as one of the
+ vertices of the outgoing edges, also in a deterministic way.
 \end_layout
 
 \begin_layout Enumerate
@@ -1005,8 +1004,8 @@ The saddle vertices will be assigned to the same domain as one of the vertices
 
 \begin_layout Standard
 
-\change_inserted -190403614 1421091018
-In order to achieve our goals we introduce an ordering function 
+\change_inserted -190403614 1421099422
+We introduce an ordering function 
 \begin_inset Formula $I$
 \end_inset
 
@@ -1016,7 +1015,7 @@ In order to achieve our goals we introduce an ordering function
 
 .
  
-\begin_inset Formula $I:V\to N$
+\begin_inset Formula $I:V\to\{1,2,...,|V|\}$
 \end_inset
 
  such that 
@@ -1040,12 +1039,17 @@ In order to achieve our goals we introduce an ordering function
  
 \end_layout
 
+\begin_layout --Separator--
+
+\change_inserted -190403614 1421099462
+
+\end_layout
+
 \begin_layout Standard
 
-\change_inserted -190403614 1421092261
-We then modify the domain graph and the original graph such that the standard
- watershed transform on the modified graph yields no border vertices.
- This can be done by simply removing some of the edges.
+\change_inserted -190403614 1421099453
+We then modify the domain graph and the original graph in the following
+ way:
 \end_layout
 
 \begin_layout Enumerate
@@ -1081,8 +1085,14 @@ Assign all non-isolated vertices to a domain.
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421092393
+\change_inserted -190403614 1421106183
 All the domains will be connected.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421106203
+The minimax distances will not change.
 \end_layout
 
 \begin_layout Definition*
