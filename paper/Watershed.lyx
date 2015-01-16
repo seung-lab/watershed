@@ -77,7 +77,13 @@ figs-within-sections
 \begin_body
 
 \begin_layout Title
-A modified watershed transform on graphs
+A 
+\change_deleted -190403614 1421272795
+modified
+\change_inserted -190403614 1421272796
+extended
+\change_unchanged
+ watershed transform on graphs
 \end_layout
 
 \begin_layout Abstract
@@ -236,31 +242,12 @@ Another approach to deal with the excessive noise is to recursively apply
 
 \begin_layout Section
 Watershed transform definition
-\change_inserted -190403614 1421101254
-
 \end_layout
 
 \begin_layout Standard
 We start by defining the watershed transform of a weighted undirected graphs
-\change_inserted -190403614 1421105698
- with positive edge weights
-\change_unchanged
- 
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-Removed notation as it conflicts with V later on, and not necessary in this
- section anywa
-\change_deleted -190403614 1421105655
-y.
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
- as its Voronoi tessellation based on the minimax distance.
+ with non-negative edge weights as its Voronoi tessellation based on the
+ minimax distance.
 \end_layout
 
 \begin_layout Definition*
@@ -306,11 +293,7 @@ minimax path
 \begin_inset Formula $d(u,v)=\infty$
 \end_inset
 
-
-\change_inserted -190403614 1421080259
 .
-
-\change_unchanged
  The 
 \emph on
 minimax 
@@ -320,10 +303,6 @@ distance of a vertex to itself is defined to be
 \end_inset
 
 .
-\end_layout
-
-\begin_layout --Separator--
-
 \end_layout
 
 \begin_layout Remark*
@@ -356,8 +335,6 @@ minimax distance
 \end_inset
 
 .
-
-\change_inserted -190403614 1421080297
  If 
 \begin_inset Formula $u\in V$
 \end_inset
@@ -367,12 +344,6 @@ minimax distance
 \end_inset
 
 .
-\change_unchanged
-
-\end_layout
-
-\begin_layout --Separator--
-
 \end_layout
 
 \begin_layout Definition*
@@ -384,32 +355,14 @@ marker
 
  
 \emph default
-is a non-empty connected
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_deleted -190403614 1420990694
-Why does it have to be connected? To exclude the possibility of disconnected
- domains?
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
- subset of 
+is a non-empty connected subset of 
 \begin_inset Formula $V$
 \end_inset
 
 .
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
+\begin_deeper
 \begin_layout Definition*
 For a set of disjoint markers 
 \begin_inset Formula $M_{1},M_{2},...$
@@ -430,10 +383,7 @@ For a set of disjoint markers
 .
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
+\begin_deeper
 \begin_layout Definition*
 
 \emph on
@@ -443,7 +393,7 @@ A border vertex
 \begin_inset Formula $v$
 \end_inset
 
- is one such that the closest marker is nonunique, i.e., 
+ is one such that the closest marker is non-unique, i.e., 
 \begin_inset Formula $d\left(v,M_{i}\right)$
 \end_inset
 
@@ -454,51 +404,7 @@ A border vertex
 .
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Definition*
-The
-\emph on
- 
-\emph default
-watershed
-\emph on
- 
-\emph default
-transform of a graph based on a set of disjoint markers 
-\begin_inset Formula $M_{1},M_{2},\ldots$
-\end_inset
-
- is defined as the collection of watershed domains, where a domain is 
-\change_deleted -190403614 1421105788
-defined as the union o
-\change_inserted -190403614 1421105791
-a voronoi cell o
-\change_unchanged
-f a marker
-\change_deleted -190403614 1421105798
- and its Voronoi cell
-\change_unchanged
-.
- 
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-The marker might not be contained in its cell because of border vertices?
-\end_layout
-
-\end_inset
-
-The border vertices are called the ridges of the watershed transform.
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
+\begin_deeper
 \begin_layout Definition*
 An edge between vertices 
 \begin_inset Formula $u$
@@ -524,10 +430,7 @@ if its weight is not larger than the weights of all edges containing either
 .
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
+\begin_deeper
 \begin_layout Definition*
 A 
 \emph on
@@ -539,93 +442,36 @@ of a graph is a connected component of the subgraph containing only the
 .
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
+\begin_deeper
 \begin_layout Definition*
-The 
+The
 \emph on
-standard watershed transform 
+ 
 \emph default
-of a graph is its watershed transform based on markers chosen as the regional
- minima of the graph
+watershed
+\emph on
+ 
+\emph default
+transform of a graph is a collection of watershed domains, where a domain
+ is a voronoi cell of a marker, and markers are chosen to be the regional
+ minima.
+ The border vertices are called the ridges of the watershed transform.
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
+\end_deeper
+\end_deeper
+\end_deeper
+\end_deeper
+\end_deeper
 \begin_layout Remark*
 If the edge weights of a graph are distinct, then the watershed transform
- will not have any border vertices.
+ will not have any ridges.
 \end_layout
 
 \begin_layout Section
 
 \series bold
-Watershed algorithms
-\end_layout
-
-\begin_layout Subsection
-Marker based watershed algorithm
-\change_inserted -190403614 1421105857
-
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1421105873
-Just in words from the definition.
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1421104328
-A straight forward algorithm (should we explain a more complicated, but
- more efficient algorithm, it's not trivial)
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1421088655
-Assign a different ID for each marker.
- All vertices of a marker will be assigned to the same ID.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1421088744
-For each unasigned vertex we find the 
-\emph on
-minimax 
-\emph default
-distance to all the markers.
- If there is a unique marker with the minimal distance then we assign the
- vertex to the same ID as that marker, otherwise we assign the vertex as
- border vertex - a special ID.
-\change_unchanged
-
-\end_layout
-
-\begin_layout Subsection
-
-\change_inserted -190403614 1421088533
-Optimized standard watershed algorithm
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1421088587
-For the case of the standard watershed algorithm, where markers are the
- 
-\emph on
-regional minima 
-\emph default
-we can significantly improve the complexity of the algorithm.
- 
-\change_unchanged
-
+Standard watershed algorithm
 \end_layout
 
 \begin_layout Standard
@@ -633,7 +479,7 @@ The central quantity in the watershed algorithm is the steepest descent
  graph, defined as follows.
 \end_layout
 
-\begin_layout Definition
+\begin_layout Definition*
 Consider an undirected graph 
 \begin_inset Formula $G$
 \end_inset
@@ -679,25 +525,26 @@ A directed path in
 
  is a path of steepest descent, in the sense that every step is along an
  edge with locally minimal weight.
- The steepest ascent graph can be defined analogously using edges of m
-\change_inserted -190403614 1420757200
-a
-\change_deleted -190403614 1420757200
-e
-\change_unchanged
-ximal weight.
+ The steepest ascent graph can be defined analogously using edges of maximal
+ weight.
  The watershed algorithm is named because a drop of water is imagined to
  take a path of steepest descent on a landscape.
  Either steepest ascent or descent can be used without loss of generality.
-\change_inserted -190403614 1419862797
-
 \end_layout
 
-\begin_layout --Separator--
-
+\begin_layout Remark*
+All the outgoing and bidirectional edges of a vertex will have smaller weight
+ than all incoming vertices.
 \end_layout
 
-\begin_layout Definition
+\begin_deeper
+\begin_layout Remark*
+Every non-isolated vertex will have at least one bidirectional or outgoing
+ edge.
+\end_layout
+
+\end_deeper
+\begin_layout Definition*
 A 
 \emph on
 saddle vertex
@@ -705,11 +552,8 @@ saddle vertex
  of the steepest descent graph has more than one outgoing edge.
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Definition
+\begin_deeper
+\begin_layout Definition*
 A 
 \emph on
 plateau
@@ -721,18 +565,13 @@ plateau
  containing only bidirectional edges.
 \end_layout
 
+\begin_deeper
 \begin_layout Remark*
 The smallest possible plateau consists of two vertices, with a bidirectional
  edge between them.
-\change_inserted -190403614 1419862806
-
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Definition
+\begin_layout Definition*
 A 
 \emph on
 plateau corner
@@ -746,11 +585,17 @@ vertex with one or more outgoing edges
 .
 \end_layout
 
-\begin_layout --Separator--
-
+\end_deeper
+\end_deeper
+\begin_layout Remark*
+All the outgoing edges off all 
+\emph on
+plateau
+\emph default
+ corners of a single plateau have the same weight.
 \end_layout
 
-\begin_layout Definition
+\begin_layout Definition*
 A 
 \emph on
 locally minimal plateau 
@@ -759,24 +604,14 @@ contains no
 \emph on
 plateau corners.
  
-\change_inserted -190403614 1420757330
-
 \end_layout
 
 \begin_layout Remark*
-
-\change_inserted -190403614 1420757349
 A locally minimal plateau of the steepest descent graph is the same as the
  regional minimum of the original graph.
-\change_unchanged
-
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Definition
+\begin_layout Definition*
 A 
 \emph on
 non-minimal plateau 
@@ -786,50 +621,160 @@ contains at least one
 plateau corner
 \emph default
 .
-\change_inserted -190403614 1419863185
-
 \end_layout
 
-\begin_layout Subsection
+\begin_deeper
+\begin_layout Definition*
+A 
+\emph on
+compressed steepest descent multigraph 
+\emph default
+(CSDM) is obtained by collapsing 
+\emph on
+plateaus
+\emph default
+ into 
+\emph on
+supervertices.
 
-\change_inserted -190403614 1421099260
+\emph default
+ All the bidirectional edges inside the plateau are removed and all the
+ incoming and outgoing edges are preserved.
+\end_layout
+
+\begin_layout Remark*
+We will refer to the 
+\emph on
+supervertices 
+\emph default
+obtained by collapsing 
+\emph on
+plateaus
+\emph default
+ as 
+\emph on
+locally minimal 
+\emph default
+and 
+\emph on
+non-minimal
+\emph default
+ 
+\emph on
+supervertex
+\emph default
+ accordingly.
+\end_layout
+
+\end_deeper
+\begin_layout Remark*
+All the outgoing edges of a 
+\emph on
+supervertex
+\emph default
+ will have the same weight which is smaller than the weight of all incoming
+ vertices.
+\end_layout
+
+\begin_deeper
+\begin_layout Remark*
+The 
+\emph on
+compressed steepest descent multigraph 
+\emph default
+will contain no bidirectional edges.
+ All but 
+\emph on
+locally minimal supervertices
+\emph default
+ will have at least one outgoing edge.
+\end_layout
+
+\begin_deeper
+\begin_layout Remark*
+Every directed path in the CSDM will have strictly decreasing weights and
+ will terminate in one of the 
+\emph on
+locally minimal supervertices
+\emph default
+.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsection
 The standard watershed algorithm 
 \end_layout
 
 \begin_layout Enumerate
+We collapse all the 
+\emph on
+plateaus
+\emph default
+ into 
+\emph on
+supervertices
+\emph default
+.
+\end_layout
 
-\change_inserted -190403614 1420757276
-Assign all the locally minimal plateaus an unique domain ID.
- Mark all the vertices of the locally minimal plateaus as visited, put them
- on a global FIFO queue and assign them the corresponding ID.
+\begin_deeper
+\begin_layout Enumerate
+Supervertices corresponding to locally minimal plateaus will have no outgoing
+ edges.
+ All the other vertices and supervertices will have at least one outgoing
+ edge.
 \end_layout
 
 \begin_layout Enumerate
+The new graph will contain no bidirectional edges.
+\end_layout
 
-\change_inserted -190403614 1420757418
-Mark all the saddle vertices as visited and assign them a special ID representin
-g a border.
- Put the vertices on the FIFO queue.
+\end_deeper
+\begin_layout Enumerate
+We reverse the directions of all the edges.
 \end_layout
 
 \begin_layout Enumerate
+We visit the vertices (and supervertices) in a topological order.
+ When visiting a vertex we:
+\end_layout
 
-\change_inserted -190403614 1420757428
-Mark all the vertices on the non-minimal plateaus containing more than one
- plateau corner as visited and also assign them a special ID representing
- a border.
- Put all the plateau vertices on the FIFO queue.
+\begin_deeper
+\begin_layout Enumerate
+If the vertex has no outgoing edges we assign a new unique ID to it.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421090814
-Using BFS traverse the graph following only incoming and bidirectional edges.
- Every time a vertex is visited it is assigned the same ID as the ID of
- the vertex on the other side of the edge.
+Otherwise, if all the vertices pointed to by the outgoing edges have the
+ same ID we assign the current vertex that ID, otherwise we assign a special
+ ID representing a border.
 \end_layout
 
+\end_deeper
 \begin_layout Lemma
+Every directed path in the 
+\change_inserted -190403614 1421355377
+steepest descent graph has non-increasing weights.
+\end_layout
+
+\begin_layout Proof
+
+\change_inserted -190403614 1421355743
+Any path going thorugh a node 
+\begin_inset Formula $p$
+\end_inset
+
+ can leave 
+\end_layout
+
+\begin_layout Corollary*
+
+\change_inserted -190403614 1421354848
+Every path of the steepest descent graph is a non-increasing and terminates
+\end_layout
+
+\begin_layout Lemma*
 
 \emph on
 Each vertex in 
@@ -840,18 +785,17 @@ Each vertex in
 
  
 \emph on
-will be assigned to a unique domain.
-
-\change_inserted -190403614 1421088996
- 
+will be assigned to a unique domain
+\change_inserted -190403614 1421184837
+ corresponding to the closest regional minimum by minimax distance or will
+ be designated as a border vertex
 \change_unchanged
-The total number of domains will be equal to the number of 
+.
+ The total number of domains will be equal to the number of 
 \emph default
 locally minimal plateaus
 \emph on
 .
-
-\change_inserted -190403614 1421089074
  
 \emph default
 All vertices in a 
@@ -874,13 +818,30 @@ ocally minimal plateaus
 domains
 \emph on
 .
+
+\change_inserted -190403614 1421184855
+ Domains will be connected.
+\end_layout
+
+\begin_layout Proof
+
+\change_inserted -190403614 1421184862
+Prove this.
 \change_unchanged
 
 \end_layout
 
 \begin_layout Remark*
+If the steepest descent graph contains no saddle vertices or non-minima
+ plateaus with more than one plateau corner the watershed transform will
+ yield no non-isolated border vertices.
+\end_layout
 
-\change_inserted -190403614 1421089234
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Remark*
 The isolated vertices of the original graph have an infinite distance to
  all the other vertices.
  If the graph contains only one 
@@ -897,17 +858,13 @@ and all the vertices including the isolated ones will be assigned to it.
 locally minimal plateau
 \emph default
  the isolated vertices will be assigned as borders.
-\change_deleted -190403614 1421089261
+\change_deleted -190403614 1421172539
 
 \end_layout
 
 \begin_layout --Separator--
 
 \change_inserted -190403614 1421089272
-
-\end_layout
-
-\begin_layout --Separator--
 
 \end_layout
 
@@ -954,23 +911,17 @@ Assigning border vertices
 
 \begin_layout Standard
 
-\change_inserted -190403614 1421106032
-The number of border vertices can be arbitrarly large.
+\change_inserted -190403614 1421173979
+The number of border vertices can be arbitrarily large.
  We would like to assign the non-isolated border vertices to the domains
- in some consistant and intuitive way.
- We set the following requirements
-\end_layout
-
-\begin_layout Problem
-
-\change_inserted -190403614 1421092113
-Requirements:
+ in some consistent and intuitive way.
+ 
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421090209
-All but isolated border vertices should be assigned a domain.
+\change_inserted -190403614 1421174996
+Not have degeneracies - have a detereministic algorithm.
 \end_layout
 
 \begin_layout Enumerate
@@ -981,30 +932,19 @@ All domains should be connected.
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421099394
-A vertex inside a non-minimal plateau should be assigned to the same domain
- as the nearest plateau corner.
- The vertices equidistant to more than one plateau corner should be assigned
- to one of the corners in a deterministic way.
+\change_inserted -190403614 1421175023
+Plateaus should be fairly divided.
+\end_layout
+
+\begin_layout Subsubsection*
+
+\change_inserted -190403614 1421182187
+Algorithm for dividing borders
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421099402
-The saddle vertices should be assigned to the same domain as one of the
- vertices of the outgoing edges, also in a deterministic way.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1421092175
-??The regular vertices, with just one outgoing edge, will be assigned to
- the same domain as the vertex on the other end of the edge.??
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1421099422
+\change_inserted -190403614 1421175081
 We introduce an ordering function 
 \begin_inset Formula $I$
 \end_inset
@@ -1039,157 +979,129 @@ We introduce an ordering function
  
 \end_layout
 
-\begin_layout --Separator--
-
-\change_inserted -190403614 1421099462
-
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1421099453
-We then modify the domain graph and the original graph in the following
- way:
-\end_layout
-
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421092280
+\change_inserted -190403614 1421182206
+We then modify the steepest descent graph and the original graph in the
+ following way:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421173432
 For saddle vertices we keep only one outgoing edge pointing to 
 \begin_inset Formula $u$
 \end_inset
 
  with the minimal index.
- 
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421092296
-Vertices inside non-minimal plateaus that have equal distance to more than
- one plateau corner we keep only one bidirectional edge so that there is
- a unique closest plateau corner - the one with the smallest index.
+\change_inserted -190403614 1421173453
+We cut the non-minima plateaus with more than one plateau corner
 \end_layout
 
-\begin_layout Claim
+\begin_deeper
+\begin_layout Enumerate
 
-\change_inserted -190403614 1421092375
-The watershed transform of the modified graph will:
+\change_inserted -190403614 1421184393
+For all non corner vertices that are we will keep a single bidirectional
+ edge (explain a bit clearer)
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421092394
-Assign all non-isolated vertices to a domain.
+\change_inserted -190403614 1421173492
+We remove all edges that have the two vertices equidistant to two different
+ plateau corners.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Theorem*
+
+\change_inserted -190403614 1421173832
+
+\emph on
+The 
+\emph default
+standard watershed transform 
+\emph on
+of the modified graph will
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421106183
-All the domains will be connected.
+\change_inserted -190403614 1421173962
+Uniquely assign all non-isolated vertices to a domain.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1421106203
-The minimax distances will not change.
+\change_inserted -190403614 1421184475
+A vertex inside a 
+\emph on
+non-minimal plateau
+\emph default
+ will be assigned to the same 
+\emph on
+domain
+\emph default
+ as one of the nearest 
+\emph on
+plateau corners
+\emph default
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421186280
+The 
+\emph on
+minimax distance
+\emph default
+ from any vertex to its assigned 
+\emph on
+regional minimum
+\emph default
+ will not be changed by the graph modification.
+ (There exists at least one minimax path of he original graph will remain
+ in the modified graph).
+ Remark: Minimax distances can not decrease (b/c we are only eliminating
+ edges)
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421186451
+Remark: This is what the clames above mean: Every non-isolated border vertex
+ of the original graph was equidistant from multople reginal minima.
+ In the modified graph it has a unique closest regional minima with unchanged
+ minimax distance.
+ The distance to the other reginal minima had increased.
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+
+\change_inserted -190403614 1421175139
+Sketch: 1) Show that there's always non-decreasing path from a local minima
+ to a vertex.
+ If there's a minimax path to two different local minimas then we didn't
+ actually split the plateaus.
+ 2) by design 3) by design of the algorithm, we visit the graph using BFS
+ 4) the value of the removed edges will still be there.
+\end_layout
+
+\begin_layout Section
+Domain graph and forest
 \end_layout
 
 \begin_layout Definition*
-The size of a domain 
-\begin_inset Formula $d$
-\end_inset
-
-, 
-\begin_inset Formula $S_{d}$
-\end_inset
-
- is equal to the number of vertices in 
-\begin_inset Formula $G$
-\end_inset
-
- assigned to that domain.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-May use text for informal explanation later: Assuming that 
-\begin_inset Formula $G$
-\end_inset
-
- contains no isolated vertices, each vertex of 
-\begin_inset Formula $A$
-\end_inset
-
- will have at least one outgoing edge or one bidirectional edge, and can
- be assigned to the same segment as any of the vertices pointed to by outgoing
- or bidirectional edges.
- A vertex with exactly one outgoing edge is assigned to the same segment
- as the vertex at the other end of the edge.
- 
-\end_layout
-
-\end_inset
-
-
-\change_inserted -190403614 1419864667
-
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1419864750
-
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1419864702
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -190403614 1420750157
-The non-minimal plateaus and the saddle vertices are the source of degeneracies.
- For the rest of this chapter we will assume that the steepest descent graph
- has no non-minimal plateaus or saddle vertices.
- Later we'll discuss how to augment the original graph, or the steepest
- ascent graph so that we solve the degeneracy issues in a consisteA border
- vertex 
-\begin_inset Formula $v$
-\end_inset
-
- is a vertex such that 
-\begin_inset Formula $\exists i,j\vert i\neq j,d(v,M_{i})=d(v,M_{j})=\min_{k}\{d(v,M_{k})\}$
-\end_inset
-
- nt way.
-\end_layout
-
-\begin_layout Plain Layout
-
-\change_inserted -190403614 1419866139
-Properties of such graphs
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-
-\end_layout
-
-\begin_layout Subsection
-Domain graph and forest
-\change_inserted -190403614 1419864664
-
-\end_layout
-
-\begin_layout Definition
 A watershed domain graph 
 \begin_inset Formula $R=(D,E_{r},W_{r})$
 \end_inset
@@ -1241,11 +1153,7 @@ The edge
 \begin_inset Formula $v_{x}$
 \end_inset
 
-
-\change_inserted 1172979425 1420954675
- 
-\change_unchanged
-and 
+ and 
 \begin_inset Formula $v_{y}$
 \end_inset
 
@@ -1253,11 +1161,7 @@ and
 \begin_inset Formula $d_{a}$
 \end_inset
 
-
-\change_inserted 1172979425 1420954678
- 
-\change_unchanged
-and 
+ and 
 \begin_inset Formula $d_{b}$
 \end_inset
 
@@ -1278,7 +1182,7 @@ The weight of the edge
 \begin_inset Formula $C_{a,b}$
 \end_inset
 
-is a set of all edges 
+ is a set of all edges 
 \begin_inset Formula $\{v_{x},v_{y}\}$
 \end_inset
 
@@ -1286,7 +1190,7 @@ is a set of all edges
 \begin_inset Formula $v_{x}$
 \end_inset
 
-and 
+ and 
 \begin_inset Formula $v_{y}$
 \end_inset
 
@@ -1294,44 +1198,22 @@ and
 \begin_inset Formula $d_{a}$
 \end_inset
 
-and 
+ and 
 \begin_inset Formula $d_{b}$
 \end_inset
 
  accordingly.
-\change_inserted -190403614 1417547815
-
 \end_layout
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1417547813
-
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1417548040
-A watershed domain forest is a 
-\emph on
-maximum cost spanning forest 
-\emph default
-of 
-\begin_inset Formula $R$
-\end_inset
-
-, which is a union of maximum cost spanning trees for its connected components.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1418143515
+\change_inserted -190403614 1421186678
 
 \end_layout
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1418145309
+\change_inserted -190403614 1421186711
 Typically 
 \family roman
 \series medium
@@ -1348,13 +1230,14 @@ Typically
 \begin_inset Formula $W_{r}(C_{a,b})$
 \end_inset
 
- is equal to the maximal value of all the edges in 
+ is chosen to be equal to the minimal value of all the edges in 
 \begin_inset Formula $C_{a,b}$
 \end_inset
 
 .
- In this case the edges of the watershed domain forest will correspond to
- maximin edges of the original
+ In this case the weights of the edges of the watershed domain graph will
+ equal to the minimax distance between the regional minima of the domains
+ in the original
 \begin_inset Formula $G$
 \end_inset
 
@@ -1363,14 +1246,55 @@ Typically
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1418149118
+\change_inserted -190403614 1417547813
 
 \end_layout
 
 \begin_layout Subsection
 
-\change_inserted -190403614 1418149135
+\change_inserted -190403614 1421186983
 Watershed hierarchical segmentation
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1421186983
+A 
+\emph on
+watershed domain forest
+\emph default
+ is a 
+\emph on
+minimum cost spanning forest 
+\emph default
+of 
+\begin_inset Formula $R$
+\end_inset
+
+, which is a union of 
+\emph on
+minimum cost spanning trees
+\emph default
+ of its connected components.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1421186985
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421186987
+Algorithm for computing the forest.
+ Then explain that the forest implies a hierarchical segmentation.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1421186983
+
 \end_layout
 
 \begin_layout Standard
@@ -1391,7 +1315,7 @@ Applying standard techniques for weighted graph clustering on the watershed
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1418151933
+\change_inserted -190403614 1421187912
 In the special case when 
 \family roman
 \series medium
@@ -1408,7 +1332,7 @@ In the special case when
 \begin_inset Formula $W_{r}(C_{a,b})$
 \end_inset
 
- is equal to the maximal value of all the edges in 
+ is equal to the minimal value of all the edges in 
 \begin_inset Formula $C_{a,b}$
 \end_inset
 
@@ -1419,7 +1343,7 @@ we can obtain the watershed domain forest and the watershed hierarchical
 \end_inset
 
  in decreasing order and applying the same technique as above.
- Note this is computationally more expensive.
+ Note this is computationally more expensive (log factor).
 \end_layout
 
 \begin_layout --Separator--
@@ -1430,259 +1354,10 @@ we can obtain the watershed domain forest and the watershed hierarchical
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1418150170
-The edges of the watershed domain forest will be subset of a maximum spanning
+\change_inserted -190403614 1421187143
+The edges of the watershed domain forest will be a subset of a minimum spanning
  forest of the original graph.
-\end_layout
-
-\begin_layout Subsection
-
-\change_inserted -190403614 1418146445
-Watershed transform as a voronoi diagram on maximin distance
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1420034844
-
-\emph on
-Mini-max
-\emph default
- 
-\emph on
-path
-\emph default
- between two vertices in a graph is a path that minimizes the maximal weight
- of all the edges on the path.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1418145796
-
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1420037861
-
-\emph on
-Mini-max distance 
-\emph default
-between two vertices in a graph 
-\begin_inset Formula $d(u,v)$
-\end_inset
-
- is equal to the maximal edge weight on a 
-\emph on
-mini-max path
-\emph default
-.
- If there's no path between the two vertices 
-\begin_inset Formula $d(u,v)=\infty$
-\end_inset
-
-
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1418153816
-
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1420036494
-A 
-\emph on
-mini-max distance 
-\emph default
-of a vertex to a set of points 
-\begin_inset Formula $d(u,V)$
-\end_inset
-
- equals to the 
-\emph on
-minimal mini-max distance
-\emph default
- to any of the vertices in the given set, 
-\begin_inset Formula $d(u,V)=min\{d(u,v)\},v\in V$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420036132
-
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1420036361
-A 
-\emph on
-marker 
-\begin_inset Formula $M$
-\end_inset
-
- 
-\emph default
-is a non-empty connected subset of 
-\begin_inset Formula $V$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420036571
-
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1420036805
-For a given set of dijunctive markers 
-\begin_inset Formula $M_{1},M_{2},...$
-\end_inset
-
- a vornoi cell of 
-\begin_inset Formula $M_{i}$
-\end_inset
-
- is 
-\begin_inset Formula $\{v\in V\backslash\{M_{1},M_{2},...\}\vert d(v,M_{i})<d(v,M_{j})\},i\neq j$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420036856
-
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1420045544
-A border vertex 
-\begin_inset Formula $v$
-\end_inset
-
- is a vertex such that 
-\begin_inset Formula $\exists i,j\vert i\neq j,d(v,M_{i})=d(v,M_{j})=\min_{k}\{d(v,M_{k})\}$
-\end_inset
-
- 
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420037228
-
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1420037560
-If the set of markers is chosen to be the set of locally minimal plateaus,
- the voronoi tessellation of the graph will correspond to the watershed
- transform.
- The voronoi cells will correspond to the watershed domains.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420037392
-
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1420037597
-If the steepest descent graph does not contain saddle vertices or non-minimal
- plateaus with more than one plateau edge the watershed transform and the
- voronoi tesselation will not contain berder vertices.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420037602
-
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1420037823
-For a single marker 
-\begin_inset Formula $M$
-\end_inset
-
-, all the vertices in the graph will belong the voronoi cell of 
-\begin_inset Formula $M$
-\end_inset
-
-, given there's a path between the vertex and 
-\begin_inset Formula $M$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420037915
-
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1420038418
-When having more than one marker it is possible that all the vertices not
- beloning to any of the markers are border vertices.
- (Example image).
- Note that it is hard to find an image equivalent of this.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1420037929
-
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1418154238
-In the special case when 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-
-\begin_inset Formula $W_{r}(C_{a,b})$
-\end_inset
-
- is equal to the maximal value of all the edges in 
-\begin_inset Formula $C_{a,b}$
-\end_inset
-
- the weights of the edges of the watershed domain graph will equal to the
- maximal maxi-min distance in the original graph between any pair of vertices
- from the two domains.
- And it will equal to the maxi-min distance between the two locally maximal
- plateaus.
+ Not explained correctly, need better statement here.
 \end_layout
 
 \begin_layout --Separator--
@@ -1691,244 +1366,148 @@ In the special case when
 
 \end_layout
 
-\begin_layout Remark*
+\begin_layout Section
+Modified watershed algorithm
+\change_inserted -190403614 1421175606
 
-\change_inserted -190403614 1418154716
-
-\emph on
-Maxi-min distance 
-\emph default
-satisfies the 
-\emph on
-ultrametric 
-\emph default
-properties (ref).
- Check this (vs mini-max)
 \end_layout
 
-\begin_layout Definition*
+\begin_layout Standard
 
-\change_inserted -190403614 1418147959
-For given set of vertices 
-\begin_inset Formula $U\subseteq V$
-\end_inset
-
-, a 
-\emph on
-voronoi cell
-\emph default
- of 
-\emph on
-
-\begin_inset Formula $u\in U$
-\end_inset
-
-
-\emph default
- is 
-\begin_inset Formula $\{x\in V\backslash U\mid d(x,u)\leq d(x,u')\},\forall u'\in U,u'\neq u$
-\end_inset
-
+\change_inserted -190403614 1421272371
+In the case of segmentation, very often the edges of the given graph represent
  
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1418155355
-Similarly we can define a voronoi cell of a set of vertices as union of
- all voronoi cells of the individual vertices.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1418155361
-
-\end_layout
-
-\begin_layout Lemma*
-
-\change_inserted -190403614 1418148511
-
 \emph on
-Let 
-\begin_inset Formula $U\subseteq V$
-\end_inset
-
- be a set of vertices belonging to locally maximal plateaus, the union of
- the vertices from a single locally maximal plateau and their voronoi cells,
- using maxi-min distance as metric, will correspond to a watershed domain.
- The watershed transform of the graph 
-\begin_inset Formula $G$
-\end_inset
-
- will correspond to a voronoi diagram of 
-\begin_inset Formula $G$
-\end_inset
-
- using locally maximal plateaus as cell centers and maxi-min distance as
- metric.
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1418154345
-The voronoi cell centers can also be arbitrary chosen.
- In that case the voronoi diagram corresponds to a marker based watershed
- transform of 
-\begin_inset Formula $G$
-\end_inset
-
-.
- Maybe elaborate a bit more on this.
- Give more efficient algorithm later?
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1418150261
-
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1418154441
-One way to partition a graph is to apply marker based watershed with the
- cell centers being connected components of the tresholded graph.
- The resulting domains will equal to a union of one or more of the standard
- watershed domains....
- this is tricky....
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1418154968
-Note: it's not the same as thresholding the watershed domain graph.
-\end_layout
-
-\begin_layout Example
-
-\change_inserted -190403614 1418154987
-NOTE: CC and single vertices
-\end_layout
-
-\begin_layout Section*
-
-\change_inserted -190403614 1418150208
-Next section....
+disaffinities
+\emph default
+ - the measure of the likelihood that the two vertices have similar characterist
+ics, belong to the same segment.
+ Without losing generality we will assume that the small values mean high
+ likelihood.
+ A slight noise in the affinity values can lead to large number of regional
+ minima producing large number of watershed domains.
+ We introduce modifications to the standard watershed algorithm to deal
+ with such noise.
 \end_layout
 
 \begin_layout Subsection
 
-\change_inserted -190403614 1418145456
-Marker based watershed transform
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1418145623
-In the standard watershed algorithm the number of domains was determined
- by the number of local
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1418145376
-
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1417548167
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -190403614 1417548171
-Define maximin edges
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1417549673
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -190403614 1417548211
-Remark about what the other maximin edges are (two cases, redundant and
- ones inside the domains)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1417549717
-Define watershed hierarchy and watershed segmentation for the special case
- of W_r 
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1417549742
-Discuss relatoinship to thresholded original graph + marker based watershed
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1417549743
-Thresholding a graph, then applying connected components + marker based
- watershed is equal to the following.
- (Assuming that the results has N final components)
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1417550542
-Obtaining the regular watershed with it's hierarchical segmentation.
- Then we start merging the hierarchical segmentation until we get exactly
- N components.
- That will be equal to the previous case.
- 
+\change_inserted -190403614 1421262820
+Maximum threshold
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1417550054
-Voroni tessalation on maxmin distance.
+\change_inserted -190403614 1421262870
+Without losing generality, affinities take values [0,1] representing probabiliti
+es of two vertices not beloning to the same segment.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1417550476
-Define watershed transform as producing 
+\change_inserted -190403614 1421262899
+We expcet segment boundaries - vertices separating segments, not assigned
+ to any segment.
 \end_layout
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1417550529
-We can discuss creating graph vs sorting all the edges of the original grap
- 
-\begin_inset Formula $G$
+\change_inserted -190403614 1421272420
+We are confident that the disaffinities larger than some value 
+\begin_inset Formula $T_{\max}$
 \end_inset
 
-.
+ should never be used to assign vertices to the same domain.
 \end_layout
 
-\begin_layout Section
-Modified watershed algorithm
+\begin_layout Subsection
+
+\change_inserted -190403614 1421255704
+Minimum threshold
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421267890
+Noisy data produces large number of reginal minima and therefore large number
+ of watershed domains.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421263097
+The hirarchical segmentation is useful only for a subset of thresholds,
+ we'll never use the hierarchical segmentation with a threshold smaller
+ than some value
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421263197
+A level of the hierarchical segmentation is obtained by merging watershed
+ domains starting from the watershed domain graph.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421263276
+We can alsways increase the threshold, but never decrease (we have to recompute
+ the domain graph starting from the original graph)
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421263278
+Solutions
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421263360
+Do watershed transform and then compute the minimal level of the hierarchical
+ segmentation
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1421267930
+Introduce the threshold before the watershed transform by replacing all
+ the edges....
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+
+\change_inserted -190403614 1421263407
+Relation to connected components
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421267962
+An often used method for segmentation is applying connected components on
+ a thresholded graph.
+ The resulting segmentation might produce a lot of isolated vertices.
+ Applying the watershed transform after introducing the minimum threshold
+ will produce a similar segmentation where all vertices will be assigned
+ either by growing existing connected components of the thresholded graph
+ or by introducing new segments.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421268036
+Each connected component of the thresholded graph will be a subsetequals
+ to a single domain obtained by watershed followed by thresholding the domain
+ graph to the same threshold.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421268066
+Doing marker based watershed which is not defined would be equivalent to
+ doing marker based watershed on the domain graph after thresholding it.
 \end_layout
 
 \begin_layout Subsection
@@ -1937,29 +1516,16 @@ Minimum and maximum thresholds
 
 \begin_layout Standard
 The first modification of the watershed algorithm is by introducing minimum
-\change_inserted -190403614 1416331029
- threshold
-\change_unchanged
- 
-\change_inserted -190403614 1416331020
-
+ threshold 
 \begin_inset Formula $T_{min}$
 \end_inset
 
-
-\change_unchanged
-and maximum thresholds
-\change_inserted -190403614 1416331033
- 
+ and maximum threshold 
 \begin_inset Formula $T_{max}$
 \end_inset
 
-
-\change_unchanged
 .
- 
-\change_inserted -190403614 1416332769
-Given an undirected graph 
+ Given an undirected graph 
 \begin_inset Formula $G$
 \end_inset
 
@@ -1971,46 +1537,20 @@ Given an undirected graph
 \begin_inset Formula $G$
 \end_inset
 
- erased if its value is lower than 
-\begin_inset Formula $T_{min}$
-\end_inset
-
- and replaced by an edge with a value 
-\begin_inset Formula $\infty$
-\end_inset
-
- if its value is greater than 
+ erased if its value is larger than 
 \begin_inset Formula $T_{max}$
 \end_inset
 
-.
- The graph 
-\begin_inset Formula $M$
+ and replaced by an edge with a value 
+\begin_inset Formula $0$
 \end_inset
 
- might contain isolated vertices.
- Typically such vertices are not assigned a segment, or each assigned a
- separate segment.
- Let 
-\begin_inset Formula $M'$
-\end_inset
-
- be an undirected graph same as 
-\begin_inset Formula $M$
-\end_inset
-
- but excluding the isolated vertices of 
-\begin_inset Formula $M$
+ if its value is smaller than 
+\begin_inset Formula $T_{min}$
 \end_inset
 
 .
- 
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1416332801
-The first modified watershed transform of 
+ The first modified watershed transform of 
 \begin_inset Formula $G$
 \end_inset
 
@@ -2018,7 +1558,7 @@ The first modified watershed transform of
 \begin_inset Formula $T_{min}$
 \end_inset
 
-and 
+ and 
 \begin_inset Formula $T_{max}$
 \end_inset
 
@@ -2031,12 +1571,53 @@ and
 \end_inset
 
  as described above.
+\change_inserted -190403614 1421346885
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1421346888
+Rebalancing the dendrogram
 \end_layout
 
 \begin_layout Subsection
 
-\change_inserted -190403614 1416331930
-Size threshold, etc..
+\change_inserted -190403614 1421186485
+Other interpretation of the minimum threshold
+\end_layout
+
+\begin_layout Definition*
+
+\change_inserted -190403614 1421186485
+The size of a domain 
+\begin_inset Formula $d$
+\end_inset
+
+, 
+\begin_inset Formula $S_{d}$
+\end_inset
+
+ is equal to the number of vertices in 
+\begin_inset Formula $G$
+\end_inset
+
+ assigned to that domain.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1421276885
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Definition
@@ -2372,8 +1953,13 @@ Note that the number of segments (watershed domains) in the segmentation
  will be equal to the number of local maxima in the original graph.
  Every watershed domain will have it's local maxima [ref].
  The region graph will have the following interesting property - the edges
- of the region graph will be maximin edges between the local maximas of
- the connected segments.
+ of the region graph will be maximin edges between the local 
+\change_deleted -190403614 1421174042
+maximas
+\change_inserted -190403614 1421174042
+maxima
+\change_unchanged
+ of the connected segments.
 \end_layout
 
 \begin_layout Standard
@@ -2760,8 +2346,8 @@ Theorem: When
 
 \begin_layout Remark*
 
-\change_inserted -190403614 1420759451
-For a give finate graph and weight function there exist a sufficiently small
+\change_inserted -190403614 1421174050
+For a give finite graph and weight function there exist a sufficiently small
  epsilon such that above.
 \end_layout
 
