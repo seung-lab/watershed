@@ -263,10 +263,7 @@ path
  the two vertices of the maximal weight of edges on the path.
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
+\begin_deeper
 \begin_layout Definition*
 The
 \emph on
@@ -305,6 +302,7 @@ distance of a vertex to itself is defined to be
 .
 \end_layout
 
+\end_deeper
 \begin_layout Remark*
 The 
 \emph on
@@ -571,6 +569,12 @@ The smallest possible plateau consists of two vertices, with a bidirectional
  edge between them.
 \end_layout
 
+\begin_deeper
+\begin_layout Remark*
+All the bidirectional edges inside a plateau will have the same weight.
+\end_layout
+
+\end_deeper
 \begin_layout Definition*
 A 
 \emph on
@@ -592,7 +596,8 @@ All the outgoing edges off all
 \emph on
 plateau
 \emph default
- corners of a single plateau have the same weight.
+ corners of a single plateau have the same weight equal to all the bidirectional
+ edges inside the plateau.
 \end_layout
 
 \begin_layout Definition*
@@ -666,14 +671,14 @@ supervertex
  accordingly.
 \end_layout
 
-\end_deeper
+\begin_deeper
 \begin_layout Remark*
 All the outgoing edges of a 
 \emph on
 supervertex
 \emph default
- will have the same weight which is smaller than the weight of all incoming
- vertices.
+ will have the same weight, equal to all the bidirectional edges inside
+ the plateau and smaller than the weight of all incoming vertices.
 \end_layout
 
 \begin_deeper
@@ -700,6 +705,167 @@ locally minimal supervertices
 .
 \end_layout
 
+\begin_layout Lemma
+Every directed path 
+\begin_inset Formula $u\to\dots\to v$
+\end_inset
+
+ in 
+\begin_inset Formula $A$
+\end_inset
+
+ is a minimax path with the minimax distance equal to the minimax distance
+ between 
+\begin_inset Formula $u$
+\end_inset
+
+ and 
+\begin_inset Formula $v$
+\end_inset
+
+ in 
+\begin_inset Formula $G$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+All the outgoing and bidirectional edges of a vertex 
+\begin_inset Formula $u$
+\end_inset
+
+ have the same weight and all the paths in 
+\begin_inset Formula $A$
+\end_inset
+
+ are non-increasing.
+ Therefore any path starting from 
+\begin_inset Formula $u$
+\end_inset
+
+ will have the maximal edge weight equal to the weight of the first edge
+ and is therefore a 
+\emph on
+minimax path
+\emph default
+ with the 
+\emph on
+minimax distance 
+\emph default
+equal to the weight of the first edge on the path.
+\end_layout
+
+\begin_layout Proof
+For every directed path 
+\begin_inset Formula $p$
+\end_inset
+
+ in 
+\begin_inset Formula $A$
+\end_inset
+
+ there is a corresponding path in 
+\begin_inset Formula $G.$
+\end_inset
+
+ The maximal edge weight on the path is equal to the weight of the first
+ edge.
+ Let 
+\begin_inset Formula $p$
+\end_inset
+
+ be a path from 
+\begin_inset Formula $u$
+\end_inset
+
+ to 
+\begin_inset Formula $v$
+\end_inset
+
+ and the weight of the first edge on the path be 
+\begin_inset Formula $w_{0}$
+\end_inset
+
+.
+ All the outgoing and bidirectional edges from 
+\begin_inset Formula $u$
+\end_inset
+
+ in 
+\begin_inset Formula $A$
+\end_inset
+
+ have the same value and are locally minimal - all edges in 
+\begin_inset Formula $G$
+\end_inset
+
+ containing 
+\begin_inset Formula $u$
+\end_inset
+
+ have weight greater or equal than 
+\begin_inset Formula $w_{0}$
+\end_inset
+
+.
+ Therefore every path from 
+\begin_inset Formula $u$
+\end_inset
+
+ to 
+\begin_inset Formula $v$
+\end_inset
+
+ in 
+\begin_inset Formula $G$
+\end_inset
+
+ will contain an edge with the weight greater or equal to 
+\begin_inset Formula $w_{0}$
+\end_inset
+
+.
+ Hence 
+\begin_inset Formula $w_{0}$
+\end_inset
+
+ is the minimax distance between 
+\begin_inset Formula $u$
+\end_inset
+
+ and 
+\begin_inset Formula $v$
+\end_inset
+
+ in 
+\begin_inset Formula $G$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Corollary*
+Every directed path in the CSDM is also a minimax path with the minimax
+ distance equal to the minimax distance the corresponding vertices in 
+\begin_inset Formula $G$
+\end_inset
+
+.
+ If either 
+\begin_inset Formula $u$
+\end_inset
+
+ or 
+\begin_inset Formula $v$
+\end_inset
+
+ are supervertices the claim is true for any pair of vertices from the correspon
+ding plateaus.
+\end_layout
+
+\end_deeper
+\end_deeper
 \end_deeper
 \end_deeper
 \begin_layout Subsection
@@ -707,30 +873,13 @@ The standard watershed algorithm
 \end_layout
 
 \begin_layout Enumerate
-We collapse all the 
+We create the 
 \emph on
-plateaus
-\emph default
- into 
-\emph on
-supervertices
+compressed steepest descent multigraph
 \emph default
 .
 \end_layout
 
-\begin_deeper
-\begin_layout Enumerate
-Supervertices corresponding to locally minimal plateaus will have no outgoing
- edges.
- All the other vertices and supervertices will have at least one outgoing
- edge.
-\end_layout
-
-\begin_layout Enumerate
-The new graph will contain no bidirectional edges.
-\end_layout
-
-\end_deeper
 \begin_layout Enumerate
 We reverse the directions of all the edges.
 \end_layout
@@ -741,31 +890,121 @@ We visit the vertices (and supervertices) in a topological order.
 \end_layout
 
 \begin_deeper
-\begin_layout Enumerate
-If the vertex has no outgoing edges we assign a new unique ID to it.
+\begin_layout Itemize
+If the vertex has no outgoing edges we assign a new unique domain ID to
+ it.
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Itemize
 Otherwise, if all the vertices pointed to by the outgoing edges have the
  same ID we assign the current vertex that ID, otherwise we assign a special
  ID representing a border.
 \end_layout
 
 \end_deeper
-\begin_layout Lemma
-Every directed path in the 
-\change_inserted -190403614 1421355377
-steepest descent graph has non-increasing weights.
+\begin_layout Enumerate
+We assign all the vertices of the original graph.
+ The plateau vertices will be assigned to the same ID as the corresponding
+ 
+\emph on
+supervertex
+\emph default
+.
+\end_layout
+
+\begin_layout Enumerate
+*If there is a single unique domain assign all the vertices of the graph
+ to that ID.
+\change_inserted -190403614 1421438620
+
+\end_layout
+
+\begin_layout Theorem
+
+\emph on
+The algorithm 3.1 will:
+\end_layout
+
+\begin_layout Enumerate
+Assign each vertex in 
+\begin_inset Formula $G$
+\end_inset
+
+ a unique domain corresponding to the closes regional mimimum by minimax
+ distance or designate it as a border vertex if such minimum distance is
+ not unique.
+\end_layout
+
+\begin_layout Enumerate
+The total number of domains will be equal to the number of 
+\emph on
+locally minimal plateaus
+\emph default
+.
+\end_layout
+
+\begin_layout Enumerate
+All vertices in a 
+\emph on
+locally minimal plateau 
+\emph default
+will be assigned to the same 
+\emph on
+domain
+\emph default
+.
+ Vertices in different 
+\emph on
+locally minimal plateaus 
+\emph default
+will be assigned to different 
+\emph on
+domains
+\emph default
+.
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+Domains 
+\emph default
+will be connected.
 \end_layout
 
 \begin_layout Proof
 
-\change_inserted -190403614 1421355743
-Any path going thorugh a node 
-\begin_inset Formula $p$
-\end_inset
+\change_deleted -190403614 1421441714
+ 
+\change_unchanged
+The step 3 of the algorithm assigns a unique domain ID only to vertices
+ with no outgoing edges.
+ Only 
+\emph on
+locally minimal supervertices
+\emph default
+ have no outgoing edges and therefore will be assigned a new unique ID.
 
- can leave 
+\change_inserted -190403614 1421441736
+ As they correspond to
+\emph on
+ locally minimal plateaus 
+\emph default
+every 
+\emph on
+locally minimal plateau
+\emph default
+ will be assigned a different ID and all the vertices in the 
+\emph on
+plateau
+\emph default
+ will be assigned to that same ID.
+ As we visit the vertices in a topological order when visiting vertices
+ that have outgoing edges all the vertices pointed to by those edges will
+ already be visited and assigned.
+ If they are all assigned to the same ID not equal to the special ID representin
+g a border then we know that all the paths from the current vertex will
+ terminate 
 \end_layout
 
 \begin_layout Corollary*
