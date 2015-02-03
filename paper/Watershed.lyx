@@ -403,7 +403,17 @@ regional minimum
 of a graph is a connected component of the subgraph containing only the
  locally minimal edges
 \emph on
-.
+ 
+\emph default
+such that every possible steepest descent walk in 
+\begin_inset Formula $G$
+\end_inset
+
+ starting in any of the vertices of the connected component
+\emph on
+ 
+\emph default
+stays inside the component.
 \end_layout
 
 \begin_layout Theorem*
@@ -1414,8 +1424,25 @@ standard watershed domain graph
 regional minima
 \emph default
  of the corresponding domains.
+\change_inserted -190403614 1422499466
+
 \end_layout
 
+\begin_layout Subsection
+
+\change_inserted -190403614 1422499720
+Single linkage clustering
+\end_layout
+
+\end_deeper
+\begin_layout Definition*
+
+\change_inserted -190403614 1422499922
+Single linkage clustering is a method of agglomerative clustering.
+ All 
+\end_layout
+
+\begin_deeper
 \begin_layout Subsection
 Single linkage hierarchical clustering
 \end_layout
@@ -1474,7 +1501,7 @@ dissaffinity
 \begin_deeper
 \begin_layout Remark*
 
-\change_inserted -190403614 1422481720
+\change_inserted -190403614 1422499011
 In 
 \emph on
 single linkage clustering
