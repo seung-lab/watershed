@@ -71,7 +71,6 @@ figs-within-sections
 \html_css_as_file 0
 \html_be_strict false
 \author -190403614 "Aleksandar Zlateski" 
-\author 1172979425 "Sebastian Seung" 
 \end_header
 
 \begin_body
@@ -90,15 +89,8 @@ ion.
  We present a modified (extended) watershed algorithm(s) that can overcome
  the issue of noisy data, and take advantage of the possibly known nature
  of the data to achieve much better results.
- Our algorithm
-\change_deleted -190403614 1415823866
-(
-\change_unchanged
-s
-\change_deleted -190403614 1415823868
-)
-\change_unchanged
- are as efficient as the most efficient regular watershed algorithms.
+ Our algorithms are as efficient as the most efficient regular watershed
+ algorithms.
 \end_layout
 
 \begin_layout Section
@@ -110,10 +102,6 @@ Introduction
 \begin_layout Standard
 The watershed algorithm is widely used for segmenting images (cite), and
  has also been generalized to the partitioning of graphs (cite).
-
-\change_deleted 1172979425 1412601357
- 
-\change_unchanged
  In this paper we will focus on watershed for affinity graphs, which is
  relevant for the special case of images.
  However our results are applicable to arbitrary graphs.
@@ -236,8 +224,6 @@ Another approach to deal with the excessive noise is to recursively apply
 
 \begin_layout Section
 Watershed transform definition
-\change_inserted -190403614 1421447885
-
 \end_layout
 
 \begin_layout Standard
@@ -420,16 +406,10 @@ stays inside the component.
 If the graph doesn't have any isolated vertices then every initial state
  of the system will, after a finite number of steps, be trapped into a regional
  minimum.
-\change_inserted -190403614 1422309682
-
 \end_layout
 
 \begin_layout Proof
-
-\change_inserted -190403614 1422309694
 First 
-\change_unchanged
-
 \end_layout
 
 \begin_deeper
@@ -444,13 +424,7 @@ regional minimum
 \emph default
  is a set of vertices from which there is a 
 \emph on
-steepest descent 
-\change_deleted -190403614 1422309827
-walk
-\change_inserted -190403614 1422309827
-path
-\change_unchanged
-
+steepest descent path
 \emph default
  to every vertex of the 
 \emph on
@@ -641,22 +615,16 @@ Every non-isolated vertex of
 \end_inset
 
  will have at least one bidirectional or outgoing edge.
-\change_inserted -190403614 1422310529
-
 \end_layout
 
 \begin_deeper
 \begin_layout Remark*
-
-\change_inserted -190403614 1422310585
 The evolution of our stochastic descrete dynamics is equivalent to a random
  walk along the
 \emph on
  steepest descent graph
 \emph default
 .
-\change_unchanged
-
 \end_layout
 
 \end_deeper
@@ -1078,14 +1046,10 @@ will be assigned the special ID representing a border.
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -190403614 1421089771
 Assigning border vertices
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1421173979
 The number of border vertices can be arbitrarily large.
  We would like to assign the non-isolated border vertices to the domains
  in some consistent and intuitive way.
@@ -1093,32 +1057,22 @@ The number of border vertices can be arbitrarily large.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1422300230
 Not have degeneracies - have a deterministic algorithm.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421099354
 All domains should be connected.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421175023
 Plateaus should be fairly divided.
 \end_layout
 
 \begin_layout Subsubsection*
-
-\change_inserted -190403614 1421182187
 Algorithm for dividing borders
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421175081
 We introduce an ordering function 
 \begin_inset Formula $I$
 \end_inset
@@ -1154,16 +1108,12 @@ We introduce an ordering function
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421182206
 We then modify the steepest descent graph and the original graph in the
  following way:
 \end_layout
 
 \begin_deeper
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421173432
 For saddle vertices we keep only one outgoing edge pointing to 
 \begin_inset Formula $u$
 \end_inset
@@ -1172,22 +1122,16 @@ For saddle vertices we keep only one outgoing edge pointing to
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421173453
 We cut the non-minima plateaus with more than one plateau corner
 \end_layout
 
 \begin_deeper
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421184393
 For all non corner vertices that are we will keep a single bidirectional
  edge (explain a bit clearer)
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421173492
 We remove all edges that have the two vertices equidistant to two different
  plateau corners.
 \end_layout
@@ -1195,8 +1139,6 @@ We remove all edges that have the two vertices equidistant to two different
 \end_deeper
 \end_deeper
 \begin_layout Theorem*
-
-\change_inserted -190403614 1421173832
 
 \emph on
 The 
@@ -1207,14 +1149,10 @@ of the modified graph will
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421173962
 Uniquely assign all non-isolated vertices to a domain.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421184475
 A vertex inside a 
 \emph on
 non-minimal plateau
@@ -1231,8 +1169,6 @@ plateau corners
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421186280
 The 
 \emph on
 minimax distance
@@ -1250,8 +1186,6 @@ regional minimum
 
 \begin_deeper
 \begin_layout Enumerate
-
-\change_inserted -190403614 1422300251
 Remark: This is what the clames above mean: Every non-isolated border vertex
  of the original graph was equidistant from multiple regional minima.
  In the modified graph it has a unique closest regional minima with unchanged
@@ -1261,8 +1195,6 @@ Remark: This is what the clames above mean: Every non-isolated border vertex
 
 \end_deeper
 \begin_layout Proof
-
-\change_inserted -190403614 1422300255
 Sketch: 1) Show that there's always non-decreasing path from a local minima
  to a vertex.
  If there's a minimax path to two different local minima then we didn't
@@ -1288,7 +1220,7 @@ domain graph
 \begin_inset Formula $G$
 \end_inset
 
- is an undirected weighted graph defined as follows
+ is an undirected weighted graph defined as follows 
 \end_layout
 
 \begin_layout Enumerate
@@ -1296,11 +1228,7 @@ The set of vertices
 \begin_inset Formula $D$
 \end_inset
 
- is the set of domains
-\change_inserted -190403614 1422481495
-/partitions
-\change_unchanged
- of 
+ is the set of domains/partitions of 
 \begin_inset Formula $G$
 \end_inset
 
@@ -1348,8 +1276,6 @@ The edge
 \end_inset
 
  accordingly.
-\change_inserted -190403614 1422390299
-
 \end_layout
 
 \begin_layout Enumerate
@@ -1424,61 +1350,10 @@ standard watershed domain graph
 regional minima
 \emph default
  of the corresponding domains.
-\change_inserted -190403614 1422499466
-
-\end_layout
-
-\begin_layout Subsection
-
-\change_inserted -190403614 1422499720
-Single linkage clustering
-\end_layout
-
-\end_deeper
-\begin_layout Definition*
-
-\change_inserted -190403614 1422499922
-Single linkage clustering is a method of agglomerative clustering.
- All 
 \end_layout
 
 \begin_deeper
-\begin_layout Subsection
-Single linkage hierarchical clustering
-\end_layout
-
-\end_deeper
-\begin_layout Standard
-Given a partitioning of 
-\begin_inset Formula $G$
-\end_inset
-
-, hierarchical clustering treats each partition as a singleton cluster,
- and the successively merges clusters until all partitions have been merged
- into a single remaining cluster.
- A hierarchical clustering is often represented as a dendrogram.
-\change_inserted -190403614 1422481172
-
-\end_layout
-
-\begin_layout Standard
-In 
-\emph on
-single linkage
-\emph default
- hierarchical clustering in each step we merge two clusters whos two closest
- members have the smallest 
-\emph on
-disaffinity
-\emph default
-.
-\change_inserted -190403614 1422481154
-
-\end_layout
-
 \begin_layout Remark*
-
-\change_inserted -190403614 1422481529
 The weights of the edges of the 
 \emph on
 standard
@@ -1498,115 +1373,66 @@ dissaffinity
  of the two closest members.
 \end_layout
 
-\begin_deeper
-\begin_layout Remark*
-
-\change_inserted -190403614 1422499011
-In 
-\emph on
-single linkage clustering
-\emph default
- a partitioning at a threshold 
-\begin_inset Formula $T$
-\end_inset
-
- is obtained by iteratively merging clusters whos two closest members have
- the smallest 
-\emph on
-dissafinity
-\emph default
- as long as that value is smaller than 
-\begin_inset Formula $T$
-\end_inset
-
-.
-\end_layout
-
+\end_deeper
 \begin_layout Subsection
-
-\change_inserted -190403614 1422481742
-Connected components on the thresholded 
-\begin_inset Formula $G$
-\end_inset
-
-
+Single linkage hierarchical clustering
 \end_layout
 
 \end_deeper
-\begin_layout Remark*
-
-\change_inserted -190403614 1422481853
-Often a graph partitioning is generated by obtaining connected components
- on the thresholded graph.
- A graph 
+\begin_layout Definition*
+Given a graph 
 \begin_inset Formula $G$
 \end_inset
 
- thresholded with the threshold 
-\begin_inset Formula $T$
-\end_inset
+, hierarchical clustering treats each vertex as a singleton cluster, and
+ successively merges clusters until all partitions have been merged into
+ a single remaining cluster.
+ A hierarchical clustering is often represented as a dendrogram.
+ Each merge operations produces a new graph partition at the given level
+ of the hierarchy.
+\end_layout
 
- is obtained by keeping only edges whos values are smaller than 
-\begin_inset Formula $T$
-\end_inset
-
+\begin_layout Standard
+In 
+\emph on
+single linkage
+\emph default
+ hierarchical clustering in each step we merge two clusters whos two closest
+ members have the smallest 
+\emph on
+disaffinity
+\emph default
 .
 \end_layout
 
+\begin_layout Remark*
+In each step of the 
+\emph on
+single linkage clustering 
+\emph default
+the values of the 
+\emph on
+smallest disaffinity
+\emph default
+ for which we merge the clusers will be non-decreasing.
+\end_layout
+
 \begin_layout Claim*
-
-\change_inserted -190403614 1422484684
-Let 
-\begin_inset Formula $R_{CC,T}$
-\end_inset
-
- be the 
+The graph partitioning obtained by 
 \emph on
-standard
+single linkage
 \emph default
- 
+ clustering by merging clusters until the next smallest 
 \emph on
-domain graph
+disaffinity
 \emph default
- of 
-\begin_inset Formula $G$
-\end_inset
-
- partitioned by obtaining the connected components of 
-\begin_inset Formula $G$
-\end_inset
-
- thresholded at 
+ is greater or equal to some threshold 
 \begin_inset Formula $T$
 \end_inset
 
-.
- Let 
-\begin_inset Formula $R_{WS}$
-\end_inset
-
- be the 
-\emph on
-standard watershed domain graph 
-\emph default
-of 
-\begin_inset Formula $G$
-\end_inset
-
-.
- The watershed transform of 
-\begin_inset Formula $R_{CC,T}$
-\end_inset
-
- will yield the same partitioning as the 
-\emph on
-single linkage clustering
-\emph default
- of 
-\begin_inset Formula $R_{WS}$
-\end_inset
-
- at the threshold 
+ will be equivalent to the partitioning obtained by obtaining the connected
+ components of the thresholded graph, where we only keep edges with weight
+ smaller than 
 \begin_inset Formula $T$
 \end_inset
 
@@ -1614,123 +1440,239 @@ single linkage clustering
 \end_layout
 
 \begin_deeper
+\begin_layout Subsection
+Segmentation using single linkage clustering
+\end_layout
+
+\end_deeper
 \begin_layout Claim*
-
-\change_inserted -190403614 1422484757
-The 
+Often a segmentation is produced using 
 \emph on
-watershed transform
+single linkage
 \emph default
- of the modified 
-\begin_inset Formula $G$
-\end_inset
-
- where all the edges whos values are smaller than 
+ 
+\emph on
+clustering
+\emph default
+ - connected components of the thresholded graph.
+ An obvious problem there is that this method can produce a lot of clusters.
+ Each vertex with that has no edge with the weight smaller than 
 \begin_inset Formula $T$
 \end_inset
 
- with edges of value 
+ will be in its own segment.
+ A method to reduce the number of small, singleton clusters is to apply
+ the watershed transform on the resulting 
+\emph on
+domain graph
+\emph default
+.
+\end_layout
+
+\begin_layout Theorem*
+For a given threshold 
+\begin_inset Formula $T$
+\end_inset
+
+, the following three methods will produce the same partitioning of 
+\begin_inset Formula $G$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+First partition the graph by finding the connected components of the thresolded
+ 
+\begin_inset Formula $G$
+\end_inset
+
+ and then applying watershed on the resulting domain graph.
+\end_layout
+
+\begin_layout Enumerate
+Applying the watershed transform on 
+\begin_inset Formula $G$
+\end_inset
+
+, and then finding the connected components of the thresholded watershed
+ domain graph.
+\end_layout
+
+\begin_layout Enumerate
+Replacing all the edges with weight smaller than 
+\begin_inset Formula $T$
+\end_inset
+
+ with an edge of weight 
 \begin_inset Formula $0$
 \end_inset
 
- will also produce the same partitioning.
+ and then applying the watershed transform.
+\end_layout
+
+\begin_layout Proof
+Prove this!
+\end_layout
+
+\begin_layout Section
+Methods for improving the segmentation
+\end_layout
+
+\begin_layout Standard
+Often a prior knowledge about the nature of the data can be used to improve
+ the segmentation.
+ In this section we introduce several efficient methods.
+\end_layout
+
+\begin_layout Subsection
+Segment borders
+\end_layout
+
+\begin_layout Standard
+The nature of the data can be such that there is space between desired segments
+ - segment boundaries.
+ The values of the 
+\emph on
+dissafinities
+\emph default
+ among vertices on the segment boundaries will be very high.
+ However the watershed transform will assign each non-isolated vertex to
+ a domain.
+ 
+\end_layout
+
+\begin_layout Standard
+An intuitive way to improve the segmentation in this case is to remove all
+ edges from the graph whose weight is higher than some pre-defined threshold
+ 
+\begin_inset Formula $T_{\max}$
+\end_inset
+
+.
+ Mainly, for 
+\emph on
+dissafinities 
+\emph default
+higher than 
+\begin_inset Formula $T_{\max}$
+\end_inset
+
+we are confident that those edges of the graph should never be used when
+ obtaining the segmentation.
+\end_layout
+
+\begin_layout Subsection
+Segment properties
+\end_layout
+
+\begin_layout Standard
+In many cases some properties of the desired segments are known.
+ For example, when segmenting neural tissue we can estimate the minimal
+ size of the segments inside a given volume.
+\end_layout
+
+\begin_layout Definition*
+A non-decreasing property 
+\begin_inset Formula $P:S\to R^{+}$
+\end_inset
+
+ is a function of a segment such that 
+\begin_inset Formula $P(S)\le P(S\cup v)$
+\end_inset
+
+.
+ Similarly we can define non-increasing properties.
+\end_layout
+
+\begin_layout Remark*
+Exmple of non-decresing properties are size (number of vertices) in the
+ segment, bounding box volume (in the case of volumetric affinity graphs),
+ etc...
+\change_inserted -190403614 1424197356
+
+\end_layout
+
+\begin_layout Proposition*
+
+\change_inserted -190403614 1424197463
+Given a property 
+\begin_inset Formula $P$
+\end_inset
+
+ and prior knowledge about the data - 
+\begin_inset Formula $P(S)\ge P_{\min}$
+\end_inset
+
+.
+ We propose the following method to improve the segmentation.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424197832
+We consider all the edges of the standard domain graph in non-decreasing
+ order.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424197670
+If the edge is connecting two different segments 
+\begin_inset Formula $S_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{2}$
+\end_inset
+
+ and if either 
+\begin_inset Formula $P(S_{1})<P_{\min}$
+\end_inset
+
+or 
+\begin_inset Formula $P(S_{2})<P_{\min}$
+\end_inset
+
+.
+ We merge the segments 
+\begin_inset Formula $S_{1}$
+\end_inset
+
+and 
+\begin_inset Formula $S_{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Claim*
+
+\change_inserted -190403614 1424197746
+In the algorithm described above it is enough to consider just the edges
+ of the minimum cost spanning forest of the domain graph.
+\end_layout
+
+\begin_layout Proof
+
+\change_inserted -190403614 1424197753
+Simple...
+\end_layout
+
+\begin_layout Proof
+
+\change_inserted -190403614 1424197843
+The method above does not take into account the wights of the edges of the
+ domain graph.
 \change_unchanged
 
 \end_layout
 
-\end_deeper
 \begin_layout Subsection
-asd
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1422468686
-
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1422469634
-A single linkage hierarchical clustering at a level 
-\begin_inset Formula $T$
-\end_inset
-
- is obtained by merging two clusters whos two closest members have the smallest
- distance, as long as that distance is smaller than 
-\begin_inset Formula $T$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1422469060
-A slingle linkage clustering also closely corresponds to a weighted graph's
- minimum cost spanning tree.
-\end_layout
-
-\begin_layout Subsection
-
-\change_inserted -190403614 1422469278
-Watershed domain graph and single linkage clustering
-\end_layout
-
-\begin_layout Definition*
-
-\change_inserted -190403614 1422480179
-Watershed 
-\end_layout
-
-\begin_layout Remark*
-
-\change_inserted -190403614 1422469478
-Typically 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-
-\begin_inset Formula $W_{r}(C_{a,b})$
-\end_inset
-
- is chosen to be equal to the minimal value of all the edges in 
-\begin_inset Formula $C_{a,b}$
-\end_inset
-
-.
- In this case the weights of the edges of the watershed domain graph will
- equal to the minimax distance between the regional minima of the domains
- in the original
-\begin_inset Formula $G$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1417547813
-
-\end_layout
-
-\begin_layout Subsection
-
-\change_inserted -190403614 1421186983
 Watershed hierarchical segmentation
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted -190403614 1421186983
 A 
 \emph on
 watershed domain forest
@@ -1752,26 +1694,18 @@ minimum cost spanning trees
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1421186985
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1421186987
 Algorithm for computing the forest.
  Then explain that the forest implies a hierarchical segmentation.
 \end_layout
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1421186983
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1418151879
 Applying standard techniques for weighted graph clustering on the watershed
  domain graph we obtain the watershed hierarchical segmentation.
  We can do this in the following way: we consider all the edges in the watershed
@@ -1786,8 +1720,6 @@ Applying standard techniques for weighted graph clustering on the watershed
 \end_layout
 
 \begin_layout Remark*
-
-\change_inserted -190403614 1421187912
 In the special case when 
 \family roman
 \series medium
@@ -1820,13 +1752,9 @@ we can obtain the watershed domain forest and the watershed hierarchical
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1418150118
-
 \end_layout
 
 \begin_layout Remark*
-
-\change_inserted -190403614 1421187143
 The edges of the watershed domain forest will be a subset of a minimum spanning
  forest of the original graph.
  Not explained correctly, need better statement here.
@@ -1834,19 +1762,13 @@ The edges of the watershed domain forest will be a subset of a minimum spanning
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1418146462
-
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -190403614 1422391138
 Agglomerative hierarchical clustering
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1422391094
 Often the result of the 
 \emph on
 watershed transform 
@@ -1869,8 +1791,6 @@ will represent the distance between the clusters.
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted -190403614 1422388870
 A
 \emph on
  minimax
@@ -1885,8 +1805,6 @@ path
 
 \begin_deeper
 \begin_layout Definition*
-
-\change_inserted -190403614 1422391198
 The
 \emph on
  minimax distance
@@ -1926,8 +1844,6 @@ distance of a vertex to itself is defined to be
 
 \end_deeper
 \begin_layout Definition*
-
-\change_inserted -190403614 1422395949
 The 
 \emph on
 watershed domains 
@@ -1941,29 +1857,21 @@ regional minima
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted -190403614 1422396267
 - In the special case when the edge weight is chosen to be the minimum of
  ....
  
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted -190403614 1422396267
 edge weight domain graph corresponds to the minimax distance between any
  two pairs of points of the regional minima (between regional minima)
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted -190403614 1422396955
 - more efficient
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1422397564
 *difference between MCST.
  MCST has more information than the dendrogram.
  MCST -> dendrogram.
@@ -1971,42 +1879,24 @@ edge weight domain graph corresponds to the minimax distance between any
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1422399873
 * two domains are in the same cluster iff the minmax distance between the
  regional minima 
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1422399885
 1) Relate CC of the two graphs
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1422399890
 2) Relate the MST of the two graphs
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1422400223
 3) Watershed on the domain graph on CC is the same as CC on the watershed
  domain graph
 \end_layout
 
-\begin_layout Section
-
-\change_deleted -190403614 1422397990
-Modified watershed algorithm
-\change_inserted -190403614 1421175606
-
-\end_layout
-
 \begin_layout Standard
-
-\change_inserted -190403614 1421272371
 In the case of segmentation, very often the edges of the given graph represent
  
 \emph on
@@ -2023,28 +1913,20 @@ ics, belong to the same segment.
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -190403614 1421262820
 Maximum threshold
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1422300266
 Without losing generality, affinities take values [0,1] representing probabiliti
 es of two vertices not belonging to the same segment.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1422300267
 We expect segment boundaries - vertices separating segments, not assigned
  to any segment.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421272420
 We are confident that the disaffinities larger than some value 
 \begin_inset Formula $T_{\max}$
 \end_inset
@@ -2053,71 +1935,51 @@ We are confident that the disaffinities larger than some value
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -190403614 1421255704
 Minimum threshold
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1422300271
 Noisy data produces large number of regional minima and therefore large
  number of watershed domains.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1422300273
 The hierarchical segmentation is useful only for a subset of thresholds,
  we'll never use the hierarchical segmentation with a threshold smaller
  than some value
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421263197
 A level of the hierarchical segmentation is obtained by merging watershed
  domains starting from the watershed domain graph.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1422300275
 We can always increase the threshold, but never decrease (we have to recompute
  the domain graph starting from the original graph)
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421263278
 Solutions
 \end_layout
 
 \begin_deeper
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421263360
 Do watershed transform and then compute the minimal level of the hierarchical
  segmentation
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1421267930
 Introduce the threshold before the watershed transform by replacing all
  the edges....
 \end_layout
 
 \end_deeper
 \begin_layout Subsection
-
-\change_inserted -190403614 1421263407
 Relation to connected components
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1421267962
 An often used method for segmentation is applying connected components on
  a thresholded graph.
  The resulting segmentation might produce a lot of isolated vertices.
@@ -2128,23 +1990,17 @@ An often used method for segmentation is applying connected components on
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1422300280
 Each connected component of the thresholded graph will be a subset-equals
  to a single domain obtained by watershed followed by thresholding the domain
  graph to the same threshold.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1422397705
 Doing marker based watershed which is not defined would be equivalent to
  doing marker based watershed on the domain graph after thresholding it.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1422397746
 Two domains of the tresholded domain graph will be in the same connected
  component iff the two regional minima are in the same connected component
  of the orginial graph.
@@ -2211,25 +2067,17 @@ The first modification of the watershed algorithm is by introducing minimum
 \end_inset
 
  as described above.
-\change_inserted -190403614 1421346885
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1421346888
 Rebalancing the dendrogram
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -190403614 1421186485
 Other interpretation of the minimum threshold
 \end_layout
 
 \begin_layout Definition*
-
-\change_inserted -190403614 1421186485
 The size of a domain 
 \begin_inset Formula $d$
 \end_inset
@@ -2246,8 +2094,6 @@ The size of a domain
 \end_layout
 
 \begin_layout --Separator--
-
-\change_inserted -190403614 1421276885
 \begin_inset ERT
 status open
 
@@ -2261,8 +2107,6 @@ status open
 \end_layout
 
 \begin_layout Definition
-
-\change_inserted -190403614 1416332886
 Given a 
 \emph on
 watershed transform 
@@ -2404,13 +2248,7 @@ If both edges
 \end_inset
 
  can be categorized as outgoing, incoming, or bidirectional with respect
- to that 
-\change_deleted -190403614 1416332808
-vetex
-\change_inserted -190403614 1416332808
-vertex
-\change_unchanged
-.
+ to that vertex.
 \end_layout
 
 \begin_layout Standard
@@ -2723,19 +2561,13 @@ Arbitrary Function of an Arbitrary Property Threshold
 
 \begin_layout Subsection
 Recursive Application of the Modified Algorithm
-\change_inserted -190403614 1420747606
-
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -190403614 1420747683
 Modified metric
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1420747949
 We start by introducing an ordering function 
 \begin_inset Formula $O$
 \end_inset
@@ -2762,13 +2594,9 @@ We start by introducing an ordering function
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420747953
-
 \end_layout
 
 \begin_layout Definition
-
-\change_inserted -190403614 1420830273
 
 \emph on
 A minimax graph distance 
@@ -2803,13 +2631,9 @@ and
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420830274
-
 \end_layout
 
 \begin_layout Definition
-
-\change_inserted -190403614 1420830317
 
 \emph on
 A minimax graph distance 
@@ -2845,13 +2669,9 @@ and
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420829385
-
 \end_layout
 
 \begin_layout Theorem
-
-\change_inserted -190403614 1420830598
 
 \emph on
 When 
@@ -2866,8 +2686,6 @@ When
 \end_layout
 
 \begin_layout Theorem
-
-\change_inserted -190403614 1420830829
 \begin_inset Formula $\alpha(x,y)\ge0$
 \end_inset
 
@@ -2875,8 +2693,6 @@ When
 \end_layout
 
 \begin_layout Theorem
-
-\change_inserted -190403614 1420830831
 \begin_inset Formula $\alpha(x,x)=0$
 \end_inset
 
@@ -2884,8 +2700,6 @@ When
 \end_layout
 
 \begin_layout Theorem
-
-\change_inserted -190403614 1420830834
 \begin_inset Formula $\alpha(x,y)=\alpha(y,z)$
 \end_inset
 
@@ -2893,8 +2707,6 @@ When
 \end_layout
 
 \begin_layout Theorem
-
-\change_inserted -190403614 1420830839
 \begin_inset Formula $\alpha(x,z)\le\alpha(x,y)+\alpha(y,z)$
 \end_inset
 
@@ -2925,19 +2737,13 @@ is defined as follows:
 \end_inset
 
 
-\change_inserted -190403614 1420748373
-
 \end_layout
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420748378
-
 \end_layout
 
 \begin_layout Definition
-
-\change_inserted -190403614 1420758987
 We introduce a new metric 
 \begin_inset Formula $m(u,v)=d(u,v)+\epsilon g(u,v)+\epsilon^{2}n(u,v)$
 \end_inset
@@ -2946,21 +2752,15 @@ We introduce a new metric
 \end_layout
 
 \begin_layout Remark*
-
-\change_inserted -190403614 1420759168
 Theorem about being a metric.
  As sum of metrics
 \end_layout
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1420749200
-
 \end_layout
 
 \begin_layout Remark*
-
-\change_inserted -190403614 1420759336
 Theorem: When 
 \begin_inset Formula $\epsilon\to0$
 \end_inset
@@ -2980,15 +2780,11 @@ Theorem: When
 \end_layout
 
 \begin_layout Remark*
-
-\change_inserted -190403614 1421174050
 For a give finite graph and weight function there exist a sufficiently small
  epsilon such that above.
 \end_layout
 
 \begin_layout Remark*
-
-\change_inserted -190403614 1421784868
 TODO: describe the modified algorithm.
 \end_layout
 
