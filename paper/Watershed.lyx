@@ -1201,6 +1201,177 @@ Sketch: 1) Show that there's always non-decreasing path from a local minima
  actually split the plateaus.
  2) by design 3) by design of the algorithm, we visit the graph using BFS
  4) the value of the removed edges will still be there.
+\change_inserted -190403614 1424288773
+
+\end_layout
+
+\begin_layout Section
+
+\change_inserted -190403614 1424289064
+Improving the watershed segmentation
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1424290190
+The edges of the graph usually represent 
+\emph on
+affinities 
+\emph default
+or 
+\emph on
+dissafinities 
+\emph default
+- probabilities that the two vertices belong or don't belong to the same
+ segment.
+ The watershed transform will produce a domain for every regional minima.
+ And slight noise in the data can therefore produce large number of domains.
+ Our goal is to reduce the number of segments while still not getting mergers
+ to improve the resulting segmentation.
+ In order to do this we will modify the 
+\emph on
+dissafinity 
+\emph default
+graph for the confident values.
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1424290209
+Minimum threshold 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1424290523
+For very small values of 
+\emph on
+dissafinity
+\emph default
+ for which we are confident that the two vertices should belong to the same
+ domain we will modify the 
+\emph on
+dissafinity 
+\emph default
+value to be as low as possible.
+ Mainly we will modify the graph by replacing all edges with weight smaller
+ than 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
+with an edge with weight 
+\begin_inset Formula $0$
+\end_inset
+
+.
+ This will reduce the number the number of domains as it will flatten the
+ regions with small 
+\emph on
+dissafinities
+\emph default
+, reducing the noise.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424290541
+Some regional minima will get merged into a larger one.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424290700
+Other regional minima with the value larger or equal to 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
+ will stay.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1424290742
+\begin_inset Graphics
+	filename Figures/raw.png
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename Figures/min.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1424290760
+Maximum threshold 
+\begin_inset Formula $T_{\max}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1424291102
+Similarly for very high values of dissafinity we can be confident that the
+ two vertices don't belong to the same domain.
+ We can therefore safely remove these edges from the graph.
+ Removing edges with value larger than 
+\begin_inset Formula $T_{\max}$
+\end_inset
+
+can prevent some mergers.
+ Also in the case where the segments can have boundaries - vertices that
+ shouldn't belong to any of the segments the maximum threshold will produce
+ small or singleton segments where the boundaries should be.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1424291467
+\begin_inset Graphics
+	filename Figures/minmax.png
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Figures/singletons.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\change_inserted -190403614 1424291184
+Chosing 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
+and 
+\begin_inset Formula $T_{\max}$
+\end_inset
+
+ values
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1424291217
+Not exact science :) get the largest possible values while not introducing
+ mergers.
+ Further modification can make this choice be looser.
 \end_layout
 
 \begin_layout Section
@@ -1371,6 +1542,8 @@ domain graph
 dissaffinity
 \emph default
  of the two closest members.
+\change_inserted -190403614 1424202275
+
 \end_layout
 
 \end_deeper
@@ -1387,7 +1560,11 @@ Given a graph
 , hierarchical clustering treats each vertex as a singleton cluster, and
  successively merges clusters until all partitions have been merged into
  a single remaining cluster.
- A hierarchical clustering is often represented as a dendrogram.
+ A hierarchical clustering is often represented as a dendrogram
+\change_inserted -190403614 1424199943
+ [fig]
+\change_unchanged
+.
  Each merge operations produces a new graph partition at the given level
  of the hierarchy.
 \end_layout
@@ -1397,8 +1574,11 @@ In
 \emph on
 single linkage
 \emph default
- hierarchical clustering in each step we merge two clusters whos two closest
- members have the smallest 
+ hierarchical clustering in each step we merge two clusters whos
+\change_inserted -190403614 1424199963
+e
+\change_unchanged
+ two closest members have the smallest 
 \emph on
 disaffinity
 \emph default
@@ -1441,10 +1621,28 @@ disaffinity
 
 \begin_deeper
 \begin_layout Subsection
-Segmentation using single linkage clustering
+Relation between 
+\emph on
+single linkage clustering and the watershed transform
+\change_inserted -190403614 1424200390
+
 \end_layout
 
 \end_deeper
+\begin_layout Claim*
+
+\change_inserted -190403614 1424202535
+Explicitly explain that this is for a level of the hierarchical clustering.
+ 
+\end_layout
+
+\begin_layout Claim*
+
+\change_inserted -190403614 1424202542
+Graph partitioning is obtained by CC.
+ 
+\end_layout
+
 \begin_layout Claim*
 Often a segmentation is produced using 
 \emph on
@@ -1513,10 +1711,21 @@ Replacing all the edges with weight smaller than
 
 \begin_layout Proof
 Prove this!
+\change_inserted -190403614 1424200250
+
+\end_layout
+
+\begin_layout Proof
+
+\change_inserted -190403614 1424200266
+Explain why we want Watershed and then CC.
+ or sometimes 3)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
-Methods for improving the segmentation
+Methods for agglomerative clustering
 \end_layout
 
 \begin_layout Standard
@@ -1526,10 +1735,14 @@ Often a prior knowledge about the nature of the data can be used to improve
 \end_layout
 
 \begin_layout Subsection
-Segment borders
+
+\change_deleted -190403614 1424291322
+Segment boundaries
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -190403614 1424291322
 The nature of the data can be such that there is space between desired segments
  - segment boundaries.
  The values of the 
@@ -1543,6 +1756,8 @@ dissafinities
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -190403614 1424291322
 An intuitive way to improve the segmentation in this case is to remove all
  edges from the graph whose weight is higher than some pre-defined threshold
  
@@ -1560,10 +1775,16 @@ higher than
 
 we are confident that those edges of the graph should never be used when
  obtaining the segmentation.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
 Segment properties
+\change_inserted -190403614 1424201094
+ (modification of single linkage clustering + explain the relationship)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -1574,7 +1795,7 @@ In many cases some properties of the desired segments are known.
 
 \begin_layout Definition*
 A non-decreasing property 
-\begin_inset Formula $P:S\to R^{+}$
+\begin_inset Formula $P:2^{V}\to R^{+}$
 \end_inset
 
  is a function of a segment such that 
@@ -1661,9 +1882,10 @@ Simple...
 
 \begin_layout Proof
 
-\change_inserted -190403614 1424197843
+\change_inserted -190403614 1424201115
 The method above does not take into account the wights of the edges of the
  domain graph.
+ P_min as function of the weight.
 \change_unchanged
 
 \end_layout
