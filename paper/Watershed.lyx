@@ -2,10 +2,9 @@
 \lyxformat 474
 \begin_document
 \begin_header
-\textclass amsart
+\textclass llncs
 \use_default_options true
 \begin_modules
-theorems-ams
 eqs-within-sections
 figs-within-sections
 \end_modules
@@ -91,6 +90,74 @@ ion.
  of the data to achieve much better results.
  Our algorithms are as efficient as the most efficient regular watershed
  algorithms.
+\change_inserted -190403614 1424467883
+
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424467903
+Watershed transform is used for hierarchical image segmentation
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424467919
+Idea comes from geography
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424468490
+Watershed has been studied on edge weighted graphs for hierarchical image
+ segmentation.
+ Usually pixel intensities (differences)
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424468694
+Vertex clustering on edge-weighted graphs.
+ Usually affinity graphs.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424471598
+Define a watershed transform on an edge-weighted graph as ....
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424468791
+Propose a linear time algorithm that gracefully deals with degeneracies.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424468814
+Propose simple improvements to deal with noise.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424468906
+Propose a single linkage clustering method of the watershed domains that's
+ efficient and takes advantage of the prior knowledge of the data to achieve
+ better segmentation results.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424469956
+We present results on affinity graphs of EM data.
+ used on EyeWire.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1424469153
+Keywords: Watershed, image segmentation, graph, electron microscopy
 \end_layout
 
 \begin_layout Section
@@ -354,7 +421,6 @@ steepest descent path
 steepest descent walk.
 \end_layout
 
-\begin_deeper
 \begin_layout Definition*
 An edge between vertices 
 \begin_inset Formula $u$
@@ -380,7 +446,6 @@ if its weight is not larger than the weights of all edges containing either
 .
 \end_layout
 
-\begin_deeper
 \begin_layout Definition*
 A 
 \emph on
@@ -433,7 +498,6 @@ regional minimum
 .
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 
 \emph on
@@ -451,7 +515,6 @@ basin of attraction
 .
 \end_layout
 
-\begin_deeper
 \begin_layout Definition*
 A 
 \emph on
@@ -462,7 +525,6 @@ border vertex
 basin of attraction.
 \end_layout
 
-\begin_deeper
 \begin_layout Definition*
 Let 
 \begin_inset Formula $B$
@@ -496,7 +558,6 @@ regional minimum
 .
 \end_layout
 
-\begin_deeper
 \begin_layout Definition*
 The
 \emph on
@@ -512,18 +573,11 @@ transform of a graph is a collection of watershed domains, where a domain
 \end_layout
 
 \end_deeper
-\end_deeper
-\end_deeper
-\end_deeper
-\end_deeper
-\end_deeper
-\end_deeper
 \begin_layout Remark*
 If the edge weights of a graph are distinct, then the watershed transform
  will not have any ridges.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 All but isolated vertices will be assigned to a 
 \emph on
@@ -532,7 +586,6 @@ domain
 .
 \end_layout
 
-\end_deeper
 \begin_layout Section
 
 \series bold
@@ -608,7 +661,6 @@ All the outgoing and bidirectional edges of a vertex of
  will have smaller weight than all incoming vertices.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 Every non-isolated vertex of 
 \begin_inset Formula $D$
@@ -617,7 +669,6 @@ Every non-isolated vertex of
  will have at least one bidirectional or outgoing edge.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 The evolution of our stochastic descrete dynamics is equivalent to a random
  walk along the
@@ -627,8 +678,6 @@ The evolution of our stochastic descrete dynamics is equivalent to a random
 .
 \end_layout
 
-\end_deeper
-\end_deeper
 \begin_layout Definition*
 A 
 \emph on
@@ -637,7 +686,6 @@ saddle vertex
  of the steepest descent graph has more than one outgoing edge.
 \end_layout
 
-\begin_deeper
 \begin_layout Definition*
 A 
 \emph on
@@ -650,18 +698,15 @@ plateau
  containing only bidirectional edges.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 The smallest possible plateau consists of two vertices, with a bidirectional
  edge between them.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 All the bidirectional edges inside a plateau will have the same weight.
 \end_layout
 
-\end_deeper
 \begin_layout Definition*
 A 
 \emph on
@@ -676,8 +721,6 @@ vertex with one or more outgoing edges
 .
 \end_layout
 
-\end_deeper
-\end_deeper
 \begin_layout Remark*
 All the outgoing edges off all 
 \emph on
@@ -715,7 +758,6 @@ plateau corner
 .
 \end_layout
 
-\begin_deeper
 \begin_layout Definition*
 A 
 \emph on
@@ -758,7 +800,6 @@ super-vertex
  accordingly.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 All the outgoing edges of a 
 \emph on
@@ -768,7 +809,6 @@ super-vertex
  the plateau and smaller than the weight of all incoming vertices.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 The 
 \emph on
@@ -782,7 +822,6 @@ locally minimal super-vertices
  will have at least one outgoing edge.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 Every directed path in the CSDM will have strictly decreasing weights and
  will terminate in one of the 
@@ -792,10 +831,6 @@ locally minimal super-vertices
 .
 \end_layout
 
-\end_deeper
-\end_deeper
-\end_deeper
-\end_deeper
 \begin_layout Subsection
 The standard watershed algorithm 
 \end_layout
@@ -989,7 +1024,6 @@ If the steepest descent graph contains no saddle vertices or non-minima
  yield no non-isolated border vertices.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 The isolated vertices of the original graph have an infinite distance to
  all the other vertices.
@@ -1009,7 +1043,6 @@ locally minimal plateau
  the isolated vertices will be assigned as borders.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 All the vertices in a 
 \emph on
@@ -1023,8 +1056,6 @@ plateau corner
  to a domain, or as borders if the corner vertex is a border vertex.
 \end_layout
 
-\end_deeper
-\end_deeper
 \begin_layout --Separator--
 
 \end_layout
@@ -1490,7 +1521,6 @@ with
  
 \end_layout
 
-\begin_deeper
 \begin_layout Definition*
 A 
 \emph on
@@ -1523,7 +1553,6 @@ regional minima
  of the corresponding domains.
 \end_layout
 
-\begin_deeper
 \begin_layout Remark*
 The weights of the edges of the 
 \emph on
@@ -1546,12 +1575,10 @@ dissaffinity
 
 \end_layout
 
-\end_deeper
 \begin_layout Subsection
 Single linkage hierarchical clustering
 \end_layout
 
-\end_deeper
 \begin_layout Definition*
 Given a graph 
 \begin_inset Formula $G$
@@ -1619,7 +1646,6 @@ disaffinity
 .
 \end_layout
 
-\begin_deeper
 \begin_layout Subsection
 Relation between 
 \emph on
@@ -1628,7 +1654,6 @@ single linkage clustering and the watershed transform
 
 \end_layout
 
-\end_deeper
 \begin_layout Claim*
 
 \change_inserted -190403614 1424202535
@@ -2025,7 +2050,6 @@ path
  the two vertices of the maximal weight of edges on the path.
 \end_layout
 
-\begin_deeper
 \begin_layout Definition*
 The
 \emph on
@@ -2064,7 +2088,6 @@ distance of a vertex to itself is defined to be
 .
 \end_layout
 
-\end_deeper
 \begin_layout Definition*
 The 
 \emph on
