@@ -162,7 +162,7 @@ We present results on affinity graphs of EM data.
 
 \begin_layout Standard
 
-\change_inserted -190403614 1424766987
+\change_inserted -190403614 1424948074
 The watershed transform is the method of choice for hierarchical image segmentat
 ion.
  The intuition comes from geography and is formalized as a continious dynamical
@@ -177,6 +177,55 @@ ion.
  Finally we present some results of applying our methods on affinity graphs
  of electron microscopy data of mouse retina.
  Our algorithm is used on EyeWire.org to obtain neuroscience discoveries.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424948092
+Explain better what 
+\begin_inset Quotes eld
+\end_inset
+
+the method of choice means
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424948106
+It can be an input to other segmentation methods
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424948112
+Manually edited
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424948132
+Explain that we are seeking an oversegmentation as close to the ground truth
+ as possible?
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424948143
+Allow only merge operations
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424948165
+Put more stress on the efficiency?
 \end_layout
 
 \begin_layout --Separator--
