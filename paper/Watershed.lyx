@@ -162,10 +162,16 @@ We present results on affinity graphs of EM data.
 
 \begin_layout Standard
 
-\change_inserted -190403614 1424948074
-The watershed transform is the method of choice for hierarchical image segmentat
-ion.
- The intuition comes from geography and is formalized as a continious dynamical
+\change_inserted -190403614 1424951405
+
+\series bold
+The watershed transform is a method of producing domains
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1424950560
+The intuition comes from geography and is formalized as a continious dynamical
  system.
  Our watershed transform clusters vertices by introducing a stochastic descrete
  dynamics of an edge-weighted graph.
@@ -177,6 +183,63 @@ ion.
  Finally we present some results of applying our methods on affinity graphs
  of electron microscopy data of mouse retina.
  Our algorithm is used on EyeWire.org to obtain neuroscience discoveries.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424956269
+Watershed on edge-weighted graphs, our algorithm produces the same domains
+ as [cite] but we have a solution for more evenly splitting the plateaus.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424956913
+There's a natural way of defining an edge weighted graph on the baisons
+ weight is the minimal weight edge
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424957055
+We make a graph on the watershed domains, each edge is equal to the minimum
+ weight edge of the original graph between domains
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424957104
+We show how to reduce the number of domains with low threshold
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424957138
+Increasing the amount of background vertices not assigned to any domain.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424957152
+Decrease N domains still have oversegmentation.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424957800
+We propose some agglomorative clustering algos.
+ Modify single linkage clustering using some prior knowledge about the data
+ adding a criterion for agglomoration that depends on an increasing property
+ like size.
+ running time is n log n.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424957053
+
 \end_layout
 
 \begin_layout Enumerate
