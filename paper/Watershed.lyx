@@ -102,8 +102,14 @@ Watershed transform is used for hierarchical image segmentation
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1424467919
-Idea comes from geography
+\change_inserted -190403614 1424471737
+Intuition comes from geography and is formalized as a dynamical system.
+\end_layout
+
+\begin_layout Enumerate
+
+\change_inserted -190403614 1424471760
+We discretize the dynamics to formalize the watershed transform on graphs.
 \end_layout
 
 \begin_layout Enumerate
@@ -149,9 +155,34 @@ Propose a single linkage clustering method of the watershed domains that's
 
 \begin_layout Enumerate
 
-\change_inserted -190403614 1424469956
+\change_inserted -190403614 1424766430
 We present results on affinity graphs of EM data.
  used on EyeWire.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1424766987
+The watershed transform is the method of choice for hierarchical image segmentat
+ion.
+ The intuition comes from geography and is formalized as a continious dynamical
+ system.
+ Our watershed transform clusters vertices by introducing a stochastic descrete
+ dynamics of an edge-weighted graph.
+ We propose a linear time algorithm and a few modification that gracefully
+ deal with noisy data and possible degeneracies.
+ We then propose a single linkage clustering methods for the obtained watershed
+ domains that take advantage of the prior knowledge of the data in order
+ to achieve superb segmentation results.
+ Finally we present some results of applying our methods on affinity graphs
+ of electron microscopy data of mouse retina.
+ Our algorithm is used on EyeWire.org to obtain neuroscience discoveries.
+\end_layout
+
+\begin_layout --Separator--
+
+\change_inserted -190403614 1424766505
+
 \end_layout
 
 \begin_layout Standard
