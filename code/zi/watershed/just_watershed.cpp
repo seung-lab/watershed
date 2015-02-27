@@ -16,6 +16,7 @@
 #include <tuple>
 #include <map>
 #include <list>
+#include <set>
 #include <vector>
 #include <chrono>
 
@@ -120,6 +121,98 @@ using region_graph = std::vector<std::tuple<F,ID,ID>>;
 template< typename ID, typename F >
 using region_graph_ptr = std::shared_ptr<region_graph<ID,F>>;
 
+template< typename ID, typename F >
+inline bool write_region_graph_to_file( const std::string& fname,
+                                        const region_graph<ID,F>& rg )
+{
+    std::ofstream f(fname.c_str(), (std::ios::out | std::ios::binary) );
+
+    if ( !f )
+    {
+        return false;
+    }
+
+    F* data = new F[rg.size() * 3];
+
+    std::size_t idx = 0;
+
+    for ( const auto& e: rg )
+    {
+        data[idx++] = static_cast<F>(std::get<1>(e));
+        data[idx++] = static_cast<F>(std::get<2>(e));
+        data[idx++] = static_cast<F>(std::get<0>(e));
+    }
+
+    f.write( reinterpret_cast<char*>(data), rg.size() * 3 * sizeof(F));
+
+    return true;
+}
+
+template< typename ID, typename F >
+inline region_graph_ptr<ID,F>
+get_merge_tree( const region_graph<ID,F>& rg, std::size_t max_segid )
+{
+    zi::disjoint_sets<ID>      sets(max_segid+1);
+    std::vector<std::list<ID>> edges(max_segid+1);
+    region_graph_ptr<ID,F>     mt_ptr( new region_graph<ID,F> );
+
+    for ( const auto& e: rg )
+    {
+        ID v1 = std::get<1>(e);
+        ID v2 = std::get<2>(e);
+
+        ID s1 = sets.find_set(v1);
+        ID s2 = sets.find_set(v2);
+
+        if ( s1 != s2 && s1 && s2 )
+        {
+            mt_ptr->push_back(e);
+            sets.join(s1, s2);
+
+            edges[v1].push_back(v2);
+            edges[v2].push_back(v1);
+
+        }
+    }
+
+    std::vector<ID> order(max_segid+1);
+    ID curr = 0;
+
+    for ( ID i = 0; i <= max_segid; ++i )
+    {
+        if ( order[i] == 0 )
+        {
+            std::deque<ID> queue;
+            queue.push_back(i);
+            order[i] = ++curr;
+
+            while ( queue.size() )
+            {
+                ID x = queue.front();
+                queue.pop_front();
+
+                for ( auto& y: edges[x] )
+                {
+                    if ( order[y] == 0 )
+                    {
+                        order[y] = ++curr;
+                        queue.push_back(y);
+                    }
+                }
+            }
+        }
+    }
+
+    for ( auto& e: *mt_ptr )
+    {
+        if ( order[std::get<2>(e)] < order[std::get<1>(e)] )
+        {
+            std::swap(std::get<2>(e), std::get<1>(e));
+        }
+    }
+
+    return mt_ptr;
+}
 
 template< typename ID, typename F >
 inline region_graph_ptr<ID,F>
@@ -950,9 +1043,12 @@ std::size_t limit_fn( float v )
 
 std::size_t limit_fn2( float v )
 {
-    if ( v < 0.95 ) return 0;
-    return 1000000000;
-    //return 50;
+    if ( v < 0.5 ) return 0;
+    if ( v > 0.98 ) return 5000;
+    if ( v > 0.97 ) return 2000;
+    if ( v > 0.96 ) return 1500;
+    if ( v > 0.95 ) return 500;
+    //return 500;
 
     // size threshold based on affinity
     if ( v > 1 )
@@ -960,20 +1056,60 @@ std::size_t limit_fn2( float v )
         return 2000;
     }
 
-    if ( v < 0.3 )
+    if ( v < 0.25 )
     {
         return 0;
     }
 
     if ( v < 0.5 )
     {
-        return 50;
+        return 250;
     }
 
     v *= 10;
 
 
     return static_cast<std::size_t>(50+v*v*v);
+}
+
+template< typename ID, typename F >
+inline volume_ptr<ID>
+get_colormap( const volume_ptr<ID>& orig,
+              const region_graph<ID,F>& rg,
+              std::size_t max_segid )
+{
+
+    std::ptrdiff_t xdim = orig->shape()[0];
+    std::ptrdiff_t ydim = orig->shape()[1];
+    std::ptrdiff_t zdim = orig->shape()[2];
+
+    std::ptrdiff_t size = xdim * ydim * zdim;
+
+    volume_ptr<ID> seg_ptr( new volume<ID>(boost::extents[xdim][ydim][zdim],
+                                           boost::fortran_storage_order()));
+
+    volume<ID>& seg = *seg_ptr;
+    seg = *orig;
+
+    std::vector<ID>            colormap(max_segid+1);
+    std::vector<std::list<ID>> edges(max_segid+1);
+    std::vector<std::set<ID>>  taken(max_segid+1);
+
+    for ( const auto& e: rg )
+    {
+        ID v1 = std::get<1>(e);
+        ID v2 = std::get<2>(e);
+
+        if ( v1 != v2 && v1 && v2 )
+        {
+            edges[v1].push_back(v2);
+            edges[v2].push_back(v1);
+
+            //std::cout << edges[v1].size() << ' ' << edges[v2].size() << '\n';
+        }
+    }
+
+    return seg_ptr;
 }
 
 
@@ -985,8 +1121,8 @@ int main()
 
     //std::cout << std::hex << watershed_traits<uint32_t>::high_bit << std::endl;
 
-    affinity_graph_ptr<float> aff = read_affinity_graph_from_file<float>("../../data/ws_test_250.raw",
-                                                                         250, 250, 250);
+    affinity_graph_ptr<float> aff = read_affinity_graph_from_file<float>("../../data/ws_test_256.raw",
+                                                                         256, 256, 256);
 
     //std::cout << (std::chrono::system_clock::now() - start)
     //          << " data loaded" << std::endl;
@@ -1013,12 +1149,47 @@ int main()
 
     write_volume_to_file("voutraw.out", segg);
 
+    for ( float low = 0.01; low < 0.051; low += 0.01 )
+    {
+        for ( float high = 0.998; high > 0.989; high -= 0.002 )
+        {
+//            std::tie(segg, counts) = watershed<uint32_t>(aff, low, high);
+//            write_volume_to_file("vout." + std::to_string(low) + "." +
+//                                 std::to_string(high) + ".out", segg);
+        }
+    }
+
+    std::tie(segg, counts) = watershed<uint32_t>(aff, 0.5, 2);
+
+    write_volume_to_file("voutmax.out", segg);
+
+    std::tie(segg, counts) = watershed<uint32_t>(aff, 0.5, 0.99);
+
+    write_volume_to_file("voutminmax.out", segg);
+
+
+//    return 0;
+
+    auto rg = get_region_graph(aff, segg, counts.size()-1);
+
+    //yet_another_watershed(segg, rg, counts, 0.3);
+
+    //write_volume_to_file("voutanouther.out", segg);
+
+
+    merge_segments_with_function(segg, rg, counts, limit_fn2, 50);
+
+    write_volume_to_file("voutall.out", segg);
+
+    write_region_graph_to_file("out.rg", *rg);
+
+    auto mt = get_merge_tree(*rg, counts.size()-1);
+
+    write_region_graph_to_file("out.mt", *mt);
+
+    auto cmap = get_colormap(segg, *rg, counts.size()-1);
 
     return 0;
-
-    auto rg = get_region_graph(aff, seg.first, seg.second);
-
-    merge_segments_with_function(seg.first, rg, counts, limit_fn2, 0);
 
     // single likage clusteroing
 

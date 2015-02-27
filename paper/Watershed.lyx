@@ -82,58 +82,48 @@ Image segmentation by size-dependent single linkage clustering of a watershed
  basin graph
 \change_deleted 1172979425 1424964989
 n extended watershed transform on graphs
+\change_inserted -190403614 1424989455
+
+\end_layout
+
+\begin_layout Quotation
+
+\change_inserted -190403614 1424989969
+Image Segmentation by Property-dependent Single Linkage Clustering of a
+ Watershed Basin Graph Based on Prior Knowledge.
 \change_unchanged
 
 \end_layout
 
-\begin_layout Abstract
-
-\change_deleted 1172979425 1424968059
-The watershed transform is the method of choice for hierarchical image segmentat
-ion.
- The intuitive idea about the method comes from geography.
- The standard watershed algorithm and it's applications had been thoroughly
- studied [cite], but can lead to undesirable results in a case of noisy
- data.
- We present a modified (extended) watershed algorithm(s) that can overcome
- the issue of noisy data, and take advantage of the possibly known nature
- of the data to achieve much better results.
- Our algorithms are as efficient as the most efficient regular watershed
- algorithms.
-\change_inserted 1172979425 1424958632
-
-\end_layout
-
 \begin_layout Standard
-
-\change_inserted 1172979425 1424967754
 We present a method for hierarchical image segmentation that defines a disaffini
 ty graph on the image, oversegments it into watershed basins, defines a
- new graph on the basins, and then merges basins with a size-dependent version
- of single linkage clustering.
- The method runs in linear time, and is illustrated on the challenging problem
- of segmenting 3D electron microscopic brain images.
+ new graph on the basins, and then merges basins with a modified version
+ of single linkage clustering using prior knowledge of the data.
+
+\change_deleted -190403614 1424992308
  
 \change_unchanged
-
+ The method is illustrated on the challenging problem of segmenting 3D electron
+ microscopic brain images.
+ 
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 1172979425 1424967777
 Our watershed algorithm works by finding the basins of attraction of a steepest
  descent dynamics, and has runtime that is linear in the number of graph
  edges.
  It yields basins similar to those of watershed cuts (Cousty et al.
- 2009), except that plateaus are divided between basins more evenly.
+ 2009), except that plateaus are divided between basins consistently and
+ in a more even way.
  In general, watershed algorithms lead to severe oversegmentation, which
  can be counteracted by pre- and/or post-processing.
  
+\change_inserted -190403614 1424993495
+
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 1172979425 1424967527
 Our post-processing starts by defining a new graph on the basins, in which
  the edge connecting two basins is assigned the same weight as the minimal
  edge connecting the basins in the original disaffinity graph.
@@ -145,8 +135,6 @@ Our post-processing starts by defining a new graph on the basins, in which
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 1172979425 1424967540
 If we only expect to use thresholds above some minimum value 
 \begin_inset Formula $T_{min}$
 \end_inset
@@ -159,17 +147,20 @@ If we only expect to use thresholds above some minimum value
 
  to a common low value.
  
+\change_inserted -190403614 1424993744
+In another pre-processing step we remove the edges with dissafinity to allow
+ for unsegmented regions.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 1172979425 1424967842
 We also show how to modify single linkage clustering by making it depend
- not only on edge weights but also on cluster size.
- The modification is useful when there is prior knowledge about the size
- of true segments, and is shown to have an efficient implementation because
- size is a property that is guaranteed to increase with each agglomerative
- step.
+ not only on edge weights but also on some non-decreasing property of the
+ clusters, like the cluster size.
+ The modification is useful when there is prior knowledge about the given
+ property of true segments, and is shown to have an efficient implementation
+ when that property is guaranteed to increase with each agglomerative step.
  
 \change_inserted -190403614 1424467883
 
