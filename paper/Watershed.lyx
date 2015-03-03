@@ -3,11 +3,14 @@
 \begin_document
 \begin_header
 \textclass llncs
+\begin_preamble
+\usepackage {url}
+\usepackage [numbers]{natbib}
+\renewcommand{\fnum@figure}{\bf Fig.~\thefigure .}
+\usepackage{caption}
+\usepackage[labelsep=space]{caption}
+\end_preamble
 \use_default_options true
-\begin_modules
-eqs-within-sections
-figs-within-sections
-\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -70,318 +73,157 @@ figs-within-sections
 \html_css_as_file 0
 \html_be_strict false
 \author -190403614 "Aleksandar Zlateski" 
-\author 1172979425 "Sebastian Seung" 
 \end_header
 
 \begin_body
 
 \begin_layout Title
+Image Segmentation by Size-Dependent Single Linkage Clustering of a Watershed
+ Basin Graph 
+\end_layout
 
-\change_inserted 1172979425 1424965123
-Image segmentation by size-dependent single linkage clustering of a watershed
- basin graph
-\change_deleted 1172979425 1424964989
-n extended watershed transform on graphs
-\change_unchanged
+\begin_layout Author
+Aleksandar Zlateski
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+
+ and H.
+ Sebastian Seung
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Institute
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+
+ Massachussets Institute of Technology, Cambridge, USA
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+zlateski@mit.edu
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+ Princeton University, Princeton, USA
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+sseung@princeton.edu
+\end_layout
+
+\begin_layout Abstract
+We present a method for hierarchical image segmentation that defines a disaffini
+ty graph on the image, over-segments it into watershed basins, defines a
+ new graph on the basins, and then merges basins with a modified, size-dependent
+ version of single linkage clustering.
+ The method is illustrated on the challenging problem of segmenting 3D electron
+ microscopic brain images.Our watershed transform works by finding the basins
+ of attraction of steepest descent dynamics, and has runtime that is linear
+ in the number of graph edges.
+ It yields basins similar to those of watershed cuts (Cousty et al.
+ 2009), except that plateaus are divided between basins consistently and
+ in a more even way.
+ In general, watershed algorithms tend to produce severe over-segmentation,
+ which can be counteracted by pre- and/or post-processing.
+\end_layout
+
+\begin_layout Abstract
+Our post-processing starts by examining the new graph on the basins, in
+ which the edge connecting two basins is assigned the same weight as the
+ minimal edge connecting the basins in the original disaffinity graph.
+ Then single linkage clustering yields a hierarchical segmentation of the
+ original image in which the lowest level consists of the watershed basins.
+ The levels of single linkage clustering yield flat segmentations in which
+ some of the basins are merged.
+\end_layout
+
+\begin_layout Abstract
+If we only expect to use levels above some minimum value T_min, then it
+ turns out to be equivalent and more efficient to preprocess the original
+ disaffinity graph before watershed by setting all edge weights below T_min
+ to a common low value.
+ In another pre-processing step we remove the edges with disaffinity to
+ allow for unsegmented regions.
+\end_layout
+
+\begin_layout Abstract
+We also show how to modify single linkage clustering by making it depend
+ not only on edge weights but also on cluster size - volume, length, etc.
+ The modification is useful when there is prior knowledge about the size
+ of true segments, and is shown to have an efficient implementation because
+ size is a property that is guaranteed to increase with each agglomerative
+ step.
+\end_layout
+
+\begin_layout Abstract
+\begin_inset VSpace defskip
+\end_inset
+
 
 \end_layout
 
 \begin_layout Abstract
 
-\change_deleted 1172979425 1424968059
-The watershed transform is the method of choice for hierarchical image segmentat
-ion.
- The intuitive idea about the method comes from geography.
- The standard watershed algorithm and it's applications had been thoroughly
- studied [cite], but can lead to undesirable results in a case of noisy
- data.
- We present a modified (extended) watershed algorithm(s) that can overcome
- the issue of noisy data, and take advantage of the possibly known nature
- of the data to achieve much better results.
- Our algorithms are as efficient as the most efficient regular watershed
- algorithms.
-\change_inserted 1172979425 1424958632
-
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted 1172979425 1424967754
-We present a method for hierarchical image segmentation that defines a disaffini
-ty graph on the image, oversegments it into watershed basins, defines a
- new graph on the basins, and then merges basins with a size-dependent version
- of single linkage clustering.
- The method runs in linear time, and is illustrated on the challenging problem
- of segmenting 3D electron microscopic brain images.
- 
-\change_unchanged
-
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted 1172979425 1424967777
-Our watershed algorithm works by finding the basins of attraction of a steepest
- descent dynamics, and has runtime that is linear in the number of graph
- edges.
- It yields basins similar to those of watershed cuts (Cousty et al.
- 2009), except that plateaus are divided between basins more evenly.
- In general, watershed algorithms lead to severe oversegmentation, which
- can be counteracted by pre- and/or post-processing.
- 
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted 1172979425 1424967527
-Our post-processing starts by defining a new graph on the basins, in which
- the edge connecting two basins is assigned the same weight as the minimal
- edge connecting the basins in the original disaffinity graph.
- Then single linkage clustering yields a hierarchical segmentation of the
- original image in which the lowest level consists of the watershed basins.
- Thresholding the hierarchical segmentation yields a flat segmentation in
- which basins are merged.
- 
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted 1172979425 1424967540
-If we only expect to use thresholds above some minimum value 
-\begin_inset Formula $T_{min}$
-\end_inset
-
-, then it turns out to be equivalent and more efficient to preprocess the
- original disaffinity graph before watershed by setting all edge weights
- below 
-\begin_inset Formula $T_{min}$
-\end_inset
-
- to a common low value.
- 
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted 1172979425 1424967842
-We also show how to modify single linkage clustering by making it depend
- not only on edge weights but also on cluster size.
- The modification is useful when there is prior knowledge about the size
- of true segments, and is shown to have an efficient implementation because
- size is a property that is guaranteed to increase with each agglomerative
- step.
- 
-\change_inserted -190403614 1424467883
-
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424467903
-Watershed transform is used for hierarchical image segmentation
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424471737
-Intuition comes from geography and is formalized as a dynamical system.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424471760
-We discretize the dynamics to formalize the watershed transform on graphs.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424468490
-Watershed has been studied on edge weighted graphs for hierarchical image
- segmentation.
- Usually pixel intensities (differences)
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424468694
-Vertex clustering on edge-weighted graphs.
- Usually affinity graphs.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424471598
-Define a watershed transform on an edge-weighted graph as ....
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424468791
-Propose a linear time algorithm that gracefully deals with degeneracies.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424468814
-Propose simple improvements to deal with noise.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424468906
-Propose a single linkage clustering method of the watershed domains that's
- efficient and takes advantage of the prior knowledge of the data to achieve
- better segmentation results.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424766430
-We present results on affinity graphs of EM data.
- used on EyeWire.
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1424951405
-
 \series bold
-The watershed transform is a method of producing domains
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1424950560
-The intuition comes from geography and is formalized as a continious dynamical
- system.
- Our watershed transform clusters vertices by introducing a stochastic descrete
- dynamics of an edge-weighted graph.
- We propose a linear time algorithm and a few modification that gracefully
- deal with noisy data and possible degeneracies.
- We then propose a single linkage clustering methods for the obtained watershed
- domains that take advantage of the prior knowledge of the data in order
- to achieve superb segmentation results.
- Finally we present some results of applying our methods on affinity graphs
- of electron microscopy data of mouse retina.
- Our algorithm is used on EyeWire.org to obtain neuroscience discoveries.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424956269
-Watershed on edge-weighted graphs, our algorithm produces the same domains
- as [cite] but we have a solution for more evenly splitting the plateaus.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424956913
-There's a natural way of defining an edge weighted graph on the baisons
- weight is the minimal weight edge
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424957055
-We make a graph on the watershed domains, each edge is equal to the minimum
- weight edge of the original graph between domains
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424957104
-We show how to reduce the number of domains with low threshold
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424957138
-Increasing the amount of background vertices not assigned to any domain.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424957152
-Decrease N domains still have oversegmentation.
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424957800
-We propose some agglomorative clustering algos.
- Modify single linkage clustering using some prior knowledge about the data
- adding a criterion for agglomoration that depends on an increasing property
- like size.
- running time is n log n.
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424948092
-Explain better what 
-\begin_inset Quotes eld
-\end_inset
-
-the method of choice means
-\begin_inset Quotes erd
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424948106
-It can be an input to other segmentation methods
-\end_layout
-
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424948112
-Manually edited
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424948132
-Explain that we are seeking an oversegmentation as close to the ground truth
- as possible?
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424948143
-Allow only merge operations
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
-
-\change_inserted -190403614 1424948165
-Put more stress on the efficiency?
-\end_layout
-
-\begin_layout --Separator--
-
-\change_inserted -190403614 1424766505
-
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1424469153
-Keywords: Watershed, image segmentation, graph, electron microscopy
+Keywords: 
+\series default
+Watershed, image segmentation, graph, electron microscopy
 \end_layout
 
 \begin_layout Section
 
 \series bold
 Introduction
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cousty2009,Cousty2010,Cousty2011,Falcao2004,Felzenszwalb2004,Guimaraes2012,Mustafa,Punnen1991,Wassenberg2009"
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cousty2009,Cousty2010,Cousty2011,Falcao2004,Felzenszwalb2004,Guimaraes2012,Mustafa,Punnen1991,Wassenberg2009"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -508,14 +350,805 @@ Another approach to deal with the excessive noise is to recursively apply
 \end_layout
 
 \begin_layout Section
-Watershed transform definition
+Watershed Transform
 \end_layout
 
 \begin_layout Standard
-Roughly speaking we want to define the steepest descent stochastic discrete
- dynamics on an undirected weighted graph and then partition the graph into
- the basins of attraction of this dynamics.
- But there are sproblems!
+Inspired by the 
+\emph on
+drop of water principle 
+\emph default
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cousty2009"
+
+\end_inset
+
+ we define a steepest descent descrete dynamics on a connected edge-weighted
+ graph 
+\begin_inset Formula $G=(V,E)$
+\end_inset
+
+.
+ A water drop travels from a vertex to a vertex using only 
+\emph on
+locally minimal
+\emph default
+ edges.
+ An edge 
+\begin_inset Formula $\{u,v\}$
+\end_inset
+
+ is 
+\emph on
+locally minimal
+\emph default
+ with respect to 
+\begin_inset Formula $u$
+\end_inset
+
+ if there is no edge in 
+\begin_inset Formula $E$
+\end_inset
+
+ containing 
+\begin_inset Formula $u$
+\end_inset
+
+ with lower weight.
+ Starting from a vertex 
+\begin_inset Formula $v_{0}$
+\end_inset
+
+ the evolution of the system can be represented as a 
+\emph on
+steepest descent walk
+\emph default
+ 
+\begin_inset Formula $\left\langle v_{0},e_{0},v_{1},e_{1},v_{2},\dots\right\rangle $
+\end_inset
+
+ where every edge 
+\begin_inset Formula $e_{i}$
+\end_inset
+
+ is locally minimal in respect to 
+\begin_inset Formula $v_{i}.$
+\end_inset
+
+ A 
+\emph on
+regional minimum 
+\begin_inset Formula $M$
+\end_inset
+
+
+\emph default
+ is a connected subgraph of 
+\begin_inset Formula $G$
+\end_inset
+
+ such that every 
+\emph on
+steepest descent walk 
+\emph default
+in 
+\begin_inset Formula $G$
+\end_inset
+
+ starting from a vertex in 
+\begin_inset Formula $M$
+\end_inset
+
+ will stay within 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ A vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ belongs to the 
+\emph on
+basin of attraction
+\emph default
+ of a 
+\emph on
+regional minimum 
+\begin_inset Formula $M$
+\end_inset
+
+ 
+\emph default
+if there exist a 
+\emph on
+steepest descent walk 
+\emph default
+from 
+\begin_inset Formula $v$
+\end_inset
+
+ to any vertex in 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ Note that 
+\begin_inset Formula $v$
+\end_inset
+
+ can belong 
+\emph on
+basins of attractions
+\emph default
+ of multiple 
+\emph on
+reginal minima
+\emph default
+.
+ In our 
+\emph on
+watershed transform
+\emph default
+ we partition 
+\begin_inset Formula $V$
+\end_inset
+
+ into 
+\emph on
+basins of attraction
+\emph default
+ of 
+\emph on
+the regional minima.
+ 
+\emph default
+Vertices belonging to more than one 
+\emph on
+basin of attraction 
+\emph default
+will be reffered to as 
+\emph on
+border vertices
+\emph default
+ and will be assigned to one of the 
+\emph on
+basins
+\emph default
+ as described below.
+\end_layout
+
+\begin_layout Subsubsection
+Steepest descent graph.
+\end_layout
+
+\begin_layout Standard
+The central quantity in the watershed algorithm is the steepest descent
+ graph, defined as follows.
+ Consider an undirected weighted graph 
+\begin_inset Formula $G$
+\end_inset
+
+ (Fig.
+ 1(a)).
+ Define the directed graph 
+\begin_inset Formula $G'$
+\end_inset
+
+ in which each undirected edge of 
+\begin_inset Formula $G$
+\end_inset
+
+ is replaced by both directed edges between the same vertices.
+ The 
+\emph on
+steepest descent graph
+\emph default
+ 
+\begin_inset Formula $D$
+\end_inset
+
+ (Fig.
+ 1(b)) is a subgraph of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with the property that 
+\begin_inset Formula $D$
+\end_inset
+
+ includes every edge of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with minimal weight of all edges outgoing from the same vertex.
+ A directed path in 
+\begin_inset Formula $D$
+\end_inset
+
+ is a path of steepest descent in 
+\begin_inset Formula $G$
+\end_inset
+
+, in the sense that every step is along an edge with locally minimal weight.
+ The steepest ascent graph can be defined analogously using edges of maximal
+ weight.
+ Either steepest ascent or descent can be used without loss of generality.
+ For simplicity, for a given vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ we will refer to its edges in 
+\begin_inset Formula $D$
+\end_inset
+
+ as incoming, outgoing, and bidirectional.
+ A 
+\emph on
+plateau
+\emph default
+ is a connected component of the subgraph of 
+\begin_inset Formula $D$
+\end_inset
+
+ containing only bidirectional edges.
+ A 
+\emph on
+plateau corner
+\emph default
+ is a vertex of a 
+\emph on
+plateau
+\emph default
+ that has at least one outgoing edge.
+ 
+\emph on
+Locally minimal plateaus
+\emph default
+ contain no 
+\emph on
+plateau corner, 
+\emph default
+they
+\emph on
+ 
+\emph default
+are equivalent to the regional minima of the original graph.
+ 
+\emph on
+Non-minimal plateaus 
+\emph default
+contain one or more 
+\emph on
+plateau edges.
+ 
+\emph default
+A 
+\emph on
+saddle vertex 
+\emph default
+has more than one outgoing edge.
+ In Fig.
+ 1(c) we show 
+\emph on
+locally minimal plateaus 
+\emph default
+(black), 
+\emph on
+non-minimal plateaus 
+\emph default
+(gray), 
+\emph on
+plateau corners
+\emph default
+ (C), and a
+\emph on
+ saddle vertex 
+\emph default
+(S).
+\change_inserted -190403614 1425409861
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1425409861
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+\begin_inset Graphics
+	filename Figures/affinity_graph.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+\begin_inset Graphics
+	filename Figures/sd_graph.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+\begin_inset Graphics
+	filename Figures/sd_graph_plateaus.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+\begin_inset Graphics
+	filename Figures/ws_result.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409861
+Graph, Steepest descent graph, etc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+
+\change_inserted -190403614 1425406566
+Assigning border vertices.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1425410239
+In Fig.
+ 1(d) we show the 
+\emph on
+basins of attraction
+\emph default
+ of the two 
+\emph on
+regional minima.
+
+\emph default
+ The 
+\emph on
+border
+\emph default
+ vertices are shown in gray and belong to both 
+\emph on
+basins of attraction.
+ 
+\emph default
+Watershed cuts 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cousty2009,Cousty2010"
+
+\end_inset
+
+ assign 
+\emph on
+border
+\emph default
+ vertices with a single constraint that all the 
+\emph on
+basins of attraction
+\emph default
+ have to be connected.
+ We introduce additional constrains.
+ The watershed transform to be uniqely defined and the 
+\emph on
+non-minimal plateaus 
+\emph default
+should be divided evenly
+\emph on
+.
+ 
+\emph default
+More specificly, we want our dynamics
+\emph on
+ 
+\emph default
+to be uniqely defined at 
+\emph on
+saddle vertices.
+ 
+\emph default
+Also, we want the vertices of the 
+\emph on
+non-minial plateaus
+\emph default
+ to be assigned to the same 
+\emph on
+basin of attraction
+\emph default
+ as the nearest 
+\emph on
+plateau corner - 
+\emph default
+a 
+\emph on
+plateau corner
+\emph default
+ reachable in fewest steps following the rules of our dynamics
+\emph on
+.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+
+\change_inserted -190403614 1425409668
+Watershed transform algorithm.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1425410795
+We introduce an ordering function 
+\begin_inset Formula $\alpha:V\to\{1,2,...,|V|\}$
+\end_inset
+
+ such that 
+\begin_inset Formula $\alpha(u)\neq\alpha(v)$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $u\neq v$
+\end_inset
+
+.
+ We'll refer to 
+\begin_inset Formula $\alpha(u)$
+\end_inset
+
+ as the index of 
+\begin_inset Formula $u$
+\end_inset
+
+ (Fig.
+ 2(a)).
+ In the first part of the algorithm we modify 
+\begin_inset Formula $D$
+\end_inset
+
+ by removing edges.
+ For all 
+\emph on
+saddle vertices
+\emph default
+ we keep only one outgoing edge - the one pointing to a vertex with the
+ lowest index.
+ We then divide the 
+\emph on
+non-minimal plateaus
+\emph default
+.
+ We initialize a global FIFO queue 
+\begin_inset Formula $Q$
+\end_inset
+
+.
+ We then mark all the 
+\emph on
+plateau corner
+\emph default
+ vertices as visited and insert them into 
+\begin_inset Formula $Q$
+\end_inset
+
+ in increasing order of their index.
+ While 
+\begin_inset Formula $Q$
+\end_inset
+
+ is not empty we remove the vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ from the top of the queue, we then follow all the bidirectional edges.
+ If the vertex 
+\begin_inset Formula $u$
+\end_inset
+
+ on the other side of the edge is not visited, we mark it as such, insert
+ it to the back of the queue and change the edge to be incoming.
+ Otherwise, if the vertex was already visited we just remove the edge.
+ The resulting steepest descent grap is shown on Fig.
+ 2(c) - the dotted edges are removed..
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1425409897
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+\begin_inset Graphics
+	filename Figures/sd_graph_ordered.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+\begin_inset Graphics
+	filename Figures/sd_graph_plateaus.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+\begin_inset Graphics
+	filename Figures/sd_graph_plateaus_modified.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+\begin_inset Graphics
+	filename Figures/final_segmentation.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425409897
+Graph, Steepest descent graph, etc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\change_inserted -190403614 1425409834
+WORK BELOW
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1425409051
+The 
+\emph on
+saddle vertices 
+\emph default
+and 
+\emph on
+non-minimal plateaus 
+\emph default
+with more than one 
+\emph on
+plateau corner
+\emph default
+ can lead 
 \end_layout
 
 \begin_layout Standard
@@ -563,38 +1196,8 @@ We will solve this problem by introducing border vertices.
 
 \begin_layout Standard
 Let's describe our stochastic dynamic on the given weighted graph G.
-\end_layout
+\change_inserted -190403614 1425401208
 
-\begin_layout Definition*
-A walk 
-\begin_inset Formula $v_{0},e_{0},v_{1},e_{1},v_{2},\dots,v_{k-1},e_{k-1},v_{k}$
-\end_inset
-
- in a graph 
-\begin_inset Formula $G$
-\end_inset
-
- is 
-\emph on
-steepest descent walk
-\emph default
- if 
-\begin_inset Formula $W(e_{i})\le W(\{v_{i},u\})$
-\end_inset
-
- for all 
-\begin_inset Formula $i\in\left[0,k-1\right]$
-\end_inset
-
- and all 
-\begin_inset Formula $u\in V$
-\end_inset
-
- such that 
-\begin_inset Formula $\{v_{i},u\}\in E$
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Remark*
@@ -683,12 +1286,19 @@ such that every possible steepest descent walk in
  
 \emph default
 stays inside the component.
+
+\change_inserted -190403614 1425368971
+ 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Theorem*
 If the graph doesn't have any isolated vertices then every initial state
  of the system will, after a finite number of steps, be trapped into a regional
  minimum.
+\change_inserted -190403614 1425408166
+
 \end_layout
 
 \begin_layout Proof
@@ -1450,19 +2060,13 @@ Sketch: 1) Show that there's always non-decreasing path from a local minima
  actually split the plateaus.
  2) by design 3) by design of the algorithm, we visit the graph using BFS
  4) the value of the removed edges will still be there.
-\change_inserted -190403614 1424288773
-
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -190403614 1424289064
 Improving the watershed segmentation
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1424290190
 The edges of the graph usually represent 
 \emph on
 affinities 
@@ -1485,8 +2089,6 @@ graph for the confident values.
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -190403614 1424290209
 Minimum threshold 
 \begin_inset Formula $T_{\min}$
 \end_inset
@@ -1495,8 +2097,6 @@ Minimum threshold
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1424290523
 For very small values of 
 \emph on
 dissafinity
@@ -1526,14 +2126,10 @@ dissafinities
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1424290541
 Some regional minima will get merged into a larger one.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1424290700
 Other regional minima with the value larger or equal to 
 \begin_inset Formula $T_{\min}$
 \end_inset
@@ -1542,16 +2138,103 @@ Other regional minima with the value larger or equal to
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
 
-\change_inserted -190403614 1424290742
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/raw.png
+	filename Figures/sd_graph_plateaus.eps
+	scale 66
 
 \end_inset
 
  
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/min.png
+	filename Figures/sd_graph_plateaus.eps
+	scale 66
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/sd_graph_plateaus.eps
+	scale 66
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -1559,8 +2242,6 @@ Other regional minima with the value larger or equal to
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -190403614 1424290760
 Maximum threshold 
 \begin_inset Formula $T_{\max}$
 \end_inset
@@ -1569,8 +2250,6 @@ Maximum threshold
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1424291102
 Similarly for very high values of dissafinity we can be confident that the
  two vertices don't belong to the same domain.
  We can therefore safely remove these edges from the graph.
@@ -1586,7 +2265,7 @@ can prevent some mergers.
 
 \begin_layout Standard
 
-\change_inserted -190403614 1424291467
+\change_deleted -190403614 1425369216
 \begin_inset Graphics
 	filename Figures/minmax.png
 
@@ -1599,11 +2278,11 @@ can prevent some mergers.
 \end_inset
 
 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
-
-\change_inserted -190403614 1424291184
 Chosing 
 \begin_inset Formula $T_{\min}$
 \end_inset
@@ -1616,8 +2295,6 @@ and
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1424291217
 Not exact science :) get the largest possible values while not introducing
  mergers.
  Further modification can make this choice be looser.
@@ -1789,8 +2466,6 @@ domain graph
 dissaffinity
 \emph default
  of the two closest members.
-\change_inserted -190403614 1424202275
-
 \end_layout
 
 \begin_layout Subsection
@@ -1805,11 +2480,7 @@ Given a graph
 , hierarchical clustering treats each vertex as a singleton cluster, and
  successively merges clusters until all partitions have been merged into
  a single remaining cluster.
- A hierarchical clustering is often represented as a dendrogram
-\change_inserted -190403614 1424199943
- [fig]
-\change_unchanged
-.
+ A hierarchical clustering is often represented as a dendrogram [fig].
  Each merge operations produces a new graph partition at the given level
  of the hierarchy.
 \end_layout
@@ -1819,11 +2490,8 @@ In
 \emph on
 single linkage
 \emph default
- hierarchical clustering in each step we merge two clusters whos
-\change_inserted -190403614 1424199963
-e
-\change_unchanged
- two closest members have the smallest 
+ hierarchical clustering in each step we merge two clusters whose two closest
+ members have the smallest 
 \emph on
 disaffinity
 \emph default
@@ -1868,20 +2536,14 @@ disaffinity
 Relation between 
 \emph on
 single linkage clustering and the watershed transform
-\change_inserted -190403614 1424200390
-
 \end_layout
 
 \begin_layout Claim*
-
-\change_inserted -190403614 1424202535
 Explicitly explain that this is for a level of the hierarchical clustering.
  
 \end_layout
 
 \begin_layout Claim*
-
-\change_inserted -190403614 1424202542
 Graph partitioning is obtained by CC.
  
 \end_layout
@@ -1954,17 +2616,11 @@ Replacing all the edges with weight smaller than
 
 \begin_layout Proof
 Prove this!
-\change_inserted -190403614 1424200250
-
 \end_layout
 
 \begin_layout Proof
-
-\change_inserted -190403614 1424200266
 Explain why we want Watershed and then CC.
  or sometimes 3)
-\change_unchanged
-
 \end_layout
 
 \begin_layout Section
@@ -1978,56 +2634,8 @@ Often a prior knowledge about the nature of the data can be used to improve
 \end_layout
 
 \begin_layout Subsection
-
-\change_deleted -190403614 1424291322
-Segment boundaries
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted -190403614 1424291322
-The nature of the data can be such that there is space between desired segments
- - segment boundaries.
- The values of the 
-\emph on
-dissafinities
-\emph default
- among vertices on the segment boundaries will be very high.
- However the watershed transform will assign each non-isolated vertex to
- a domain.
- 
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted -190403614 1424291322
-An intuitive way to improve the segmentation in this case is to remove all
- edges from the graph whose weight is higher than some pre-defined threshold
- 
-\begin_inset Formula $T_{\max}$
-\end_inset
-
-.
- Mainly, for 
-\emph on
-dissafinities 
-\emph default
-higher than 
-\begin_inset Formula $T_{\max}$
-\end_inset
-
-we are confident that those edges of the graph should never be used when
- obtaining the segmentation.
-\change_unchanged
-
-\end_layout
-
-\begin_layout Subsection
-Segment properties
-\change_inserted -190403614 1424201094
- (modification of single linkage clustering + explain the relationship)
-\change_unchanged
-
+Segment properties (modification of single linkage clustering + explain
+ the relationship)
 \end_layout
 
 \begin_layout Standard
@@ -2053,13 +2661,9 @@ A non-decreasing property
 Exmple of non-decresing properties are size (number of vertices) in the
  segment, bounding box volume (in the case of volumetric affinity graphs),
  etc...
-\change_inserted -190403614 1424197356
-
 \end_layout
 
 \begin_layout Proposition*
-
-\change_inserted -190403614 1424197463
 Given a property 
 \begin_inset Formula $P$
 \end_inset
@@ -2073,15 +2677,11 @@ Given a property
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1424197832
 We consider all the edges of the standard domain graph in non-decreasing
  order.
 \end_layout
 
 \begin_layout Enumerate
-
-\change_inserted -190403614 1424197670
 If the edge is connecting two different segments 
 \begin_inset Formula $S_{1}$
 \end_inset
@@ -2111,26 +2711,18 @@ and
 \end_layout
 
 \begin_layout Claim*
-
-\change_inserted -190403614 1424197746
 In the algorithm described above it is enough to consider just the edges
  of the minimum cost spanning forest of the domain graph.
 \end_layout
 
 \begin_layout Proof
-
-\change_inserted -190403614 1424197753
 Simple...
 \end_layout
 
 \begin_layout Proof
-
-\change_inserted -190403614 1424201115
 The method above does not take into account the wights of the edges of the
  domain graph.
  P_min as function of the weight.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsection
@@ -2213,6 +2805,18 @@ we can obtain the watershed domain forest and the watershed hierarchical
 
  in decreasing order and applying the same technique as above.
  Note this is computationally more expensive (log factor).
+
+\change_inserted -190403614 1425369091
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:1a"
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout --Separator--
@@ -2223,6 +2827,124 @@ we can obtain the watershed domain forest and the watershed hierarchical
 The edges of the watershed domain forest will be a subset of a minimum spanning
  forest of the original graph.
  Not explained correctly, need better statement here.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/chan.png
+	scale 44
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425369083
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:1a"
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/aff.png
+	scale 44
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/raw.png
+	scale 44
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout --Separator--
@@ -2715,10 +3437,12 @@ If both edges
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -190403614 1425369229
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -2757,6 +3481,8 @@ c
 
 \end_inset
 
+
+\change_unchanged
 
 \end_layout
 
@@ -3018,243 +3744,11 @@ We propose the following simplified modification (or rather extension?)
 .
 \end_layout
 
-\begin_layout Subsection
-Arbitrary Function of an Arbitrary Property Threshold
-\end_layout
-
-\begin_layout Subsection
-Recursive Application of the Modified Algorithm
-\end_layout
-
-\begin_layout Section
-Modified metric
-\end_layout
-
 \begin_layout Standard
-We start by introducing an ordering function 
-\begin_inset Formula $O$
-\end_inset
-
- of a graph 
-\begin_inset Formula $G=(V,E,W)$
-\end_inset
-
-.
- 
-\begin_inset Formula $O:V\to N$
-\end_inset
-
- such that 
-\begin_inset Formula $O(u)\neq O(v)$
-\end_inset
-
- iff 
-\begin_inset Formula $u\neq v$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Definition
-
-\emph on
-A minimax graph distance 
-\emph default
-
-\begin_inset Formula $g(u,v)$
-\end_inset
-
- between two vertices is equal to the number of edges on the shortest 
-\emph on
-minimax path
-\emph default
- between 
-\begin_inset Formula $u$
-\end_inset
-
-and 
-\begin_inset Formula $v$
-\end_inset
-
-.
- If 
-\begin_inset Formula $u=v$
-\end_inset
-
- then 
-\begin_inset Formula $g(u,v)=0$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Definition
-
-\emph on
-A minimax graph distance 
-\emph default
-
-\begin_inset Formula $g(u,v)$
-\end_inset
-
- between two vertices is equal to the number of maximum weight edges on
- the 
-\emph on
-minimax path
-\emph default
- between 
-\begin_inset Formula $u$
-\end_inset
-
-and 
-\begin_inset Formula $v$
-\end_inset
-
- such that that number is minimized.
- If 
-\begin_inset Formula $u=v$
-\end_inset
-
- then 
-\begin_inset Formula $g(u,v)=0$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Theorem
-
-\emph on
-When 
-\begin_inset Formula $\epsilon\to0$
-\end_inset
-
- then 
-\begin_inset Formula $\alpha(u,v)=d(u,v)+\epsilon g(u,v)$
-\end_inset
-
- is a metric.
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Formula $\alpha(x,y)\ge0$
-\end_inset
-
- obvious
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Formula $\alpha(x,x)=0$
-\end_inset
-
- obvious
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Formula $\alpha(x,y)=\alpha(y,z)$
-\end_inset
-
- obvious
-\end_layout
-
-\begin_layout Theorem
-\begin_inset Formula $\alpha(x,z)\le\alpha(x,y)+\alpha(y,z)$
-\end_inset
-
-, 
-\end_layout
-
-\begin_layout Definition
-
-\emph on
-An ordering distance 
-\emph default
-between two vertices 
-\begin_inset Formula $u$
-\end_inset
-
-and 
-\begin_inset Formula $v$
-\end_inset
-
-is defined as follows:
-\end_layout
-
-\begin_layout Definition
-\begin_inset Formula $n(u,v)=\begin{cases}
-0 & u=v\\
-\max\left\{ O(u),O(v)\right\}  & u\neq v
-\end{cases}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Definition
-We introduce a new metric 
-\begin_inset Formula $m(u,v)=d(u,v)+\epsilon g(u,v)+\epsilon^{2}n(u,v)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Remark*
-Theorem about being a metric.
- As sum of metrics
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Remark*
-Theorem: When 
-\begin_inset Formula $\epsilon\to0$
-\end_inset
-
-, 
-\begin_inset Formula $m(a,b)\neq m(a,c)$
-\end_inset
-
- iff 
-\begin_inset Formula $a\neq b\neq c$
-\end_inset
-
-.
- Which means no border vertices, and every vertex will uniquely be assigned
- to one of the markers.
- 
-\end_layout
-
-\begin_layout Remark*
-For a give finite graph and weight function there exist a sufficiently small
- epsilon such that above.
-\end_layout
-
-\begin_layout Remark*
-TODO: describe the modified algorithm.
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
-key "key-1"
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "References/Some"
+options "spiebib"
 
 \end_inset
 

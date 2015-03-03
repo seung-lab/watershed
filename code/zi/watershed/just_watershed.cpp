@@ -16,9 +16,9 @@
 #include <tuple>
 #include <map>
 #include <list>
+#include <set>
 #include <vector>
 #include <chrono>
-#include <set>
 
 #include <zi/disjoint_sets/disjoint_sets.hpp>
 
@@ -30,14 +30,6 @@ void clear_container( T& c )
 }
 
 template < typename T > struct watershed_traits;
-
-template <> struct watershed_traits<uint16_t>
-{
-    static const uint16_t high_bit = 0x8000;
-    static const uint16_t mask     = 0x7FFF;
-    static const uint16_t visited  = 0x1000;
-    static const uint16_t dir_mask = 0x007F;
-};
 
 template <> struct watershed_traits<uint32_t>
 {
@@ -54,16 +46,6 @@ template <> struct watershed_traits<uint64_t>
     static const uint64_t visited  = 0x0000000000001000LL;
     static const uint64_t dir_mask = 0x000000000000007FLL;
 };
-
-template <> struct watershed_traits<int16_t>
-: watershed_traits<uint16_t> {};
-
-template <> struct watershed_traits<int32_t>
-: watershed_traits<uint32_t> {};
-
-template <> struct watershed_traits<int64_t>
-: watershed_traits<uint64_t> {};
-
 
 template < typename T >
 using volume = boost::multi_array<T,3>;
@@ -114,6 +96,21 @@ read_affinity_graph_from_file( const std::string& fname,
     return aff;
 }
 
+template < typename T >
+inline volume_ptr<T>
+read_volume( const std::string& fname, std::size_t wsize )
+{
+    volume_ptr<T> vol(new volume<T>
+                      (boost::extents[wsize][wsize][wsize],
+                       boost::fortran_storage_order()));
+
+    if ( !read_from_file(fname, vol->data(), wsize*wsize*wsize) )
+    {
+        throw 0;
+    }
+
+    return vol;
+}
 
 template < typename T >
 inline bool
@@ -139,6 +136,98 @@ using region_graph = std::vector<std::tuple<F,ID,ID>>;
 template< typename ID, typename F >
 using region_graph_ptr = std::shared_ptr<region_graph<ID,F>>;
 
+template< typename ID, typename F >
+inline bool write_region_graph_to_file( const std::string& fname,
+                                        const region_graph<ID,F>& rg )
+{
+    std::ofstream f(fname.c_str(), (std::ios::out | std::ios::binary) );
+
+    if ( !f )
+    {
+        return false;
+    }
+
+    F* data = new F[rg.size() * 3];
+
+    std::size_t idx = 0;
+
+    for ( const auto& e: rg )
+    {
+        data[idx++] = static_cast<F>(std::get<1>(e));
+        data[idx++] = static_cast<F>(std::get<2>(e));
+        data[idx++] = static_cast<F>(std::get<0>(e));
+    }
+
+    f.write( reinterpret_cast<char*>(data), rg.size() * 3 * sizeof(F));
+
+    return true;
+}
+
+template< typename ID, typename F >
+inline region_graph_ptr<ID,F>
+get_merge_tree( const region_graph<ID,F>& rg, std::size_t max_segid )
+{
+    zi::disjoint_sets<ID>      sets(max_segid+1);
+    std::vector<std::list<ID>> edges(max_segid+1);
+    region_graph_ptr<ID,F>     mt_ptr( new region_graph<ID,F> );
+
+    for ( const auto& e: rg )
+    {
+        ID v1 = std::get<1>(e);
+        ID v2 = std::get<2>(e);
+
+        ID s1 = sets.find_set(v1);
+        ID s2 = sets.find_set(v2);
+
+        if ( s1 != s2 && s1 && s2 )
+        {
+            mt_ptr->push_back(e);
+            sets.join(s1, s2);
+
+            edges[v1].push_back(v2);
+            edges[v2].push_back(v1);
+
+        }
+    }
+
+    std::vector<ID> order(max_segid+1);
+    ID curr = 0;
+
+    for ( ID i = 0; i <= max_segid; ++i )
+    {
+        if ( order[i] == 0 )
+        {
+            std::deque<ID> queue;
+            queue.push_back(i);
+            order[i] = ++curr;
+
+            while ( queue.size() )
+            {
+                ID x = queue.front();
+                queue.pop_front();
+
+                for ( auto& y: edges[x] )
+                {
+                    if ( order[y] == 0 )
+                    {
+                        order[y] = ++curr;
+                        queue.push_back(y);
+                    }
+                }
+            }
+        }
+    }
+
+    for ( auto& e: *mt_ptr )
+    {
+        if ( order[std::get<2>(e)] < order[std::get<1>(e)] )
+        {
+            std::swap(std::get<2>(e), std::get<1>(e));
+        }
+    }
+
+    return mt_ptr;
+}
 
 template< typename ID, typename F >
 inline region_graph_ptr<ID,F>
@@ -164,22 +253,19 @@ get_region_graph( const affinity_graph_ptr<F>& aff_ptr,
         for ( std::ptrdiff_t y = 0; y < ydim; ++y )
             for ( std::ptrdiff_t x = 0; x < xdim; ++x )
             {
-                if ( (x > 0) && seg[x][y][z] && seg[x-1][y][z]
-                     && (seg[x][y][z] != seg[x-1][y][z] ) )
+                if ( (x > 0) && seg[x][y][z] && seg[x-1][y][z] )
                 {
                     auto mm = std::minmax(seg[x][y][z], seg[x-1][y][z]);
                     F& curr = edges[mm.first][mm.second];
                     curr = std::max(curr, aff[x][y][z][0]);
                 }
-                if ( (y > 0) && seg[x][y][z] && seg[x][y-1][z]
-                     && (seg[x][y][z] != seg[x][y-1][z] ) )
+                if ( (y > 0) && seg[x][y][z] && seg[x][y-1][z] )
                 {
                     auto mm = std::minmax(seg[x][y][z], seg[x][y-1][z]);
                     F& curr = edges[mm.first][mm.second];
                     curr = std::max(curr, aff[x][y][z][1]);
                 }
-                if ( (z > 0) && seg[x][y][z] && seg[x][y][z-1]
-                     && (seg[x][y][z] != seg[x][y][z-1] ) )
+                if ( (z > 0) && seg[x][y][z] && seg[x][y][z-1] )
                 {
                     auto mm = std::minmax(seg[x][y][z], seg[x][y][z-1]);
                     F& curr = edges[mm.first][mm.second];
@@ -192,77 +278,6 @@ get_region_graph( const affinity_graph_ptr<F>& aff_ptr,
         for ( const auto& p: edges[id1] )
         {
             rg.emplace_back(p.second, id1, p.first);
-        }
-    }
-
-    std::cout << "Region graph size: " << rg.size() << std::endl;
-
-    std::sort(std::begin(rg), std::end(rg),
-              std::greater<std::tuple<F,ID,ID>>());
-
-    std::cout << "Sorted" << std::endl;
-
-    return rg_ptr;
-}
-
-
-template< typename ID, typename F >
-inline region_graph_ptr<ID,F>
-get_avg_region_graph( const affinity_graph_ptr<F>& aff_ptr,
-                      const volume_ptr<ID> seg_ptr,
-                      std::size_t max_segid)
-{
-
-    std::ptrdiff_t xdim = aff_ptr->shape()[0];
-    std::ptrdiff_t ydim = aff_ptr->shape()[1];
-    std::ptrdiff_t zdim = aff_ptr->shape()[2];
-
-    volume<ID>& seg = *seg_ptr;
-    affinity_graph<F> aff = *aff_ptr;
-
-    region_graph_ptr<ID,F> rg_ptr( new region_graph<ID,F> );
-
-    region_graph<ID,F>& rg = *rg_ptr;
-
-    std::vector<std::map<ID,F>> edges(max_segid+1);
-    std::vector<std::map<ID,F>> numed(max_segid+1);
-
-
-    for ( std::ptrdiff_t z = 0; z < zdim; ++z )
-        for ( std::ptrdiff_t y = 0; y < ydim; ++y )
-            for ( std::ptrdiff_t x = 0; x < xdim; ++x )
-            {
-                if ( (x > 0) && seg[x][y][z] && seg[x-1][y][z]
-                     && (seg[x][y][z] != seg[x-1][y][z] ) )
-                {
-                    auto mm = std::minmax(seg[x][y][z], seg[x-1][y][z]);
-                    F& curr = edges[mm.first][mm.second];
-                    curr += aff[x][y][z][0];
-                    numed[mm.first][mm.second] += 1;
-                }
-                if ( (y > 0) && seg[x][y][z] && seg[x][y-1][z]
-                     && (seg[x][y][z] != seg[x][y-1][z] ) )
-                {
-                    auto mm = std::minmax(seg[x][y][z], seg[x][y-1][z]);
-                    F& curr = edges[mm.first][mm.second];
-                    curr += aff[x][y][z][1];
-                    numed[mm.first][mm.second] += 1;
-                }
-                if ( (z > 0) && seg[x][y][z] && seg[x][y][z-1]
-                     && (seg[x][y][z] != seg[x][y][z-1] ) )
-                {
-                    auto mm = std::minmax(seg[x][y][z], seg[x][y][z-1]);
-                    F& curr = edges[mm.first][mm.second];
-                    curr += aff[x][y][z][2];
-                    numed[mm.first][mm.second] += 1;
-                }
-            }
-
-    for ( ID id1 = 1; id1 <= max_segid; ++id1 )
-    {
-        for ( const auto& p: edges[id1] )
-        {
-            rg.emplace_back(p.second / numed[id1][p.first], id1, p.first);
         }
     }
 
@@ -587,8 +602,6 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
 
     region_graph<ID,F> new_rg;
 
-    std::set<std::pair<ID,ID>> pairs;
-
     for ( auto& it: rg )
     {
         ID s1 = remaps[sets.find_set(std::get<1>(it))];
@@ -597,11 +610,7 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
         if ( s1 != s2 && s1 && s2 )
         {
             auto mm = std::minmax(s1,s2);
-            if ( pairs.count(mm) == 0 )
-            {
-                new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
-                pairs.insert(mm);
-            }
+            new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
         }
     }
 
@@ -818,7 +827,7 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
 
     std::tuple< volume_ptr<id_t>, std::vector<std::size_t> > result
         ( volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim],
-                                             boost::fortran_storage_order())),
+                                           boost::fortran_storage_order())),
           std::vector<std::size_t>(1) );
 
     auto& counts = std::get<1>(result);
@@ -1030,41 +1039,6 @@ std::size_t limit_fn( float v )
         return 2000;
     }
 
-    if ( v < 0.2 )
-    {
-        return 0;
-    }
-
-    if ( v < 0.5 ) return 200;
-    if ( v < 0.8 ) return 500;
-    if ( v < 0.95) return 1000;
-
-    return 2000;
-
-    // if ( v < 0.5 )
-    // {
-    //     return 50;
-    // }
-
-    // v *= 10;
-
-
-    // return static_cast<std::size_t>(50+v*v*v);
-}
-
-
-std::size_t limit_fn2( float v )
-{
-    if ( v < 0.95 ) return 0;
-    return 10000;
-    //return 50;
-
-    // size threshold based on affinity
-    if ( v > 1 )
-    {
-        return 2000;
-    }
-
     if ( v < 0.3 )
     {
         return 0;
@@ -1082,16 +1056,193 @@ std::size_t limit_fn2( float v )
 }
 
 
+std::size_t limit_fn2( float v )
+{
+    if ( v < 0.3 ) return 0;
+
+    if ( v > 0.98 ) return 5000;
+    if ( v > 0.97 ) return 2000;
+    if ( v > 0.96 ) return 1500;
+    if ( v > 0.95 ) return 500;
+
+    if ( v > 0.5 ) return 250;
+    //return 500;
+    return 100;
+
+    // size threshold based on affinity
+    if ( v > 1 )
+    {
+        return 2000;
+    }
+
+    if ( v < 0.3 )
+    {
+        return 0;
+    }
+
+    if ( v < 0.5 )
+    {
+        return 150;
+    }
+
+    v *= 10;
+
+
+    return static_cast<std::size_t>(50+v*v*v);
+}
+
+template< typename ID, typename F >
+inline volume_ptr<ID>
+get_colormap( const volume_ptr<ID>& orig,
+              const region_graph<ID,F>& rg,
+              std::size_t max_segid )
+{
+
+    std::ptrdiff_t xdim = orig->shape()[0];
+    std::ptrdiff_t ydim = orig->shape()[1];
+    std::ptrdiff_t zdim = orig->shape()[2];
+
+    std::ptrdiff_t size = xdim * ydim * zdim;
+
+    volume_ptr<ID> seg_ptr( new volume<ID>(boost::extents[xdim][ydim][zdim],
+                                           boost::fortran_storage_order()));
+
+    volume<ID>& seg = *seg_ptr;
+    seg = *orig;
+
+    std::vector<ID>            colormap(max_segid+1);
+    std::vector<std::list<ID>> edges(max_segid+1);
+    std::vector<std::set<ID>>  taken(max_segid+1);
+
+    for ( const auto& e: rg )
+    {
+        ID v1 = std::get<1>(e);
+        ID v2 = std::get<2>(e);
+
+        if ( v1 != v2 && v1 && v2 )
+        {
+            edges[v1].push_back(v2);
+            edges[v2].push_back(v1);
+
+            //std::cout << edges[v1].size() << ' ' << edges[v2].size() << '\n';
+        }
+    }
+
+    return seg_ptr;
+}
+
+std::size_t get_rand_idx( std::vector<uint32_t>& v)
+{
+    if ( v.size() <= 1 )
+    {
+        return 0;
+    }
+
+    std::sort(v.begin(), v.end());
+    //v.pop_back();
+
+    std::size_t r = 0;
+
+    for ( int i = 0; i < v.size() - 1; ++i )
+    {
+        for ( int j = i+1; j < v.size(); ++j )
+            r += v[i]*v[j];
+    }
+
+    return r;
+}
+
+void compare_volumes( const std::string& gtf, const std::string& wsf,
+                      std::size_t size )
+{
+    volume_ptr<uint32_t> gt_ptr = read_volume<uint32_t>(gtf, size);
+    volume_ptr<uint32_t> ws_ptr = read_volume<uint32_t>(wsf, size);
+
+    volume<uint32_t>& gt = *gt_ptr;
+    volume<uint32_t>& ws = *ws_ptr;
+
+    std::map<uint32_t, std::map<uint32_t, uint32_t>> map;
+    std::map<uint32_t, std::map<uint32_t, uint32_t>> invmap;
+    std::map<uint32_t, uint32_t> setg, setw;
+
+    std::size_t randindex = 0;
+    std::size_t non_zero  = 0;
+
+    for ( std::ptrdiff_t z = 28; z < size-28; ++z )
+        for ( std::ptrdiff_t y = 28; y < size-28; ++y )
+            for ( std::ptrdiff_t x = 16; x < size-16; ++x )
+            {
+                uint32_t wsv = ws[x][y][z];
+                uint32_t gtv = gt[x][y][z];
+
+                if ( gtv )
+                {
+                    ++non_zero;
+                    ++invmap[gtv][wsv];
+                    ++map[wsv][gtv];
+                }
+
+
+                if ( wsv != 0 && gtv != 0 )
+                {
+                    ++setg[gtv];
+                    ++setw[wsv];
+                }
+            }
+
+    for ( auto& a: invmap )
+    {
+        std::vector<uint32_t> v;
+        for ( auto& b: a.second )
+        {
+            v.push_back(b.second);
+        }
+        randindex += get_rand_idx(v);
+    }
+
+
+    for ( auto& a: map )
+    {
+        if ( a.second.size() > 1 )
+        {
+            std::cout << a.first << "\n";
+            std::vector<uint32_t> v;
+            for ( auto& b: a.second )
+            {
+                v.push_back(b.second);
+                // std::cout << "    " << b.first << ' ' << b.second << '\n'
+                //           << "      " << setw[a.first] << ' '
+                //           << setg[b.first] << '\n';
+            }
+            randindex += get_rand_idx(v);
+        }
+    }
+
+    std::cout << "Total gt: " << setg.size() << "\n";
+    std::cout << "Total ws: " << setw.size() << "\n";
+
+    std::size_t pairs = (non_zero * (non_zero-1)) / 2;
+
+    //double randidx = 1;
+    double randerr = static_cast<double>(randindex) / pairs;
+
+    std::cout << "Rand: " << randerr << "\n";
+
+}
+
 int main()
 {
+    compare_volumes("../../data/gt.in", "./voutraw.out", 256);
+
+    //return 0;
 
     //auto start = std::chrono::system_clock::now();
 
 
     //std::cout << std::hex << watershed_traits<uint32_t>::high_bit << std::endl;
 
-    affinity_graph_ptr<float> aff = read_affinity_graph_from_file<float>("../../data/ws_test_250.raw",
-                                                                         250, 250, 250);
+    affinity_graph_ptr<float> aff = read_affinity_graph_from_file<float>("../../data/ws_test_256.raw",
+                                                                         256, 256, 256);
 
     //std::cout << (std::chrono::system_clock::now() - start)
     //          << " data loaded" << std::endl;
@@ -1112,17 +1263,53 @@ int main()
     volume_ptr<uint32_t>     segg  ;
     std::vector<std::size_t> counts;
 
-    auto seg = simple_watershed<uint32_t>(aff, 0.1, 0.99, counts);
+    auto seg = simple_watershed<uint32_t>(aff, -0.00001, 1.2, counts);
 
-    std::tie(segg, counts) = watershed<uint32_t>(aff, 0.1, 0.99);
+    std::tie(segg, counts) = watershed<uint32_t>(aff, -1, 2);
+
+    write_volume_to_file("voutraw.out", segg);
+
+    for ( float low = 0.01; low < 0.051; low += 0.01 )
+    {
+        for ( float high = 0.998; high > 0.989; high -= 0.002 )
+        {
+//            std::tie(segg, counts) = watershed<uint32_t>(aff, low, high);
+//            write_volume_to_file("vout." + std::to_string(low) + "." +
+//                                 std::to_string(high) + ".out", segg);
+        }
+    }
+
+    std::tie(segg, counts) = watershed<uint32_t>(aff, 0.5, 2);
+
+    write_volume_to_file("voutmax.out", segg);
+
+    std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+
+    write_volume_to_file("voutminmax.out", segg);
 
 
-
-    //return 0;
+//    return 0;
 
     auto rg = get_region_graph(aff, segg, counts.size()-1);
 
-    //merge_segments_with_function(seg.first, rg, counts, limit_fn2, 0);
+    //yet_another_watershed(segg, rg, counts, 0.3);
+
+    //write_volume_to_file("voutanouther.out", segg);
+
+
+    merge_segments_with_function(segg, rg, counts, limit_fn2, 100);
+
+    write_volume_to_file("voutall.out", segg);
+
+    write_region_graph_to_file("voutall.rg", *rg);
+
+    auto mt = get_merge_tree(*rg, counts.size()-1);
+
+    write_region_graph_to_file("voutall.mt", *mt);
+
+    auto cmap = get_colormap(segg, *rg, counts.size()-1);
+
+    return 0;
 
     // single likage clusteroing
 
@@ -1146,46 +1333,10 @@ int main()
 
     //merge_segments_with_function(seg.first, rg, counts, limit_fn, 25);
 
-    //yet_another_watershed(segg, rg, counts, 0.2);
-
-    //rg = get_avg_region_graph(aff, segg, counts.size()-1);
-
-    //yet_another_watershed(segg, rg, counts, 0.2);
-
-    //rg = get_avg_region_graph(aff, segg, counts.size()-1);
-
-    //yet_another_watershed(segg, rg, counts, 0.2);
-
-    //rg = get_avg_region_graph(aff, segg, counts.size()-1);
-
-    //yet_another_watershed(segg, rg, counts, 0.2);
-
-    //rg = get_avg_region_graph(aff, segg, counts.size()-1);
-
-    merge_segments_with_function(segg, rg, counts, limit_fn, 300);
-
-
-    rg = get_region_graph(aff, segg, counts.size()-1);
-
-    // rg = get_avg_region_graph(aff, segg, counts.size()-1);
-
-    // yet_another_watershed(segg, rg, counts, 0.0);
-    // rg = get_avg_region_graph(aff, segg, counts.size()-1);
-
-    // yet_another_watershed(segg, rg, counts, 0.0);
-    // rg = get_avg_region_graph(aff, segg, counts.size()-1);
-
-    // yet_another_watershed(segg, rg, counts, 0.0);
-    // rg = get_avg_region_graph(aff, segg, counts.size()-1);
-
-    // yet_another_watershed(segg, rg, counts, 0.0);
-
-    //yet_another_watershed(segg, rg, counts, 0.0);
-
-    //yet_another_watershed(segg, rg, counts, 0.0);
-
-    write_volume_to_file("voutraw.out", segg);
-
+    yet_another_watershed(seg.first, rg, counts, 0.1);
+    yet_another_watershed(seg.first, rg, counts, 0.2);
+    yet_another_watershed(seg.first, rg, counts, 0.3);
+    yet_another_watershed(seg.first, rg, counts, 0.4);
     //yet_another_watershed(seg.first, rg, counts);
 
     //merge_segments_with_function(seg.first, rg, counts, limit_fn, 25);
