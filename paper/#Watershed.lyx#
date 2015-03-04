@@ -1499,7 +1499,7 @@ The algorithm runs in e log e.
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -1589,7 +1589,7 @@ status collapsed
 \end_inset
 
 
-\change_inserted -190403614 1425508424
+\change_inserted -190403614 1425508788
 
 \begin_inset Float figure
 wide false
@@ -1624,6 +1624,42 @@ status collapsed
 \end_layout
 
 \begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425508789
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425508789
+\begin_inset Graphics
+	filename Figures/all.png
+	scale 38
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425508789
+
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
@@ -1687,8 +1723,14 @@ key "Turaga2010"
 
 \begin_layout Section
 
-\change_inserted -190403614 1425506257
+\change_inserted -190403614 1425509028
 Conclusions
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1425509030
+We can produce 
 \change_unchanged
 
 \end_layout

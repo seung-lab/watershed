@@ -1510,7 +1510,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Figures/chan.png
-	scale 38
+	scale 44
 
 \end_inset
 
@@ -1543,7 +1543,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Figures/aff.png
-	scale 38
+	scale 44
 
 \end_inset
 
@@ -1570,7 +1570,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename Figures/raw.png
-	scale 38
+	scale 44
 
 \end_inset
 
@@ -1588,49 +1588,6 @@ status collapsed
 
 \end_inset
 
-
-\change_inserted -190403614 1425508424
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\change_inserted -190403614 1425508447
-\begin_inset Graphics
-	filename Figures/minmax.png
-	scale 38
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
 
 \begin_inset Caption Standard
 
