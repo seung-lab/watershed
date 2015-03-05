@@ -148,10 +148,14 @@ sseung@princeton.edu
 \end_layout
 
 \begin_layout Abstract
-We present a method for hierarchical image segmentation that defines a disaffini
-ty graph on the image, over-segments it into watershed basins, defines a
- new graph on the basins, and then merges basins with a modified, size-dependent
- version of single linkage clustering.
+We present a method
+\change_inserted -190403614 1425598483
+ 
+\change_unchanged
+ for hierarchical image segmentation that defines a disaffinity graph on
+ the image, over-segments it into watershed basins, defines a new graph
+ on the basins, and then merges basins with a modified, size-dependent version
+ of single linkage clustering.
  The method is illustrated on the challenging problem of segmenting 3D electron
  microscopic brain images.
  Our watershed transform works by finding the basins of attraction of steepest
