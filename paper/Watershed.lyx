@@ -148,27 +148,35 @@ sseung@princeton.edu
 \end_layout
 
 \begin_layout Abstract
+
+\change_inserted -190403614 1425519723
+Short Abstract
+\change_deleted -190403614 1425519719
 We present a method for hierarchical image segmentation that defines a disaffini
 ty graph on the image, over-segments it into watershed basins, defines a
  new graph on the basins, and then merges basins with a modified, size-dependent
  version of single linkage clustering.
  The method is illustrated on the challenging problem of segmenting 3D electron
  microscopic brain images.
-
-\change_inserted -190403614 1425507836
- 
-\change_unchanged
-Our watershed transform works by finding the basins of attraction of steepest
+ Our watershed transform works by finding the basins of attraction of steepest
  descent dynamics, and has runtime that is linear in the number of graph
  edges.
- It yields basins similar to those of watershed cuts (Cousty et al.
- 2009), except that plateaus are divided between basins consistently and
- in a more even way.
+ It yields basins similar to those of watershed cuts 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cousty2009"
+
+\end_inset
+
+(, except that plateaus are divided between basins consistently and in a
+ more even way.
  In general, watershed algorithms tend to produce severe over-segmentation,
  which can be counteracted by pre- and/or post-processing.
 \end_layout
 
 \begin_layout Abstract
+
+\change_deleted -190403614 1425519719
 Our post-processing starts by examining the new graph on the basins, in
  which the edge connecting two basins is assigned the same weight as the
  minimal edge connecting the basins in the original disaffinity graph.
@@ -179,6 +187,8 @@ Our post-processing starts by examining the new graph on the basins, in
 \end_layout
 
 \begin_layout Abstract
+
+\change_deleted -190403614 1425519719
 If we only expect to use levels above some minimum value T_min, then it
  turns out to be equivalent and more efficient to preprocess the original
  disaffinity graph before watershed by setting all edge weights below T_min
@@ -188,12 +198,16 @@ If we only expect to use levels above some minimum value T_min, then it
 \end_layout
 
 \begin_layout Abstract
+
+\change_deleted -190403614 1425519719
 We also show how to modify single linkage clustering by making it depend
  not only on edge weights but also on cluster size - volume, length, etc.
  The modification is useful when there is prior knowledge about the size
  of true segments, and is shown to have an efficient implementation because
  size is a property that is guaranteed to increase with each agglomerative
  step.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Abstract
@@ -219,7 +233,59 @@ Introduction
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -190403614 1425519725
 Intro Intro
+\change_inserted -190403614 1425519725
+We present a method for hierarchical image segmentation that defines a disaffini
+ty graph on the image, over-segments it into watershed basins, defines a
+ new graph on the basins, and then merges basins with a modified, size-dependent
+ version of single linkage clustering.
+ The method is illustrated on the challenging problem of segmenting 3D electron
+ microscopic brain images.
+ Our watershed transform works by finding the basins of attraction of steepest
+ descent dynamics, and has runtime that is linear in the number of graph
+ edges.
+ It yields basins similar to those of watershed cuts , except that plateaus
+ are divided between basins consistently and in a more even way.
+ In general, watershed algorithms tend to produce severe over-segmentation,
+ which can be counteracted by pre- and/or post-processing.
+\end_layout
+
+\begin_layout Abstract
+
+\change_inserted -190403614 1425519725
+Our post-processing starts by examining the new graph on the basins, in
+ which the edge connecting two basins is assigned the same weight as the
+ minimal edge connecting the basins in the original disaffinity graph.
+ Then single linkage clustering yields a hierarchical segmentation of the
+ original image in which the lowest level consists of the watershed basins.
+ The levels of single linkage clustering yield flat segmentations in which
+ some of the basins are merged.
+\end_layout
+
+\begin_layout Abstract
+
+\change_inserted -190403614 1425519725
+If we only expect to use levels above some minimum value T_min, then it
+ turns out to be equivalent and more efficient to preprocess the original
+ disaffinity graph before watershed by setting all edge weights below T_min
+ to a common low value.
+ In another pre-processing step we remove the edges with disaffinity to
+ allow for unsegmented regions.
+\end_layout
+
+\begin_layout Abstract
+
+\change_inserted -190403614 1425519725
+We also show how to modify single linkage clustering by making it depend
+ not only on edge weights but also on cluster size - volume, length, etc.
+ The modification is useful when there is prior knowledge about the size
+ of true segments, and is shown to have an efficient implementation because
+ size is a property that is guaranteed to increase with each agglomerative
+ step.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -423,11 +489,12 @@ basins
  as described below.
 \end_layout
 
-\begin_layout Subsubsection
-Steepest descent graph.
-\end_layout
-
 \begin_layout Standard
+
+\series bold
+Steepest descent graph.
+ 
+\series default
 The central quantity in the watershed algorithm is the steepest descent
  graph, defined as follows.
  Consider an undirected weighted graph 
@@ -686,11 +753,12 @@ status collapsed
 
 \end_layout
 
-\begin_layout Subsubsection
-Assigning border vertices.
-\end_layout
-
 \begin_layout Standard
+
+\series bold
+Assigning border vertices.
+ 
+\series default
 In Fig.
  1(d) we show the 
 \emph on
@@ -899,11 +967,12 @@ ns to the steepest descent graph; (d) final watershed partition of the graph
 
 \end_layout
 
-\begin_layout Subsubsection
-Watershed transform algorithm.
-\end_layout
-
 \begin_layout Standard
+
+\series bold
+Watershed transform algorithm.
+ 
+\series default
 We introduce an ordering function 
 \begin_inset Formula $\alpha:V\to\{1,2,...,|V|\}$
 \end_inset
@@ -1011,12 +1080,9 @@ We defer the detailed algorithm listing, the proof of correctness and running
  time to the supplementary material.
 \end_layout
 
-\begin_layout Subsubsection
-Reducing over-segmentation
-\end_layout
-
 \begin_layout Standard
-Often the edge weights of 
+Reducing over-segmentation.
+ Often the edge weights of 
 \begin_inset Formula $G$
 \end_inset
 
@@ -1036,20 +1102,16 @@ saliency
 \emph default
 of two adjacent segments is the value of the minimal 
 \emph on
-disaffiniy
+disaffinity
 \emph default
  between the vertices of the two segments.
- 
-\change_inserted -190403614 1425508110
-Noisy values of 
+ Noisy values of 
 \emph on
-disaffinites 
+disaffinities 
 \emph default
 can produce severe over-segmentation (Fig.
  3(c)).
- 
-\change_unchanged
-In order to reduce the over-segmentation we often merge adjacent segments
+ In order to reduce the over-segmentation we often merge adjacent segments
  with the 
 \emph on
 saliency 
@@ -1128,12 +1190,12 @@ basin of attraction
 \end_layout
 
 \begin_layout Section
-Hierachical Clustering of the Watershed Basin Graph
+Hierarchical Clustering of the Watershed Basin Graph
 \end_layout
 
 \begin_layout Standard
 A hierarchical clustering of an undirected weighted graph treats each vertex
- as a singleton cluster, and successively merges clusters connected by an
+ as a singleton cluster and successively merges clusters connected by an
  edge in the graph.
  A cluster is always a connected subset of the graph's vertices.
  Each merge operations creates a new level of the hierarchy - a flat segmentatio
@@ -1142,9 +1204,14 @@ n where each cluster represents a segment.
 \emph on
 single linkage
 \emph default
- clustering in each step we merge two clusters connected by an edge with
- the lowest weight in the original graph, and is equivalent to finding the
- minimum spanning tree of the graph 
+ clustering, each step we merges two clusters connected by an edge with
+ the lowest weight in the original graph.
+ 
+\emph on
+Single linkage 
+\emph default
+clustering is equivalent to finding the minimum spanning tree of the graph
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Gower1969"
@@ -1209,7 +1276,7 @@ saliency
 \emph default
  of the two 
 \emph on
-basisn.
+basins.
 
 \emph default
  We will refer to the vertices of the watershed domain graph as 
@@ -1222,11 +1289,11 @@ saliencies.
 \end_layout
 
 \begin_layout Standard
-Our size-dependent 
+In our size-dependent 
 \emph on
 single linkage
 \emph default
- clustering method, in each step merges clusters with the lowest 
+ clustering method, in each step we merge clusters with the lowest 
 \emph on
 saliency
 \emph default
@@ -1239,7 +1306,7 @@ of two clusters is defined as the minimal
 \emph on
 saliency 
 \emph default
-of two members.
+of any two members:
 \end_layout
 
 \begin_layout Standard
@@ -1258,26 +1325,23 @@ At the last level of the hierarchy all pairs of clusters will satisfy the
  predicate.
 \end_layout
 
-\begin_layout Subsubsection
-Size-dependent comparison predicate
-\end_layout
-
 \begin_layout Standard
+
+\series bold
+Size-dependent comparison predicate.
+ 
+\series default
 We define a predicate 
 \begin_inset Formula $\Lambda,$
 \end_inset
 
  for evaluating whether two clusters should be merged.
- The predicate is based on the 
-\emph on
-saliency
-\emph default
- between the two clusters and the sizes the clusters.
+ The predicate is based on the sizes of the two clusters.
  Let 
 \begin_inset Formula $S(C)$
 \end_inset
 
- be a size measure function of a cluster 
+ represent the size of 
 \begin_inset Formula $C$
 \end_inset
 
@@ -1290,31 +1354,42 @@ basins
 \emph on
 basin 
 \emph default
-sizes) .
- We first define a non-increasing threshold function 
-\begin_inset Formula $\tau(d)$
-\end_inset
-
- to represent the minimal expected size of two clusters with 
-\emph on
-saliency
-\emph default
- 
-\begin_inset Formula $d$
-\end_inset
-
-, where 
-\begin_inset Formula $\tau(d\to\infty)=0$
+sizes).
+ The size can be any measure of a cluster with the property that 
+\begin_inset Formula $S(C_{1}\cup C_{2})\ge S(C_{1})$
 \end_inset
 
 .
+ We first define a non-increasing threshold function of cluster size 
+\begin_inset Formula $\tau(s)$
+\end_inset
+
+.
+ For a given cluster size 
+\begin_inset Formula $s$
+\end_inset
+
+ the value 
+\begin_inset Formula $\tau(s)$
+\end_inset
+
+ represents the maximal 
+\emph on
+saliency
+\emph default
+ allowed between a cluster of size 
+\begin_inset Formula $s$
+\end_inset
+
+ and any adjacent cluster.
+ Our predicate is then defined as:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
 \Lambda(C_{1},C_{2})=\begin{cases}
-\textrm{t\textrm{rue}} & \textrm{if }\tau(d_{C_{1},C_{2}})<\min\left\{ S(C_{1}),S(C_{2})\right\} \\
+\textrm{t\textrm{rue}} & \textrm{if }d_{C_{1},C_{2}}\ge\tau\left(\min\left\{ S(C_{1}),S(C_{2})\right\} \right)\\
 \textrm{false} & \textrm{otherwise\textrm{ }}
 \end{cases}
 \end{equation}
@@ -1322,48 +1397,58 @@ saliency
 \end_inset
 
 
-\change_inserted -190403614 1425507113
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1425507677
-The intuition behind the predicate is to apply some prior knowledge about
- the size of the desired segments.
- The threshold function allows us to modify our confidence of the minimal
- desired size based on the disaffinity values.
- We limit the threshold function to be non-increasing in order to be able
- to have an efficient algorithm, but it's also intuitive to have it non-increasi
-ng - lower disaffinity should allow merging bigger clusters and vice versa.
- If the threshold function chosen to be a constant the method will try to
- produce clusters not smaller than the given size.
-\change_unchanged
-
-\end_layout
-
-\begin_layout Subsubsection
-Algorithm
+The intuition behind the predicate is to apply prior knowledge about the
+ sizes of the true segments.
+ With the threshold function we control the confidence required to grow
+ a cluster of a certain size.
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1425507038
-Present the algorithm that will produce hierarchical clustering where at
- the final level the predicate is satisfied for all pairs of clusters.
- 
-\change_unchanged
-The algorithm is similar to the one introduced by Felzenszwalb 
-\emph on
-et al.
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
+With a slight modification of the predicate we could allow for an arbitrary
+ threshold function (changing the condition to 
+\begin_inset Formula $d_{C_{1},C_{2}}\ge\min\left\{ \tau(S(C_{1})),\tau(S(C_{2}))\right\} )$
 \end_inset
 
 .
+ However, restricting the function to be non-decreasing allows us to design
+ a more efficient
+\emph on
+ 
+\emph default
+algorithm.
+ It is also more intuitive to allow higher 
+\emph on
+saliency
+\emph default
+ for merging small clusters and require lower 
+\emph on
+saliency
+\emph default
+ as the size of the clusters grow.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Algorithm 1
+\change_inserted -190403614 1425519610
+ 
+\change_deleted -190403614 1425519610
+.
+
+\change_inserted -190403614 1425519608
+ 
+\change_deleted -190403614 1425519607
+ 
+\end_layout
+
+\begin_layout Standard
+In our clustering algorithm we visit all the edges of the watershed basin
+ graph in non-decreasing order and merge the corresponding clusters based
+ on the introduced predicate.
 \end_layout
 
 \begin_layout Enumerate
@@ -1407,8 +1492,6 @@ Construct
 \begin_inset Formula $S^{k-1}$
 \end_inset
 
-
-\change_inserted -190403614 1425506754
 .
  Let 
 \begin_inset Formula $e_{k}=\{B_{i},B_{j}\}$
@@ -1469,8 +1552,6 @@ Construct
 \end_inset
 
 
-\change_unchanged
-
 \end_layout
 
 \begin_layout Enumerate
@@ -1479,20 +1560,41 @@ Return the hierarchical segmentation
 \end_inset
 
 
-\change_inserted -190403614 1425506923
+\end_layout
 
+\begin_layout Theorem*
+
+\series bold
+Theorem 1 
+\series default
+\emph on
+The highest level of the hierarchical segmentation produced by algorithm
+ (1) will have the predicate 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+ satisfied for all pairs of the clusters.
+ The complexity of the algorithm is 
+\begin_inset Formula $\left|E_{W}\right|\log\left|E_{W}\right|$
+\end_inset
+
+.
+ The algorithm can be modified to consider only the edges of the minimum
+ cost spanning tree of 
+\begin_inset Formula $G_{W}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
+We defer the proof the supplementary material.
+\end_layout
 
-\change_inserted -190403614 1425507771
-The algorithm runs in e log e.
- Similarity to kruskal's algorithm is obvious, in the supplementary matrial
- we will prove that it's enough to consider just the edges of the minimum
- spanning tree of the basin graph.
- That also allows us to re-run the algorithm for a different treshold function
- in near linear time as we only need to consider edges of the MST which
- have already been sorted.
+\begin_layout Standard
+The steps 2-5 of the algorithm have near linear complexity.
+ Once we have a sorted list of the edges we can re-run the algorithm for
+ different threshold functions more efficiently.
 \end_layout
 
 \begin_layout Standard
@@ -1589,20 +1691,12 @@ status collapsed
 \end_inset
 
 
-\change_inserted -190403614 1425508424
-
 \begin_inset Float figure
 wide false
 sideways false
 status collapsed
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\change_inserted -190403614 1425508447
 \begin_inset Graphics
 	filename Figures/minmax.png
 	scale 38
@@ -1619,18 +1713,26 @@ status collapsed
 \end_inset
 
 
-\change_unchanged
-
-\end_layout
-
-\begin_layout Plain Layout
-
 \end_layout
 
 \end_inset
 
 
-\change_unchanged
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/gt.png
+	scale 38
+
+\end_inset
+
 
 \begin_inset Caption Standard
 
@@ -1646,23 +1748,141 @@ status collapsed
 \end_inset
 
 
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/all.png
+	scale 38
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/fe2.png
+	scale 38
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/fe1.png
+	scale 38
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(a) EM image; (b) volumetric disaffinity graph, the 3 directions of disaffinitie
+s are represented with RGB; (c) watershed transform output; (d) watershed
+ transform output with 
+\begin_inset Formula $T_{\min}=0.01$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{\max}=0.9$
+\end_inset
+
+; (e) ground truth; (f) our method; (g), (e) segmentation by 
+\emph on
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Felzenszwalb2004"
+
+\end_inset
+
+ 
+\emph default
+with 
+\begin_inset Formula $k=0.5$
+\end_inset
+
+ and 
+\begin_inset Formula $k=10$
+\end_inset
+
+ respectivelly.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout --Separator--
 
-\change_inserted -190403614 1425506240
-
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -190403614 1425507788
 Results
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1425507945
 We present results on 3D electron microscopic brain images (Fig.
  3(a)).
  We obtain affinity graphs by the methods explained in 
@@ -1681,16 +1901,46 @@ key "Turaga2010"
 
  (Fig.
  3(b)).
-\change_unchanged
+\end_layout
 
+\begin_layout Subsubsection
+Metric
+\end_layout
+
+\begin_layout Standard
+A good metric for evaluating a segmentation should ideally tell us how good
+ the segmentation is for using in practice.
+ Mainly how much manual corrections are needed to acheve the correct segmentatio
+n.
+ Often foreground-restricted Rand Index 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Rand2009"
+
+\end_inset
+
+ between the proposed segmentation and the ground truth is used.
+ However it has problems when the number of segments is large as the dynamics
+ range gets smaller.
+ A better method is proposed by Arganda et al in preparation that better
+ estimastes the amount of user reaction needed to correct the segmentation.
 \end_layout
 
 \begin_layout Section
-
-\change_inserted -190403614 1425506257
 Conclusions
-\change_unchanged
+\end_layout
 
+\begin_layout Standard
+We can produce great over-segmentation.
+ Final segmentation can be obtained by merging our segments.
+ It would be a good input to a lot of other methods like 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Mustafa"
+
+\end_inset
+
+prior knowledge about segments assumes all have the same size properties
 \end_layout
 
 \begin_layout Standard
