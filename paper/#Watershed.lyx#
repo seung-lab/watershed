@@ -148,10 +148,6 @@ sseung@princeton.edu
 \end_layout
 
 \begin_layout Abstract
-
-\change_inserted -190403614 1425519723
-Short Abstract
-\change_deleted -190403614 1425519719
 We present a method for hierarchical image segmentation that defines a disaffini
 ty graph on the image, over-segments it into watershed basins, defines a
  new graph on the basins, and then merges basins with a modified, size-dependent
@@ -160,52 +156,9 @@ ty graph on the image, over-segments it into watershed basins, defines a
  microscopic brain images.
  Our watershed transform works by finding the basins of attraction of steepest
  descent dynamics, and has runtime that is linear in the number of graph
- edges.
- It yields basins similar to those of watershed cuts 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Cousty2009"
-
-\end_inset
-
-(, except that plateaus are divided between basins consistently and in a
- more even way.
- In general, watershed algorithms tend to produce severe over-segmentation,
- which can be counteracted by pre- and/or post-processing.
-\end_layout
-
-\begin_layout Abstract
-
-\change_deleted -190403614 1425519719
-Our post-processing starts by examining the new graph on the basins, in
- which the edge connecting two basins is assigned the same weight as the
- minimal edge connecting the basins in the original disaffinity graph.
- Then single linkage clustering yields a hierarchical segmentation of the
- original image in which the lowest level consists of the watershed basins.
- The levels of single linkage clustering yield flat segmentations in which
- some of the basins are merged.
-\end_layout
-
-\begin_layout Abstract
-
-\change_deleted -190403614 1425519719
-If we only expect to use levels above some minimum value T_min, then it
- turns out to be equivalent and more efficient to preprocess the original
- disaffinity graph before watershed by setting all edge weights below T_min
- to a common low value.
- In another pre-processing step we remove the edges with disaffinity to
- allow for unsegmented regions.
-\end_layout
-
-\begin_layout Abstract
-
-\change_deleted -190403614 1425519719
-We also show how to modify single linkage clustering by making it depend
- not only on edge weights but also on cluster size - volume, length, etc.
- The modification is useful when there is prior knowledge about the size
- of true segments, and is shown to have an efficient implementation because
- size is a property that is guaranteed to increase with each agglomerative
- step.
+ edges
+\change_inserted -190403614 1425581719
+.
 \change_unchanged
 
 \end_layout
@@ -233,28 +186,18 @@ Introduction
 \end_layout
 
 \begin_layout Standard
+.
 
-\change_deleted -190403614 1425519725
-Intro Intro
-\change_inserted -190403614 1425519725
-We present a method for hierarchical image segmentation that defines a disaffini
-ty graph on the image, over-segments it into watershed basins, defines a
- new graph on the basins, and then merges basins with a modified, size-dependent
- version of single linkage clustering.
- The method is illustrated on the challenging problem of segmenting 3D electron
- microscopic brain images.
- Our watershed transform works by finding the basins of attraction of steepest
- descent dynamics, and has runtime that is linear in the number of graph
- edges.
- It yields basins similar to those of watershed cuts , except that plateaus
+\change_deleted -190403614 1425581721
+ 
+\change_unchanged
+It yields basins similar to those of watershed cuts, except that plateaus
  are divided between basins consistently and in a more even way.
  In general, watershed algorithms tend to produce severe over-segmentation,
  which can be counteracted by pre- and/or post-processing.
 \end_layout
 
-\begin_layout Abstract
-
-\change_inserted -190403614 1425519725
+\begin_layout Standard
 Our post-processing starts by examining the new graph on the basins, in
  which the edge connecting two basins is assigned the same weight as the
  minimal edge connecting the basins in the original disaffinity graph.
@@ -264,9 +207,7 @@ Our post-processing starts by examining the new graph on the basins, in
  some of the basins are merged.
 \end_layout
 
-\begin_layout Abstract
-
-\change_inserted -190403614 1425519725
+\begin_layout Standard
 If we only expect to use levels above some minimum value T_min, then it
  turns out to be equivalent and more efficient to preprocess the original
  disaffinity graph before watershed by setting all edge weights below T_min
@@ -275,17 +216,13 @@ If we only expect to use levels above some minimum value T_min, then it
  allow for unsegmented regions.
 \end_layout
 
-\begin_layout Abstract
-
-\change_inserted -190403614 1425519725
+\begin_layout Standard
 We also show how to modify single linkage clustering by making it depend
  not only on edge weights but also on cluster size - volume, length, etc.
  The modification is useful when there is prior knowledge about the size
  of true segments, and is shown to have an efficient implementation because
  size is a property that is guaranteed to increase with each agglomerative
  step.
-\change_unchanged
-
 \end_layout
 
 \begin_layout Subsubsection
@@ -1081,7 +1018,11 @@ We defer the detailed algorithm listing, the proof of correctness and running
 \end_layout
 
 \begin_layout Standard
-Reducing over-segmentation.
+
+\series bold
+Reducing over-segmentation
+\series default
+.
  Often the edge weights of 
 \begin_inset Formula $G$
 \end_inset
@@ -1151,7 +1092,17 @@ below
 \end_inset
 
 ) before applying the watershed transform.
- We differ the proof to the supplementary material.
+ 
+\change_deleted -190403614 1425523470
+We differ the proof 
+\change_inserted -190403614 1425523473
+We prove this claim in the
+\change_deleted -190403614 1425523475
+to the 
+\change_inserted -190403614 1425523476
+ 
+\change_unchanged
+supplementary material.
  To show confidence about high values of 
 \emph on
 disaffinities
@@ -1186,7 +1137,15 @@ disaffinities
 \emph on
 basin of attraction
 \emph default
- and are considered background, which is often desired.
+ and are considered background, which is often 
+\change_inserted -190403614 1425523499
+a 
+\change_unchanged
+desired
+\change_inserted -190403614 1425523513
+ result
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Section
@@ -1404,6 +1363,11 @@ The intuition behind the predicate is to apply prior knowledge about the
  sizes of the true segments.
  With the threshold function we control the confidence required to grow
  a cluster of a certain size.
+
+\change_inserted -190403614 1425592014
+ 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -1427,25 +1391,22 @@ saliency
 \emph on
 saliency
 \emph default
- as the size of the clusters grow.
+ as the size
+\change_inserted -190403614 1425591567
+s
+\change_unchanged
+ of the clusters grow.
 \end_layout
 
 \begin_layout Standard
 
 \series bold
 Algorithm 1
-\change_inserted -190403614 1425519610
+\change_deleted -190403614 1425520430
  
-\change_deleted -190403614 1425519610
-.
-
-\change_inserted -190403614 1425519608
+\change_unchanged
  
-\change_deleted -190403614 1425519607
- 
-\end_layout
-
-\begin_layout Standard
+\series default
 In our clustering algorithm we visit all the edges of the watershed basin
  graph in non-decreasing order and merge the corresponding clusters based
  on the introduced predicate.
@@ -1601,7 +1562,7 @@ The steps 2-5 of the algorithm have near linear complexity.
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -1809,7 +1770,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/fe1.png
+	filename Figures/3d.png
 	width 3cm
 
 \end_inset
