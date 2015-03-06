@@ -152,11 +152,10 @@ We present a method for hierarchical image segmentation that defines a disaffini
 ty graph on the image, over-segments it into watershed basins, defines a
  new graph on the basins, and then merges basins with a modified, size-dependent
  version of single linkage clustering.
- The method is illustrated on the challenging problem of segmenting 3D electron
+ The efficiency of the method makes is suitable for segmenting large 3D
+ volumes.
+ We illustrate the method on the challenging problem of segmenting 3D electron
  microscopic brain images.
- Our watershed transform works by finding the basins of attraction of steepest
- descent dynamics, and has runtime that is linear in the number of graph
- edges.
  
 \end_layout
 
@@ -172,8 +171,7 @@ ty graph on the image, over-segments it into watershed basins, defines a
 \series bold
 Keywords: 
 \series default
-Watershed, image segmentation, graphs, hierarchical clustering, electron
- microscopy
+Watershed, image segmentation, hierarchical clustering, electron microscopy
 \end_layout
 
 \begin_layout Section
@@ -183,45 +181,44 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-- we need close to linear time.
- watershed is well known to be fast.
- 
-\end_layout
-
-\begin_layout Standard
--huge images (neuroscience application easy to produce a terabyte with 3d
- microscpoy)
-\end_layout
-
-\begin_layout Standard
-- needed linear time segmentation.
-\end_layout
-
-\begin_layout Standard
-- 
-\end_layout
-
-\begin_layout Standard
-.It yields basins similar to those of watershed cuts, except that plateaus
- are divided between basins consistently and in a more even way.
- In general, watershed algorithms tend to produce severe over-segmentation,
+When segmenting very large volumes an efficient segmentation algorithms
+ are required.
+ We can obtain terabate scale volumes of EM data, we need close to linear
+ time segmentation methods.
+ Watershed is known to be fast but it tends to produce severe over-segmentation,
  which can be counteracted by pre- and/or post-processing.
 \end_layout
 
 \begin_layout Standard
-Our post-processing starts by examining the new graph on the basins, in
+Our watershed transform works by finding the basins of attraction of steepest
+ descent dynamics, and has runtime that is linear in the number of graph
+ edges.
+ It yields basins similar to those of watershed cuts 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cousty2009"
+
+\end_inset
+
+, except that plateaus are divided between basins consistently and in a
+ more even way.
+ Our post-processing starts by examining the new graph on the basins, in
  which the edge connecting two basins is assigned the same weight as the
  minimal edge connecting the basins in the original disaffinity graph.
  Then single linkage clustering yields a hierarchical segmentation of the
  original image in which the lowest level consists of the watershed basins.
  The levels of single linkage clustering yield flat segmentations in which
  some of the basins are merged.
-\end_layout
+ If we only expect to use levels above some minimum value 
+\begin_inset Formula $T_{\min}$
+\end_inset
 
-\begin_layout Standard
-If we only expect to use levels above some minimum value T_min, then it
- turns out to be equivalent and more efficient to preprocess the original
- disaffinity graph before watershed by setting all edge weights below T_min
+, then it turns out to be equivalent and more efficient to preprocess the
+ original disaffinity graph before watershed by setting all edge weights
+ below 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
  to a common low value.
  In another pre-processing step we remove the edges with disaffinity to
  allow for unsegmented regions.
@@ -229,7 +226,7 @@ If we only expect to use levels above some minimum value T_min, then it
 
 \begin_layout Standard
 We also show how to modify single linkage clustering by making it depend
- not only on edge weights but also on cluster size - volume, length, etc.
+ not only on edge weights but also on cluster size.
  The modification is useful when there is prior knowledge about the size
  of true segments, and is shown to have an efficient implementation because
  size is a property that is guaranteed to increase with each agglomerative
@@ -281,7 +278,6 @@ key "Guimaraes2012"
 \end_inset
 
  for real valued weights of the edges.
- Maybe some more complex (slower methods?)
 \end_layout
 
 \begin_layout Section
@@ -805,7 +801,7 @@ plateau corner
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -1909,33 +1905,13 @@ key "Turaga2009,Turaga2010"
 
 \begin_layout Standard
 
-\change_deleted -190403614 1425658098
-
 \series bold
-Error metric
-\change_inserted -190403614 1425658105
-Measuring the quality of the segmentations
-\change_unchanged
-.
-
-\change_inserted -190403614 1425658093
+Measuring the quality of the segmentations.
  
-\change_unchanged
-
 \series default
 A good metric for evaluating a segmentation should ideally tell us how good
- the segmentation is for using in practice
-\change_inserted -190403614 1425658114
-,
-\change_deleted -190403614 1425658113
-.
-
-\change_unchanged
- 
-\change_deleted -190403614 1425658116
-Mainly 
-\change_unchanged
-how much manual corrections are needed to acheve the correct segmentation.
+ the segmentation is for using in practice, how much manual corrections
+ are needed to acheve the correct segmentation.
  Often foreground-restricted Rand Index 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1966,98 +1942,6 @@ key "Rand2009"
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted -190403614 1425658244
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename Figures/results.eps
-	width 7cm
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename Figures/3da.png
-	width 5.5cm
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-(a) Performance of our method and the method described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
-; (b) Segmentation obtained by our method with 
-\begin_inset Formula $\tau^{-1}(w)=3000(1-w)$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
 V_{\textrm{split}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}t_{k}^{2}}\textrm{ and }V_{\textrm{merge}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}s_{k}^{2}}
@@ -2069,26 +1953,20 @@ V_{\textrm{split}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}t_{k}^{2
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
 
-\change_inserted -190403614 1425658247
+\begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -190403614 1425658246
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted -190403614 1425658246
 \begin_inset Graphics
-	filename Figures/results.eps
+	filename Figures/results2.eps
 	width 7cm
 
 \end_inset
@@ -2098,8 +1976,6 @@ status collapsed
 
 \begin_layout Plain Layout
 
-\change_inserted -190403614 1425658246
-
 \end_layout
 
 \end_inset
@@ -2116,8 +1992,6 @@ sideways false
 status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -190403614 1425658246
 \begin_inset Graphics
 	filename Figures/3da.png
 	width 5.5cm
@@ -2129,8 +2003,6 @@ status collapsed
 
 \begin_layout Plain Layout
 
-\change_inserted -190403614 1425658246
-
 \end_layout
 
 \end_inset
@@ -2144,8 +2016,6 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-
-\change_inserted -190403614 1425658246
 (a) Performance of our method and the method described in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2171,15 +2041,47 @@ key "Felzenszwalb2004"
 \end_layout
 
 \begin_layout Standard
-We see that the method blah starts introducing mergers for some values of
- k while there's still a lot of splits around.
- It's because the other method has stricter guarantees
-\change_inserted -190403614 1425658246
- (not to corse or fine) where as we we relax the too corse requirement and
- just hierustically produce a segmentation that is not too fine.
- (not sure we need this)
+
+\change_inserted -190403614 1425662721
+In Fig.
+ 4(a) we compare our method with various threshold functions to the method
+ described in
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Felzenszwalb2004"
+
+\end_inset
+
+ applied both to the original graph and the 
+\emph on
+watershed basin graph
+\emph default
+.
+ Our method shows superior results, a sample segmentation is shown on Fig.
+ 4(b).
 \change_unchanged
 
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1425662562
+Our method greatly outperforms 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Felzenszwalb2004"
+
+\end_inset
+
+.
+ 
+\change_unchanged
+We see that the method blah starts introducing mergers for some values of
+ k while there's still a lot of splits around.
+ It's because the other method has stricter guarantees (not to corse or
+ fine) where as we we relax the too corse requirement and just hierustically
+ produce a segmentation that is not too fine.
+ (not sure we need this)
 \end_layout
 
 \begin_layout Section
