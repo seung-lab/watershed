@@ -19,6 +19,19 @@ inline bool read_from_file( const std::string& fname, T* data, std::size_t n )
 }
 
 template < typename T >
+inline bool
+write_to_file( const std::string& fname,
+               const T* data, std::size_t n )
+{
+    std::ofstream f(fname.c_str(), (std::ios::out | std::ios::binary) );
+    if ( !f ) return false;
+
+    f.write( reinterpret_cast<const char*>(data), n * sizeof(T));
+    return true;
+}
+
+
+template < typename T >
 inline affinity_graph_ptr<T>
 read_affinity_graph( const std::string& fname,
                      std::size_t xsize,
@@ -95,7 +108,7 @@ inline std::tuple<volume_ptr<ID>, std::vector<std::size_t>>
                                          boost::fortran_storage_order())),
           std::vector<std::size_t>(xdim*ydim*zdim+1));
 
-    volume<ID>& seg = *(std::get<0>(result.seg_ptr));
+    volume<ID>& seg = *(std::get<0>(result));
     auto& counts = std::get<1>(result);
 
     std::fill_n(counts.begin(), xdim*ydim*zdim*1, 1);

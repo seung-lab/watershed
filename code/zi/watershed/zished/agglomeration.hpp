@@ -192,7 +192,7 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
 
 
 template< typename ID, typename F, typename FN, typename M >
-inline void
+inline std::vector<double>
 merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
                                   const volume_ptr<ID>& gt_ptr,
                                   const region_graph_ptr<ID,F> rg_ptr,
@@ -200,6 +200,8 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
                                   const FN& func,
                                   const M& lowt )
 {
+    std::vector<double> ret;
+
     std::ptrdiff_t xdim = seg_ptr->shape()[0];
     std::ptrdiff_t ydim = seg_ptr->shape()[1];
     std::ptrdiff_t zdim = seg_ptr->shape()[2];
@@ -259,9 +261,8 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
             (static_cast<double>(a) / tot);
     }
 
-    std::cout << "Initial Error: " << (sum_p_ij/sum_t_k) << " "
-              << (sum_p_ij/sum_s_k) << "\n";
-
+    ret.push_back(sum_p_ij/sum_t_k);
+    ret.push_back(sum_p_ij/sum_s_k);
 
     region_graph<ID,F>& rg  = *rg_ptr;
 
@@ -324,8 +325,13 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
                 p_ij[s2].clear();
 
                 if ( (++mod) % 100 == 0 )
-                    std::cout << "Now Error: " << (sum_p_ij/sum_t_k) << " "
-                              << (sum_p_ij/sum_s_k) << "\n";
+                {
+                    //std::cout << "Now Error: " << (sum_p_ij/sum_t_k) << " "
+                    //          << (sum_p_ij/sum_s_k) << "\n";
+                    ret.push_back(sum_p_ij/sum_t_k);
+                    ret.push_back(sum_p_ij/sum_s_k);
+                }
+
 
                 ID s = sets.join(s1,s2);
                 std::swap(counts[s], counts[s1]);
@@ -340,6 +346,7 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
 
     for ( auto& it: rg )
     {
+        break;
 
         if (  minf > std::get<0>(it) )
         {
@@ -352,7 +359,7 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
 
         if ( s1 != s2 && s1 && s2 )
         {
-            if ( (counts[s1] < 100) || (counts[s2] < 100) )
+            //if ( (counts[s1] < 100) || (counts[s2] < 100) )
             {
                 counts[s1] += counts[s2];
                 counts[s2]  = 0;
@@ -392,8 +399,11 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
                 p_ij[s2].clear();
 
                 //if ( (++mod) % 100 == 0 )
-                    std::cout << "Now Error: " << (sum_p_ij/sum_t_k) << " "
-                              << (sum_p_ij/sum_s_k) << "\n";
+                std::cout << "Now Error: " << (sum_p_ij/sum_t_k) << " "
+                          << (sum_p_ij/sum_s_k) << "\n";
+                ret.push_back(sum_p_ij/sum_t_k);
+                ret.push_back(sum_p_ij/sum_s_k);
+
 
                 ID s = sets.join(s1,s2);
                 std::swap(counts[s], counts[s1]);
@@ -454,4 +464,6 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
 
     std::cout << "Done with updating the region graph, size: "
               << rg.size() << std::endl;
+
+    return ret;
 }
