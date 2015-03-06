@@ -1,5 +1,5 @@
 //#pragma once
-
+#include "felzenszwalb.hpp"
 #include "agglomeration.hpp"
 #include "region_graph.hpp"
 #include "basic_watershed.hpp"
@@ -94,107 +94,6 @@ get_merge_tree( const region_graph<ID,F>& rg, std::size_t max_segid )
 }
 
 
-
-template< typename ID, typename F, typename K >
-inline volume_ptr<ID> other_alg( const affinity_graph_ptr<F>& aff_ptr,
-                                 const K& kconst )
-{
-    std::ptrdiff_t xdim = aff_ptr->shape()[0];
-    std::ptrdiff_t ydim = aff_ptr->shape()[1];
-    std::ptrdiff_t zdim = aff_ptr->shape()[2];
-
-    std::ptrdiff_t total = xdim * ydim * zdim;
-
-    auto dummy          = get_dummy_segmentation<ID>(xdim, ydim, zdim);
-    volume<ID>&    seg  = *std::get<0>(dummy);
-
-    region_graph_ptr<ID,F> rg_ptr = get_region_graph(aff_ptr,
-                                                     std::get<0>(dummy), total);
-    region_graph<ID,F>& rg  = *rg_ptr;
-
-    zi::disjoint_sets<ID> sets(total+1);
-
-    F k = kconst;
-
-    std::vector<F> int_val(total+1);
-    std::vector<F> sizes(total+1);
-
-    std::fill_n(sizes.begin(), total+1, 1);
-
-    for ( auto& it: rg )
-    {
-        ID s1 = sets.find_set(std::get<1>(it));
-        ID s2 = sets.find_set(std::get<2>(it));
-
-        F  w  = static_cast<F>(1) - std::get<0>(it);
-
-        if ( s1 != s2 )
-        {
-            F v1 = int_val[s1] + k / sizes[s1];
-            F v2 = int_val[s2] + k / sizes[s2];
-
-            if ( w < std::min(v1, v2) )
-            {
-                sizes[s1] += sizes[s2];
-                sizes[s2] = 0;
-
-                int_val[s1] = w;
-                int_val[s2] = 0;
-
-                ID s = sets.join(s1,s2);
-
-                std::swap(sizes[s1], sizes[s]);
-                std::swap(int_val[s1], int_val[s]);
-            }
-        }
-    }
-
-    std::cout << "Done with merging" << std::endl;
-
-    std::vector<ID> remaps(sizes.size());
-
-    ID next_id = 1;
-
-    for ( ID id = 0; id < sizes.size(); ++id )
-    {
-        ID s = sets.find_set(id);
-        if ( s && (remaps[s] == 0) )
-        {
-            remaps[s] = next_id;
-            ++next_id;
-        }
-    }
-
-    ID* seg_raw = seg.data();
-
-    for ( std::ptrdiff_t idx = 0; idx < total; ++idx )
-    {
-        seg_raw[idx] = remaps[sets.find_set(seg_raw[idx])];
-    }
-
-    std::cout << "Done with remapping, total: " << (next_id-1) << std::endl;
-
-    region_graph<ID,F> new_rg;
-
-    for ( auto& it: rg )
-    {
-        ID s1 = remaps[sets.find_set(std::get<1>(it))];
-        ID s2 = remaps[sets.find_set(std::get<2>(it))];
-
-        if ( s1 != s2 && s1 && s2 )
-        {
-            auto mm = std::minmax(s1,s2);
-            new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
-        }
-    }
-
-    rg.swap(new_rg);
-
-    std::cout << "Done with updating the region graph, size: "
-              << rg.size() << std::endl;
-
-    return std::get<0>(dummy);
-}
 
 template< typename ID,
           typename F,
@@ -379,20 +278,11 @@ void fill_void( ID* arr, std::size_t len )
     }
 }
 
-void compare_volumes( const std::string& gtf, const std::string& wsf,
-                      std::size_t size )
+std::pair<double,double>
+compare_volumes( volume<uint32_t>& gt,
+                 volume<uint32_t>& ws,
+                 std::size_t size )
 {
-    volume_ptr<uint32_t> gt_ptr = read_volume<uint32_t>(gtf, size);
-    volume_ptr<uint32_t> ws_ptr = read_volume<uint32_t>(wsf, size);
-    //volume_ptr<uint32_t> ws_ptr = get_dummy_segmentation<uint32_t>(size,size,size);
-
-    //fill_void(gt_ptr->data(), size*size*size);
-    //fill_void(ws_ptr->data(), size*size*size);
-
-
-    volume<uint32_t>& gt = *gt_ptr;
-    volume<uint32_t>& ws = *ws_ptr;
-
     std::map<uint32_t, std::map<uint32_t, uint32_t>> map;
     std::map<uint32_t, std::map<uint32_t, uint32_t>> invmap;
     std::map<uint32_t, uint32_t> setg, setw;
@@ -404,9 +294,9 @@ void compare_volumes( const std::string& gtf, const std::string& wsf,
     double s_sq = 0;
 
     double total = 0;
-    std::map<uint32_t, std::map<uint32_t, double>> p_ij;
+    std::map<uint32_t, std::map<uint32_t, std::size_t>> p_ij;
 
-    std::map<uint32_t, double> s_i, t_j;
+    std::map<uint32_t, std::size_t> s_i, t_j;
 
     for ( std::ptrdiff_t z = 28; z < size-28; ++z )
         for ( std::ptrdiff_t y = 28; y < size-28; ++y )
@@ -417,12 +307,11 @@ void compare_volumes( const std::string& gtf, const std::string& wsf,
 
                 if ( gtv )
                 {
-                    total += 1;
+                    ++total;
 
-                    p_ij[gtv][wsv] += 1;
-
-                    s_i[wsv] += 1;
-                    t_j[gtv] += 1;
+                    ++p_ij[gtv][wsv];
+                    ++s_i[wsv];
+                    ++t_j[gtv];
                 }
             }
 
@@ -431,22 +320,23 @@ void compare_volumes( const std::string& gtf, const std::string& wsf,
     {
         for ( auto& b: a.second )
         {
-            sum_p_ij += (b.second / total) * (b.second / total);
+            sum_p_ij += b.second * b.second;
         }
     }
 
     double sum_t_k = 0;
     for ( auto& a: t_j )
     {
-        sum_t_k += (a.second / total) * (a.second / total);
+        sum_t_k += a.second * a.second;
     }
 
 
     double sum_s_k = 0;
     for ( auto& a: s_i )
     {
-        sum_s_k += (a.second / total) * (a.second / total);
+        sum_s_k += a.second * a.second;
     }
+
 
     //std::cout << sum_p_ij << "\n";
     std::cout << "Rand Split: " << (sum_p_ij/sum_t_k) << "\n";
@@ -454,82 +344,348 @@ void compare_volumes( const std::string& gtf, const std::string& wsf,
     std::cout << "Rand alpha: " << (sum_p_ij*2/(sum_t_k+sum_s_k)) << "\n";
 
 
-    // for ( auto& a: invmap )
-    // {
-    //     std::vector<uint32_t> v;
-    //     double sum = 0;
-    //     for ( auto& b: a.second )
-    //     {
-    //         v.push_back(b.second);
-    //         sum += b.second;
-    //     }
-    //     rand_split += square_sum(v);
-    //     t_sq += sum;
-    // }
+    return std::make_pair(sum_p_ij/sum_t_k,
+                          sum_p_ij/sum_s_k);
+}
 
+std::vector<double> reduce( const std::vector<double>& v )
+{
+    std::vector<double> ret;
+    ret.push_back(v[0]);
+    ret.push_back(v[1]);
 
-    // for ( auto& a: map )
-    // {
-    //     if ( a.second.size() > 1 )
-    //     {
-    //         std::vector<uint32_t> v;
-    //         double sum;
-    //         for ( auto& b: a.second )
-    //         {
-    //             v.push_back(b.second);
-    //             sum += b.second;
-    //         }
-    //         rand_merge += square_sum(v) / sum;
-    //     }
-    // }
+    for ( std::size_t i = 2; i + 4 < v.size(); i += 2 )
+    {
+        double oldx = v[i-2];
+        double oldy = v[i-1];
 
-    // std::cout << "Total gt: " << setg.size() << "\n";
-    // std::cout << "Total ws: " << setw.size() << "\n";
+        double x = v[i];
+        double y = v[i+1];
 
-    // std::cout << "Rand Split: " << rand_split << "\n";
-    // std::cout << "Rand Merge: " << rand_merge << "\n";
+        double nextx = v[i+2];
+        double nexty = v[i+3];
 
+        if ( std::abs(oldx-x) > 0.0001 ||
+             std::abs(oldy-y) > 0.0001 ||
+             std::abs(nextx-x) > 0.0001 ||
+             std::abs(nexty-y) > 0.0001 )
+        {
+            ret.push_back(x);
+            ret.push_back(y);
+        }
+    }
+
+    ret.push_back(v[v.size()-2]);
+    ret.push_back(v[v.size()-1]);
+
+    return ret;
 }
 
 
 
+////////////////////////////////////////////////////////////////////////////
+//
+// Felzenszwalb implementation
+
+void process_felzenszwalb( volume_ptr<uint32_t> gt_ptr,
+                           affinity_graph_ptr<float> aff,
+                           double k,
+                           const std::string& fname )
+{
+    auto seg = felzenszwalb<uint32_t>(aff, k);
+    write_volume(fname + ".dat", seg);
+
+    auto prc = reduce(felzenszwalb_err(gt_ptr, aff, k));
+    write_to_file(fname + "_pr.dat", prc.data(), prc.size());
+}
+
+////////////////////////////////////////////////////////////////////////////
+//
+// Const above threshold
+
+void process_const_above_thold( volume_ptr<uint32_t> gt_ptr,
+                                affinity_graph_ptr<float> aff,
+                                float thold,
+                                std::size_t sz,
+                                const std::string& fname )
+{
+    volume_ptr<uint32_t>     segg  ;
+    std::vector<std::size_t> counts;
+
+    {
+        std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+        auto rg = get_region_graph(aff, segg, counts.size()-1);
+
+        merge_segments_with_function
+            (segg, rg, counts,
+             const_above_threshold(thold, sz), 100);
+
+        write_volume(fname + ".dat", segg);
+    }
+
+    {
+        std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+        auto rg = get_region_graph(aff, segg, counts.size()-1);
+
+        auto r = reduce(merge_segments_with_function_err
+                        (segg, gt_ptr, rg, counts,
+                         const_above_threshold(thold, sz), 100));
+
+        write_to_file(fname + "_pr.dat", r.data(), r.size());
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+//
+// Const above threshold
+
+void process_square( volume_ptr<uint32_t> gt_ptr,
+                     affinity_graph_ptr<float> aff,
+                     std::size_t atlow,
+                     std::size_t at1,
+                     const std::string& fname )
+{
+    volume_ptr<uint32_t>     segg  ;
+    std::vector<std::size_t> counts;
+
+    {
+        std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+        auto rg = get_region_graph(aff, segg, counts.size()-1);
+
+        merge_segments_with_function
+            (segg, rg, counts,
+             square_fn(0.3, atlow, at1), 100);
+
+        write_volume(fname + ".dat", segg);
+    }
+
+    {
+        std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+        auto rg = get_region_graph(aff, segg, counts.size()-1);
+
+        auto r = reduce(merge_segments_with_function_err
+                        (segg, gt_ptr, rg, counts,
+                         square_fn(0.3, atlow, at1), 100));
+
+        write_to_file(fname + "_pr.dat", r.data(), r.size());
+    }
+}
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////
+//
+// Felzenszwalb implementation
+
+// void process_square_fn( volume_ptr<uint32_t> gt_ptr,
+//                         affinity_graph_ptr<float> aff,
+//                         std::size_t k,
+//                         const std::string& fname )
+// {
+//     volume_ptr<uint32_t>     segg  ;
+//     std::vector<std::size_t> counts;
+
+//     {
+//         std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+//         auto rg = get_region_graph(aff, segg, counts.size()-1);
+
+//         auto r = reduce(merge_segments_with_function_err
+//                         (segg, gt_ptr, rg, counts,
+//                          square_fn(0.3, 50000, 250), 100));
+
+//         write_to_file("./experiments/square/50000_pr.dat",
+//                       r.data(), r.size());
+
+//         write_volume("./experiments/square/50000.dat", segg);
+//     }
+
+//     auto seg = felzenszwalb<uint32_t>(aff, k);
+//     write_volume(fname + ".dat", seg);
+
+//     auto prc = reduce(felzenszwalb_err(gt_ptr, aff, k));
+//     write_to_file(fname + "_pr.dat", prc.data(), prc.size());
+// }
+
 int main()
 {
-    compare_volumes("../../../data/gt.in", "../voutall4x.out", 256);
+    // load the ground truth and the affinity graph
 
-    //return 0;
-
-    affinity_graph_ptr<float> aff = read_affinity_graph<float>("../../../data/ws_test_256.raw",
-                                                               256, 256, 256);
-
-    // for ( float f = 0.1; f < 1.05; f += 0.1 )
-    // {
-
-    //     auto rrr = other_alg<uint32_t>(aff, f);
-    //     write_volume("voutoth" + std::to_string(f) + ".out", rrr);
-    //     compare_volumes("../../data/gt.in", "./voutoth" + std::to_string(f) + ".out", 256);
-    // }
-
-    // return 0;
-
-    // volume_ptr<uint32_t> sptr = get_dummy_segmentation<uint32_t>(256, 256, 256);
-    // std::vector<std::size_t> cnts(256*256*256+1);
-    // std::fill_n(cnts.begin(), 256*256*256+1, 1);
+    volume_ptr<uint32_t> gt_ptr =
+        read_volume<uint32_t>("../../../data/gt.in", 256);
 
 
-    // auto rgf = get_region_graph(aff, sptr, cnts.size()-1);
-
-    // merge_segments_with_function(sptr, rgf, cnts, limit_fn2, 100);
-
-    // write_volume("voutall4dir.out", sptr);
-
-    // return 0;
+    affinity_graph_ptr<float> aff =
+        read_affinity_graph<float>("../../../data/ws_test_256.raw",
+                                   256, 256, 256);
 
 
+    if ( 1 )
+    {
+        volume_ptr<uint32_t>     seg   ;
+        std::vector<std::size_t> counts;
+
+        std::tie(seg, counts) = watershed<uint32_t>(aff, -1, 2);
+        write_volume("./experiments/watershed/basic.out", seg);
+
+        std::tie(seg, counts) = watershed<uint32_t>(aff, 0.1, 0.99);
+        write_volume("./experiments/watershed/minmax.out", seg);
+
+        // {
+        //     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+
+        //     auto rg = get_region_graph(aff, segg, counts.size()-1);
+        //     merge_segments_with_function(segg, rg,
+        //                                  counts, limit_fn2, 100);
+
+        //     write_volume("./experiments/voutall.out", segg);
+        // }
+
+        return 0;
+    }
 
 
-    std::cout << "Multiplied" << std::endl;
+    //
+    // Linear
+    //
+    if ( 0 )
+    {
+        std::vector<double> r;
+        for ( std::size_t thold = 200; thold <= 100000; thold += 100 )
+        {
+            if ( thold > 1000 ) thold += 900;
+            if ( thold > 10000 ) thold += 9000;
 
+            //double k = static_cast<double>(thold) / 1000;
+
+            std::cout << "THOLD: " << thold << "\n";
+
+            volume_ptr<uint32_t>     seg   ;
+            std::vector<std::size_t> counts;
+
+            {
+                std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+                auto rg = get_region_graph(aff, seg , counts.size()-1);
+
+                merge_segments_with_function
+                    (seg, rg, counts,
+                     linear(thold), 10);
+
+                write_volume("experiments/linear/"
+                             + std::to_string(thold) + ".dat", seg);
+
+                auto x = compare_volumes(*gt_ptr, *seg, 256);
+                r.push_back(x.first);
+                r.push_back(x.second);
+            }
+            write_to_file("experiments/linear.dat", r.data(), r.size());
+        }
+
+        //return 0;
+    }
+
+    //
+    // Square
+    //
+    if ( 1 )
+    {
+        std::vector<double> r;
+        for ( std::size_t thold = 200; thold <= 100000; thold += 100 )
+        {
+            if ( thold > 1000 ) thold += 900;
+            if ( thold > 10000 ) thold += 9000;
+
+            std::cout << "THOLD: " << thold << "\n";
+
+            volume_ptr<uint32_t>     seg   ;
+            std::vector<std::size_t> counts;
+
+            {
+                std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+                auto rg = get_region_graph(aff, seg , counts.size()-1);
+
+                merge_segments_with_function
+                    (seg, rg, counts,
+                     square(thold), 10);
+
+                write_volume("experiments/square/"
+                             + std::to_string(thold) + ".dat", seg);
+
+                auto x = compare_volumes(*gt_ptr, *seg, 256);
+                r.push_back(x.first);
+                r.push_back(x.second);
+            }
+            write_to_file("experiments/square.dat", r.data(), r.size());
+        }
+
+//        return 0;
+    }
+
+    //
+    // Felzenszwalb implementation
+    //
+    if ( 1 )
+    {
+        std::vector<double> r;
+        for ( std::size_t thold = 100; thold <= 50000; thold += 100 )
+        {
+            if ( thold > 1000 ) thold += 900;
+            if ( thold > 10000 ) thold += 9000;
+
+            double k = static_cast<double>(thold) / 1000;
+
+            auto seg = felzenszwalb<uint32_t>(aff, k);
+            write_volume("experiments/felzenszwalb/"
+                         + std::to_string(k) + ".dat", seg);
+
+            auto x = compare_volumes(*gt_ptr, *seg, 256);
+
+            r.push_back(x.first);
+            r.push_back(x.second);
+        }
+        write_to_file("experiments/felzenszwalb.dat", r.data(), r.size());
+    }
+
+    //
+    // simple thold fn
+    //
+    if ( 1 )
+    {
+
+
+        std::vector<double> r;
+        for ( std::size_t thold = 100; thold <= 50000; thold += 100 )
+        {
+            if ( thold > 1000 ) thold += 900;
+            if ( thold > 10000 ) thold += 9000;
+
+            std::cout << "THOLD: " << thold << "\n";
+
+            volume_ptr<uint32_t>     seg   ;
+            std::vector<std::size_t> counts;
+
+            {
+                std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+                auto rg = get_region_graph(aff, seg , counts.size()-1);
+
+                merge_segments_with_function
+                    (seg, rg, counts,
+                     const_above_threshold(0.3, thold), 100);
+
+                write_volume("experiments/threshold/"
+                             + std::to_string(thold) + ".dat", seg);
+
+                auto x = compare_volumes(*gt_ptr, *seg, 256);
+                r.push_back(x.first);
+                r.push_back(x.second);
+            }
+        }
+        write_to_file("experiments/threshold.dat", r.data(), r.size());
+    }
+
+    return 0;
 
     volume_ptr<uint32_t>     segg  ;
     std::vector<std::size_t> counts;
@@ -579,10 +735,11 @@ int main()
 
     //write_volume("voutanouther.out", segg);
 
-    volume_ptr<uint32_t> gt_ptr = read_volume<uint32_t>("../../../data/gt.in",
-                                                        256);
+    auto r = merge_segments_with_function_err(segg, gt_ptr, rg,
+                                              counts, limit_fn2, 100);
 
-    merge_segments_with_function_err(segg, gt_ptr, rg, counts, limit_fn4, 100);
+    write_to_file("./experiments/custom/precision_recall.dat",
+                  r.data(), r.size());
 
     write_volume("voutall4x.out", segg);
 
