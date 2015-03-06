@@ -70,7 +70,7 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
-\tracking_changes true
+\tracking_changes false
 \output_changes false
 \html_math_output 0
 \html_css_as_file 0
@@ -151,8 +151,8 @@ We present a method for hierarchical image segmentation that defines a disaffini
 ty graph on the image, over-segments it into watershed basins, defines a
  new graph on the basins, and then merges basins with a modified, size-dependent
  version of single linkage clustering.
- The efficiency of the method makes is suitable for segmenting large 3D
- volumes.
+ The quasilinear runtime of the method makes it suitable for segmenting
+ large images.
  We illustrate the method on the challenging problem of segmenting 3D electron
  microscopic brain images.
  
@@ -180,18 +180,25 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-When segmenting very large volumes an efficient segmentation algorithms
- are required.
- We can obtain terabyte scale volumes of EM data, we need close to linear
- time segmentation methods.
- Watershed is known to be fast but it tends to produce severe over-segmentation,
- which can be counteracted by pre- and/or post-processing.
+Light and electron microscopy can now produce terascale 3D images within
+ hours (tomer2012quantitative, http://www.nature.com/nature/journal/v503/n7474/ful
+l/503147a.html?WT.ec_id=NATURE-20131107).
+ For segmenting such large images, efficient algorithms are important.
+ The watershed algorithm has linear runtime but tends to produce severe
+ over-segmentation, which is typically counteracted by pre- and/or post-processi
+ng (cite).
+ Here we update this classic approach, providing a new algorithm for watershed
+ on edge-weighted graphs, and a novel post-processing method based on single
+ linkage clustering modified to use prior knowledge of segment sizes.
 \end_layout
 
 \begin_layout Standard
-Our watershed transform works by finding the basins of attraction of steepest
- descent dynamics, and has runtime that is linear in the number of graph
- edges.
+The input is assumed to be a disaffinity graph, in which a small edge weight
+ indicates that the image voxels connected by the edge are likely to belong
+ to the same segment.
+ Our watershed transform works by finding the basins of attraction of steepest
+ descent dynamics, and has runtime that is linear in the number of disaffinity
+ graph edges.
  It yields basins similar to those of watershed cuts 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -199,14 +206,14 @@ key "Cousty2009"
 
 \end_inset
 
-, except that plateaus are divided between basins consistently and in a
- more even way.
+(cite Cousty 2010), except that plateaus are divided between basins consistently
+ and in a more even way.
  Our post-processing starts by examining the new graph on the basins, in
  which the edge connecting two basins is assigned the same weight as the
  minimal edge connecting the basins in the original disaffinity graph.
- Then single linkage clustering yields a hierarchical segmentation of the
- original image in which the lowest level consists of the watershed basins.
- The levels of single linkage clustering yield flat segmentations in which
+ Then single linkage clustering yields a hierarchical segmentation in which
+ the lowest level consists of the watershed basins.
+ Each level of single linkage clustering is a flat segmentation in which
  some of the basins are merged.
  If we only expect to use levels above some minimum value 
 \begin_inset Formula $T_{\min}$
@@ -230,31 +237,11 @@ We also show how to modify single linkage clustering by making it depend
  of true segments, and is shown to have an efficient implementation because
  size is a property that is guaranteed to increase with each agglomerative
  step.
- 
+ The runtime of single linkage clustering is quasilinear in the number of
+ edges in the watershed basin graph.
 \end_layout
 
 \begin_layout Standard
-
-\series bold
-Related work.
- 
-\series default
-Linear time watershed transform algorithms on graphs are studied by Coutsy
- 
-\emph on
-at al.
-
-\emph default
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Cousty2009,Cousty2010"
-
-\end_inset
-
-.
- Alternative close to linear time agglomerative clustering methods are introduce
-d by 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Felzenszwalb2004"
@@ -268,15 +255,16 @@ key "Guimaraes2012"
 
 \end_inset
 
-.
- Their methods are also based on satisfying binary predicates of cluster
- pairs.
- They start from the set of vertices as individual clusters and produces
- final segmentation in near linear time for integral and 
-\begin_inset Formula $O(\left|E\right|\log\left|E\right|)$
+ have proposed efficient image segmentation methods that are quasilinear
+ in the number of edges in the disaffinity graph.
+ We show that our method produces superior results to that of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Felzenszwalb2004"
+
 \end_inset
 
- for real valued weights of the edges.
+ for the segmentation of neural images from serial electron microscopy.
 \end_layout
 
 \begin_layout Section
@@ -1823,21 +1811,11 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-(a) EM image; (b) volumetric disaffinity graph, the 3 directions of disaffinitie
-s are represented with RGB; (c) watershed transform output; (d) watershed
- transform output with 
-\begin_inset Formula $T_{\min}=0.01$
+Segmentation of a 
+\begin_inset Formula $256^{3}$
 \end_inset
 
- and 
-\begin_inset Formula $T_{\max}=0.9$
-\end_inset
-
-; (e) ground truth; (f) our method with 
-\begin_inset Formula $\omega(w)=3000\left(1-w\right)$
-\end_inset
-
-; (g), (h) segmentation by 
+ EM image by our method and that of 
 \emph on
 
 \begin_inset CommandInset citation
@@ -1846,17 +1824,48 @@ key "Felzenszwalb2004"
 
 \end_inset
 
- 
+
 \emph default
-with 
-\begin_inset Formula $k=0.5$
+ (a) slice of the raw image; (b) slice of nearest neighbor disaffinity graph,
+ with 
+\begin_inset Formula $xyz$
+\end_inset
+
+ disaffinities represented with RGB; (c) watershed transform of raw image;
+ (d) watershed transform after preprocessing with 
+\begin_inset Formula $T_{\min}=0.01$
 \end_inset
 
  and 
+\begin_inset Formula $T_{\max}=0.9$
+\end_inset
+
+; (e) post-processing with size-dependent single linkage clustering using
+ 
+\begin_inset Formula $\omega(w)=3000\left(1-w\right)$
+\end_inset
+
+; (f, g)
+\emph on
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Felzenszwalb2004"
+
+\end_inset
+
+
+\emph default
+ with 
+\begin_inset Formula $k=0.5$
+\end_inset
+
+ yields oversegmentation while 
 \begin_inset Formula $k=10$
 \end_inset
 
- respectively.
+ merges neurons.
+ (h) ground truth segmentation from human expert; 
 \end_layout
 
 \end_inset
@@ -1878,43 +1887,32 @@ Results
 \end_layout
 
 \begin_layout Standard
-We have applied our method to 3D electron microscopic brain images obtained
- by [cite e2198] (Fig.
+We applied our method to 3D electron microscopic brain images [cite e2198,
+ Briggman et al.
+ (2011)] (Fig.
  3(a)).
- We obtained disaffinity graphs using convolutional neural networks described
- by Turaga 
-\emph on
-et al.
-
-\emph default
- 
+ Disaffinity graphs were computed using convolutional networks [Helmstaedter
+ et al.
+ (2013)] (Fig.
+ 3(b)).
+ The watershed transform produced severe oversegmentation (Fig.
+ 3(a)), which was reduced by pre-processing the disaffinity graph with upper
+ and lower thresholds (Fig.
+ 3(b)).
+ Size-dependent single linkage clustering further reduced oversegmentation
+ (Fig.
+ 3.
+ The first function enforced all the segments to be at least some size.
+ The second and the third functions require the minimal size of the segment
+ to be proportional to the affinity (or the square of affinity).
+ We also applied the algorithm of 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Turaga2009,Turaga2010"
+key "Felzenszwalb2004"
 
 \end_inset
 
- (Fig.
- 3(b)).
- We define the size of a segment to be the number of 3D pixels contained
- inside the segment.
- In Fig 3.
- we show the results of the watershed transform (Fig.
- 3(c)), the watershed transform on the pre-processed graph with thresholds
- 
-\begin_inset Formula $T_{\min}=0.01$
-\end_inset
-
- and 
-\begin_inset Formula $T_{\max}=0.9$
-\end_inset
-
- (Fig.
- 3(d)).
- We have tested our method on three intuitive, parametrized, threshold functions.
- The first one enforces all the segments to be at least some size, second
- and the third one require the minimal size of the segment to be proportional
- to the affinity (or the square of affinity).
+ ....
 \end_layout
 
 \begin_layout Standard
@@ -1981,14 +1979,24 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-(a) Performance of our method and the method described in 
+Scores of our method and that of 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Felzenszwalb2004"
 
 \end_inset
 
-; (b) Segmentation obtained by our method with 
+ relative to the ground truth segmentation (a) Our method with several threshold
+ functions, versus that of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Felzenszwalb2004"
+
+\end_inset
+
+ applied to disaffinity graph and to watershed basin graph.
+ Upper right is better, lower left is worse; (b) Segmentation obtained by
+ our method with 
 \begin_inset Formula $\omega(w)=3000(1-w)$
 \end_inset
 
@@ -2011,28 +2019,24 @@ key "Felzenszwalb2004"
 Measuring the quality of the segmentations.
  
 \series default
-Usually, in order for the segmenttion to be usable in practice, some human
- corrections are required.
- A good metric for evaluating a segmentation should ideally tell us how
- much manual corrections are needed.
- This is typically done by measuring the proposed segmentation to the ground
- truth using foreground-restricted Rand Index 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Rand2009"
+We evaluated the segmentations by comparing to the ground truth generated
+ by a human expert.
+ Split and merge scores were computed by
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+V_{\textrm{split}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}t_{k}^{2}}\textrm{ and }V_{\textrm{merge}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}s_{k}^{2}}
+\end{equation}
 
 \end_inset
 
-.
- However it has problems when the number of segments is large as the dynamics
- range gets smaller.
- A better metric is introduced by Arganda at al, separating the rand indices
- for splits and mergers.
- Let 
+where 
 \begin_inset Formula $p_{ij}$
 \end_inset
 
- is the probability that a randomly chosen pixel belongs to segment 
+ is the probability that a randomly chosen voxel belongs to segment 
 \begin_inset Formula $i$
 \end_inset
 
@@ -2040,7 +2044,7 @@ key "Rand2009"
 \begin_inset Formula $j$
 \end_inset
 
- in the ground truth, let 
+ in the ground truth, 
 \begin_inset Formula $s_{i}$
 \end_inset
 
@@ -2048,87 +2052,43 @@ key "Rand2009"
 \begin_inset Formula $t_{j}$
 \end_inset
 
- be the probabilities of randomly chosen pixel belonging to the component
+ are probabilities of a randomly chosen voxel belonging to predicted segment
  
 \begin_inset Formula $i$
 \end_inset
 
- in the proposed segmentation and component 
+ and ground truth segment 
 \begin_inset Formula $j$
 \end_inset
 
- in the ground truth respectively.
- The Rand split score and Rand merge score are defined as follows, with
- the higher value representing better segmentation:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-V_{\textrm{split}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}t_{k}^{2}}\textrm{ and }V_{\textrm{merge}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}s_{k}^{2}}
-\end{equation}
+ respectively.
+ The scores are similar to the Rand index, a well-known metric for clustering
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Rand2009"
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-In Fig.
- 4(a) we compare our method with various threshold functions to the method
- described in
+, except that they distinguish between split and merge errors.
+ Higher scores mean fewer errors.
+ Scoring was restricted to the foreground voxels in the ground truth.
+ We tested our method with several threshold functions, and also applied
+ the method of 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Felzenszwalb2004"
 
 \end_inset
 
- applied both to the original graph and the 
+ to the disaffinity graph and to the 
 \emph on
 watershed basin graph
 \emph default
 .
- Our method shows superior results, a sample segmentation is shown on Fig.
- 4(b).
-\end_layout
-
-\begin_layout Standard
-Even though the two algorithm seem similar, the design of the two predicates
- differ significately.
- In order to achieve a final segmentation that is not too coarse, as defined
- in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
-, the predicate has to guarantee that once it satisfied for a pair of clusters,
- the two clusters will be part of the final segmentation.
- Our predicate is loosening the requirement which allows us to be much more
- aggresive in merging clusters, which in practice gives better results.
-\end_layout
-
-\begin_layout Section
-Conclusions
-\end_layout
-
-\begin_layout Standard
-Our method is very suitable for segmenting images where we have prior knowledge
- about the size of the true segments, which makes it ideal for segmenting
- 3D EM images.
- For conservative threshold functions our method can greatly reduce the
- number of segments without introducing mergers, which makes it ideal as
- a pre-processing step for methods operating on watershed segmentation 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Mustafa,Chklovskii2010"
-
-\end_inset
-
-.
- Useful when proofreading done by non-experts (just by merging segments)
- eyewire ref,
+ Our method achieved better scores (Fig.
+ 4(a)).
+ 
 \end_layout
 
 \begin_layout Standard
