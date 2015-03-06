@@ -75,7 +75,6 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -190403614 "Aleksandar Zlateski" 
 \end_header
 
 \begin_body
@@ -1904,59 +1903,10 @@ key "Turaga2009,Turaga2010"
 \end_layout
 
 \begin_layout Standard
-
-\series bold
-Measuring the quality of the segmentations.
- 
-\series default
-A good metric for evaluating a segmentation should ideally tell us how good
- the segmentation is for using in practice, how much manual corrections
- are needed to acheve the correct segmentation.
- Often foreground-restricted Rand Index 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Rand2009"
-
-\end_inset
-
- between the proposed segmentation and the ground truth is used.
- However it has problems when the number of segments is large as the dynamics
- range gets smaller.
- A better metric is introduced by introduced by Arganda at al, separating
- the rand indices for splits and mergers.
- Let 
-\begin_inset Formula $p_{ij}$
-\end_inset
-
- is the probability that a randomly chosen pixel belongs to segiment 
-\begin_inset Formula $i$
-\end_inset
-
- in the proposed segmentation and segment 
-\begin_inset Formula $j$
-\end_inset
-
- in the ground truth.
- The Rand split score and Rand merge score are defined as follows, with
- the higher value representing better segmentation:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-V_{\textrm{split}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}t_{k}^{2}}\textrm{ and }V_{\textrm{merge}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}s_{k}^{2}}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -2042,7 +1992,71 @@ key "Felzenszwalb2004"
 
 \begin_layout Standard
 
-\change_inserted -190403614 1425662721
+\series bold
+Measuring the quality of the segmentations.
+ 
+\series default
+A good metric for evaluating a segmentation should ideally tell us how good
+ the segmentation is for using in practice, how much manual corrections
+ are needed to acheve the correct segmentation.
+ Often foreground-restricted Rand Index 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Rand2009"
+
+\end_inset
+
+ between the proposed segmentation and the ground truth is used.
+ However it has problems when the number of segments is large as the dynamics
+ range gets smaller.
+ A better metric is introduced by introduced by Arganda at al, separating
+ the rand indices for splits and mergers.
+ Let 
+\begin_inset Formula $p_{ij}$
+\end_inset
+
+ is the probability that a randomly chosen pixel belongs to segiment 
+\begin_inset Formula $i$
+\end_inset
+
+ in the proposed segmentation and segment 
+\begin_inset Formula $j$
+\end_inset
+
+ in the ground truth, let 
+\begin_inset Formula $s_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $t_{j}$
+\end_inset
+
+ be the probability of randombly chosen pixel beloning to the component
+ 
+\begin_inset Formula $i$
+\end_inset
+
+ in the proposed segmentation and component 
+\begin_inset Formula $j$
+\end_inset
+
+ in the ground truth respectivelly.
+ The Rand split score and Rand merge score are defined as follows, with
+ the higher value representing better segmentation:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+V_{\textrm{split}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}t_{k}^{2}}\textrm{ and }V_{\textrm{merge}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}s_{k}^{2}}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 In Fig.
  4(a) we compare our method with various threshold functions to the method
  described in
@@ -2059,29 +2073,10 @@ watershed basin graph
 .
  Our method shows superior results, a sample segmentation is shown on Fig.
  4(b).
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1425662562
-Our method greatly outperforms 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
-.
- 
-\change_unchanged
-We see that the method blah starts introducing mergers for some values of
- k while there's still a lot of splits around.
- It's because the other method has stricter guarantees (not to corse or
- fine) where as we we relax the too corse requirement and just hierustically
- produce a segmentation that is not too fine.
- (not sure we need this)
+A sentence explaining the results (why would we expect this?)
 \end_layout
 
 \begin_layout Section
