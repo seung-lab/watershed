@@ -1,7 +1,5 @@
 //#pragma once
 
-#include <boost/multi_array.hpp>
-#include <boost/multi_array/types.hpp>
 #include <memory>
 #include <type_traits>
 
@@ -22,119 +20,9 @@
 
 #include <zi/disjoint_sets/disjoint_sets.hpp>
 
-template < typename T >
-void clear_container( T& c )
-{
-    T n;
-    n.swap(c);
-}
-
-template < typename T > struct watershed_traits;
-
-template <> struct watershed_traits<uint32_t>
-{
-    static const uint32_t high_bit = 0x80000000;
-    static const uint32_t mask     = 0x7FFFFFFF;
-    static const uint32_t visited  = 0x00001000;
-    static const uint32_t dir_mask = 0x0000007F;
-};
-
-template <> struct watershed_traits<uint64_t>
-{
-    static const uint64_t high_bit = 0x8000000000000000LL;
-    static const uint64_t mask     = 0x7FFFFFFFFFFFFFFFLL;
-    static const uint64_t visited  = 0x0000000000001000LL;
-    static const uint64_t dir_mask = 0x000000000000007FLL;
-};
-
-template < typename T >
-using volume = boost::multi_array<T,3>;
-
-template < typename T >
-using affinity_graph = boost::multi_array<T,4>;
-
-template < typename T >
-using volume_ptr = std::shared_ptr<volume<T>>;
-
-template < typename T >
-using affinity_graph_ptr = std::shared_ptr<affinity_graph<T>>;
 
 
-template < typename T >
-inline bool read_from_file( const std::string& fname, T* data, std::size_t n )
-{
-    FILE* f = std::fopen(fname.c_str(), "rbXS");
 
-    if ( !f )
-    {
-        return false;
-    }
-
-    std::size_t nread = std::fread(data, sizeof(T), n, f);
-
-    std::fclose(f);
-
-    return nread == n;
-}
-
-template < typename T >
-inline affinity_graph_ptr<T>
-read_affinity_graph_from_file( const std::string& fname,
-                               std::size_t xsize,
-                               std::size_t ysize,
-                               std::size_t zsize )
-{
-    affinity_graph_ptr<T> aff(new affinity_graph<T>
-                              (boost::extents[xsize][ysize][zsize][3],
-                               boost::fortran_storage_order()));
-
-    if ( !read_from_file(fname, aff->data(), xsize*ysize*zsize*3) )
-    {
-        throw 0;
-    }
-
-    return aff;
-}
-
-template < typename T >
-inline volume_ptr<T>
-read_volume( const std::string& fname, std::size_t wsize )
-{
-    volume_ptr<T> vol(new volume<T>
-                      (boost::extents[wsize][wsize][wsize],
-                       boost::fortran_storage_order()));
-
-    if ( !read_from_file(fname, vol->data(), wsize*wsize*wsize) )
-    {
-        throw 0;
-    }
-
-    return vol;
-}
-
-template < typename T >
-inline bool
-write_volume_to_file( const std::string& fname,
-                      const volume_ptr<T>& vol )
-{
-    std::ofstream f(fname.c_str(), (std::ios::out | std::ios::binary) );
-
-    if ( !f )
-    {
-        return false;
-    }
-
-    f.write( reinterpret_cast<char*>(vol->data()),
-             vol->shape()[0] * vol->shape()[1] * vol->shape()[2] * sizeof(T));
-
-    return true;
-}
-
-template< typename ID, typename F >
-using region_graph = std::vector<std::tuple<F,ID,ID>>;
-
-template< typename ID, typename F >
-using region_graph_ptr = std::shared_ptr<region_graph<ID,F>>;
 
 template< typename ID, typename F >
 inline bool write_region_graph_to_file( const std::string& fname,
@@ -283,14 +171,40 @@ get_region_graph( const affinity_graph_ptr<F>& aff_ptr,
 
     std::cout << "Region graph size: " << rg.size() << std::endl;
 
-    std::sort(std::begin(rg), std::end(rg),
-              std::greater<std::tuple<F,ID,ID>>());
+    std::stable_sort(std::begin(rg), std::end(rg),
+                     std::greater<std::tuple<F,ID,ID>>());
 
     std::cout << "Sorted" << std::endl;
 
     return rg_ptr;
 }
 
+template< typename ID >
+inline volume_ptr<ID> get_dummy_segmentation( std::size_t xdim,
+                                              std::size_t ydim,
+                                              std::size_t zdim )
+{
+
+    volume_ptr<ID> seg_ptr( new volume<ID>(boost::extents[xdim][ydim][zdim],
+                                           boost::fortran_storage_order()));
+    volume<ID>& seg = *seg_ptr;
+
+    for ( ID i = 0; i < xdim*ydim*zdim; ++i )
+    {
+        seg.data()[i] = i+1;
+    }
+
+    return seg_ptr;
+}
+
+template< typename AG >
+inline void reverse_affinity( AG& ag )
+{
+    for ( auto& a: ag )
+    {
+        std::get<0>(a) = static_cast<float>(1) - std::get<0>(a);
+    }
+}
 
 template< typename ID, typename F, typename L, typename M >
 inline void merge_segments( const volume_ptr<ID>& seg_ptr,
@@ -384,6 +298,108 @@ inline void merge_segments( const volume_ptr<ID>& seg_ptr,
     std::cout << "Done with updating the region graph, size: "
               << rg.size() << std::endl;
 }
+
+
+template< typename ID, typename F, typename K >
+inline volume_ptr<ID> other_alg( const affinity_graph_ptr<F>& aff_ptr,
+                                 const K& kconst )
+{
+    std::ptrdiff_t xdim = aff_ptr->shape()[0];
+    std::ptrdiff_t ydim = aff_ptr->shape()[1];
+    std::ptrdiff_t zdim = aff_ptr->shape()[2];
+
+    std::ptrdiff_t total = xdim * ydim * zdim;
+
+    volume_ptr<ID> seg_ptr = get_dummy_segmentation<ID>(xdim, ydim, zdim);
+    volume<ID>&    seg     = *seg_ptr;
+
+    region_graph_ptr<ID,F> rg_ptr = get_region_graph(aff_ptr, seg_ptr, total);
+    region_graph<ID,F>& rg  = *rg_ptr;
+
+    zi::disjoint_sets<ID> sets(total+1);
+
+    F k = kconst;
+
+    std::vector<F> int_val(total+1);
+    std::vector<F> sizes(total+1);
+
+    std::fill_n(sizes.begin(), total+1, 1);
+
+    for ( auto& it: rg )
+    {
+        ID s1 = sets.find_set(std::get<1>(it));
+        ID s2 = sets.find_set(std::get<2>(it));
+
+        F  w  = static_cast<F>(1) - std::get<0>(it);
+
+        if ( s1 != s2 )
+        {
+            F v1 = int_val[s1] + k / sizes[s1];
+            F v2 = int_val[s2] + k / sizes[s2];
+
+            if ( w < std::min(v1, v2) )
+            {
+                sizes[s1] += sizes[s2];
+                sizes[s2] = 0;
+
+                int_val[s1] = w;
+                int_val[s2] = 0;
+
+                ID s = sets.join(s1,s2);
+
+                std::swap(sizes[s1], sizes[s]);
+                std::swap(int_val[s1], int_val[s]);
+            }
+        }
+    }
+
+    std::cout << "Done with merging" << std::endl;
+
+    std::vector<ID> remaps(sizes.size());
+
+    ID next_id = 1;
+
+    for ( ID id = 0; id < sizes.size(); ++id )
+    {
+        ID s = sets.find_set(id);
+        if ( s && (remaps[s] == 0) )
+        {
+            remaps[s] = next_id;
+            ++next_id;
+        }
+    }
+
+    ID* seg_raw = seg_ptr->data();
+
+    for ( std::ptrdiff_t idx = 0; idx < total; ++idx )
+    {
+        seg_raw[idx] = remaps[sets.find_set(seg_raw[idx])];
+    }
+
+    std::cout << "Done with remapping, total: " << (next_id-1) << std::endl;
+
+    region_graph<ID,F> new_rg;
+
+    for ( auto& it: rg )
+    {
+        ID s1 = remaps[sets.find_set(std::get<1>(it))];
+        ID s2 = remaps[sets.find_set(std::get<2>(it))];
+
+        if ( s1 != s2 && s1 && s2 )
+        {
+            auto mm = std::minmax(s1,s2);
+            new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
+        }
+    }
+
+    rg.swap(new_rg);
+
+    std::cout << "Done with updating the region graph, size: "
+              << rg.size() << std::endl;
+
+    return seg_ptr;
+}
+
 
 template< class C >
 struct is_numeric:
@@ -1091,6 +1107,84 @@ std::size_t limit_fn2( float v )
     return static_cast<std::size_t>(50+v*v*v);
 }
 
+
+std::size_t limit_fn4( float v )
+{
+    if ( v < 0.3 ) return 0;
+
+    return 250 + 50000.0 * (v-0.3)*(v-0.3) / 0.7 / 0.7;
+
+
+    if ( v > 0.98 ) return 5000;
+    if ( v > 0.97 ) return 2000;
+    if ( v > 0.96 ) return 1500;
+    if ( v > 0.95 ) return 500;
+
+    if ( v > 0.5 ) return 250;
+    //return 500;
+    return 100;
+
+    // size threshold based on affinity
+    if ( v > 1 )
+    {
+        return 2000;
+    }
+
+    if ( v < 0.3 )
+    {
+        return 0;
+    }
+
+    if ( v < 0.5 )
+    {
+        return 150;
+    }
+
+    v *= 10;
+
+
+    return static_cast<std::size_t>(50+v*v*v);
+}
+
+
+
+std::size_t limit_fn3( float v )
+{
+    if ( v < 0.3 ) return 0;
+    return 100;
+
+    if ( v > 0.98 ) return 5000;
+    if ( v > 0.97 ) return 2000;
+    if ( v > 0.96 ) return 1500;
+    if ( v > 0.95 ) return 500;
+
+    if ( v > 0.5 ) return 250;
+    //return 500;
+    return 100;
+
+    // size threshold based on affinity
+    if ( v > 1 )
+    {
+        return 2000;
+    }
+
+    if ( v < 0.3 )
+    {
+        return 0;
+    }
+
+    if ( v < 0.5 )
+    {
+        return 150;
+    }
+
+    v *= 10;
+
+
+    return static_cast<std::size_t>(50+v*v*v);
+}
+
+
 template< typename ID, typename F >
 inline volume_ptr<ID>
 get_colormap( const volume_ptr<ID>& orig,
@@ -1138,9 +1232,6 @@ std::size_t get_rand_idx( std::vector<uint32_t>& v)
         return 0;
     }
 
-    std::sort(v.begin(), v.end());
-    //v.pop_back();
-
     std::size_t r = 0;
 
     for ( int i = 0; i < v.size() - 1; ++i )
@@ -1152,11 +1243,43 @@ std::size_t get_rand_idx( std::vector<uint32_t>& v)
     return r;
 }
 
+double square_sum( std::vector<uint32_t>& v)
+{
+    double r = 0;
+
+    for ( const auto& x: v )
+    {
+        r += x*x;
+    }
+
+    return r;
+}
+
+template< typename ID >
+void fill_void( ID* arr, std::size_t len )
+{
+    ID maxi = 0;
+    for ( std::size_t i = 0; i < len; ++i )
+    {
+        maxi = std::max(maxi, arr[i]);
+    }
+
+    for ( std::size_t i = 0; i < len; ++i )
+    {
+        if ( arr[i] == 0 ) arr[i] = ++maxi;
+    }
+}
+
 void compare_volumes( const std::string& gtf, const std::string& wsf,
                       std::size_t size )
 {
     volume_ptr<uint32_t> gt_ptr = read_volume<uint32_t>(gtf, size);
     volume_ptr<uint32_t> ws_ptr = read_volume<uint32_t>(wsf, size);
+    //volume_ptr<uint32_t> ws_ptr = get_dummy_segmentation<uint32_t>(size,size,size);
+
+    //fill_void(gt_ptr->data(), size*size*size);
+    //fill_void(ws_ptr->data(), size*size*size);
+
 
     volume<uint32_t>& gt = *gt_ptr;
     volume<uint32_t>& ws = *ws_ptr;
@@ -1165,8 +1288,16 @@ void compare_volumes( const std::string& gtf, const std::string& wsf,
     std::map<uint32_t, std::map<uint32_t, uint32_t>> invmap;
     std::map<uint32_t, uint32_t> setg, setw;
 
-    std::size_t randindex = 0;
-    std::size_t non_zero  = 0;
+    double rand_split = 0;
+    double rand_merge = 0;
+
+    double t_sq = 0;
+    double s_sq = 0;
+
+    double total = 0;
+    std::map<uint32_t, std::map<uint32_t, double>> p_ij;
+
+    std::map<uint32_t, double> s_i, t_j;
 
     for ( std::ptrdiff_t z = 28; z < size-28; ++z )
         for ( std::ptrdiff_t y = 28; y < size-28; ++y )
@@ -1177,85 +1308,116 @@ void compare_volumes( const std::string& gtf, const std::string& wsf,
 
                 if ( gtv )
                 {
-                    ++non_zero;
-                    ++invmap[gtv][wsv];
-                    ++map[wsv][gtv];
-                }
+                    total += 1;
 
+                    p_ij[gtv][wsv] += 1;
 
-                if ( wsv != 0 && gtv != 0 )
-                {
-                    ++setg[gtv];
-                    ++setw[wsv];
+                    s_i[wsv] += 1;
+                    t_j[gtv] += 1;
                 }
             }
 
-    for ( auto& a: invmap )
+    double sum_p_ij = 0;
+    for ( auto& a: p_ij )
     {
-        std::vector<uint32_t> v;
         for ( auto& b: a.second )
         {
-            v.push_back(b.second);
+            sum_p_ij += (b.second / total) * (b.second / total);
         }
-        randindex += get_rand_idx(v);
     }
 
-
-    for ( auto& a: map )
+    double sum_t_k = 0;
+    for ( auto& a: t_j )
     {
-        if ( a.second.size() > 1 )
-        {
-            std::cout << a.first << "\n";
-            std::vector<uint32_t> v;
-            for ( auto& b: a.second )
-            {
-                v.push_back(b.second);
-                // std::cout << "    " << b.first << ' ' << b.second << '\n'
-                //           << "      " << setw[a.first] << ' '
-                //           << setg[b.first] << '\n';
-            }
-            randindex += get_rand_idx(v);
-        }
+        sum_t_k += (a.second / total) * (a.second / total);
     }
 
-    std::cout << "Total gt: " << setg.size() << "\n";
-    std::cout << "Total ws: " << setw.size() << "\n";
 
-    std::size_t pairs = (non_zero * (non_zero-1)) / 2;
+    double sum_s_k = 0;
+    for ( auto& a: s_i )
+    {
+        sum_s_k += (a.second / total) * (a.second / total);
+    }
 
-    //double randidx = 1;
-    double randerr = static_cast<double>(randindex) / pairs;
+    //std::cout << sum_p_ij << "\n";
+    std::cout << "Rand Split: " << (sum_p_ij/sum_t_k) << "\n";
+    std::cout << "Rand Merge: " << (sum_p_ij/sum_s_k) << "\n";
+    std::cout << "Rand alpha: " << (sum_p_ij*2/(sum_t_k+sum_s_k)) << "\n";
 
-    std::cout << "Rand: " << randerr << "\n";
+
+    // for ( auto& a: invmap )
+    // {
+    //     std::vector<uint32_t> v;
+    //     double sum = 0;
+    //     for ( auto& b: a.second )
+    //     {
+    //         v.push_back(b.second);
+    //         sum += b.second;
+    //     }
+    //     rand_split += square_sum(v);
+    //     t_sq += sum;
+    // }
+
+
+    // for ( auto& a: map )
+    // {
+    //     if ( a.second.size() > 1 )
+    //     {
+    //         std::vector<uint32_t> v;
+    //         double sum;
+    //         for ( auto& b: a.second )
+    //         {
+    //             v.push_back(b.second);
+    //             sum += b.second;
+    //         }
+    //         rand_merge += square_sum(v) / sum;
+    //     }
+    // }
+
+    // std::cout << "Total gt: " << setg.size() << "\n";
+    // std::cout << "Total ws: " << setw.size() << "\n";
+
+    // std::cout << "Rand Split: " << rand_split << "\n";
+    // std::cout << "Rand Merge: " << rand_merge << "\n";
 
 }
 
+
+
 int main()
 {
-    compare_volumes("../../data/gt.in", "./voutraw.out", 256);
+    compare_volumes("../../data/gt.in", "./voutall4x.out", 256);
 
-    //return 0;
-
-    //auto start = std::chrono::system_clock::now();
-
-
-    //std::cout << std::hex << watershed_traits<uint32_t>::high_bit << std::endl;
+    return 0;
 
     affinity_graph_ptr<float> aff = read_affinity_graph_from_file<float>("../../data/ws_test_256.raw",
                                                                          256, 256, 256);
 
-    //std::cout << (std::chrono::system_clock::now() - start)
-    //          << " data loaded" << std::endl;
+    // for ( float f = 0.1; f < 1.05; f += 0.1 )
+    // {
+
+    //     auto rrr = other_alg<uint32_t>(aff, f);
+    //     write_volume_to_file("voutoth" + std::to_string(f) + ".out", rrr);
+    //     compare_volumes("../../data/gt.in", "./voutoth" + std::to_string(f) + ".out", 256);
+    // }
+
+    // return 0;
+
+    // volume_ptr<uint32_t> sptr = get_dummy_segmentation<uint32_t>(256, 256, 256);
+    // std::vector<std::size_t> cnts(256*256*256+1);
+    // std::fill_n(cnts.begin(), 256*256*256+1, 1);
 
 
-    //std::fill_n(aff->data(), 160*160*160*3, 0);
+    // auto rgf = get_region_graph(aff, sptr, cnts.size()-1);
 
-    //  (*aff)[10][10][10][0] = 0.5;
-    // (*aff)[10][10][150][0] = 0.5;
-    // (*aff)[10][100][100][0] = 0.5;
+    // merge_segments_with_function(sptr, rgf, cnts, limit_fn2, 100);
+
+    // write_volume_to_file("voutall4dir.out", sptr);
+
+    // return 0;
 
 
-    //aff = mult_aff(aff, 3);
+
 
     std::cout << "Multiplied" << std::endl;
 
@@ -1290,6 +1452,20 @@ int main()
 
 //    return 0;
 
+    // auto rg = get_region_graph(aff, segg, counts.size()-1);
+
+    // //yet_another_watershed(segg, rg, counts, 0.3);
+
+    // //write_volume_to_file("voutanouther.out", segg);
+
+
+    // merge_segments_with_function(segg, rg, counts, limit_fn3, 100);
+
+    // write_volume_to_file("voutdo.out", segg);
+
+
+
+
     auto rg = get_region_graph(aff, segg, counts.size()-1);
 
     //yet_another_watershed(segg, rg, counts, 0.3);
@@ -1297,9 +1473,11 @@ int main()
     //write_volume_to_file("voutanouther.out", segg);
 
 
-    merge_segments_with_function(segg, rg, counts, limit_fn2, 100);
+    merge_segments_with_function(segg, rg, counts, limit_fn4, 100);
 
-    write_volume_to_file("voutall.out", segg);
+    write_volume_to_file("voutall4x.out", segg);
+
+    return 0;
 
     write_region_graph_to_file("voutall.rg", *rg);
 
