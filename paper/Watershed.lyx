@@ -157,6 +157,7 @@ ty graph on the image, over-segments it into watershed basins, defines a
  Our watershed transform works by finding the basins of attraction of steepest
  descent dynamics, and has runtime that is linear in the number of graph
  edges.
+ 
 \end_layout
 
 \begin_layout Abstract
@@ -233,20 +234,19 @@ We also show how to modify single linkage clustering by making it depend
  of true segments, and is shown to have an efficient implementation because
  size is a property that is guaranteed to increase with each agglomerative
  step.
-\end_layout
-
-\begin_layout Subsubsection
-Related work.
+ 
 \end_layout
 
 \begin_layout Standard
-Linear time watershed transform algorithms on graphs are introduced by
-\change_inserted -190403614 1425611359
- Coutsy 
+
+\series bold
+Related work.
+ 
+\series default
+Linear time watershed transform algorithms on graphs are introduced by Coutsy
+ 
 \emph on
 at al.
-
-\change_unchanged
 
 \emph default
  
@@ -281,7 +281,7 @@ key "Guimaraes2012"
 \end_inset
 
  for real valued weights of the edges.
- 
+ Maybe some more complex (slower methods?)
 \end_layout
 
 \begin_layout Section
@@ -456,137 +456,6 @@ basins
 \end_layout
 
 \begin_layout Standard
-
-\series bold
-Steepest descent graph.
- 
-\series default
-The central quantity in the watershed algorithm is the steepest descent
- graph, defined as follows.
- Consider an undirected weighted graph 
-\begin_inset Formula $G$
-\end_inset
-
- (Fig.
- 1(a)).
- Define the directed graph 
-\begin_inset Formula $G'$
-\end_inset
-
- in which each undirected edge of 
-\begin_inset Formula $G$
-\end_inset
-
- is replaced by both directed edges between the same vertices.
- The 
-\emph on
-steepest descent graph
-\emph default
- 
-\begin_inset Formula $D$
-\end_inset
-
- (Fig.
- 1(b)) is a subgraph of 
-\begin_inset Formula $G'$
-\end_inset
-
- with the property that 
-\begin_inset Formula $D$
-\end_inset
-
- includes every edge of 
-\begin_inset Formula $G'$
-\end_inset
-
- with minimal weight of all edges outgoing from the same vertex.
- A directed path in 
-\begin_inset Formula $D$
-\end_inset
-
- is a path of steepest descent in 
-\begin_inset Formula $G$
-\end_inset
-
-, in the sense that every step is along an edge with locally minimal weight.
- The steepest ascent graph can be defined analogously using edges of maximal
- weight.
- Either steepest ascent or descent can be used without loss of generality.
- For simplicity, for a given vertex 
-\begin_inset Formula $v$
-\end_inset
-
- we will refer to its edges in 
-\begin_inset Formula $D$
-\end_inset
-
- as incoming, outgoing, and bidirectional.
- A 
-\emph on
-plateau
-\emph default
- is a connected component of the subgraph of 
-\begin_inset Formula $D$
-\end_inset
-
- containing only bidirectional edges.
- A 
-\emph on
-plateau corner
-\emph default
- is a vertex of a 
-\emph on
-plateau
-\emph default
- that has at least one outgoing edge.
- 
-\emph on
-Locally minimal plateaus
-\emph default
- contain no 
-\emph on
-plateau corner, 
-\emph default
-they
-\emph on
- 
-\emph default
-are equivalent to the regional minima of the original graph.
- 
-\emph on
-Non-minimal plateaus 
-\emph default
-contain one or more 
-\emph on
-plateau edges.
- 
-\emph default
-A 
-\emph on
-saddle vertex 
-\emph default
-has more than one outgoing edge.
- In Fig.
- 1(c) we show 
-\emph on
-locally minimal plateaus 
-\emph default
-(black), 
-\emph on
-non-minimal plateau 
-\emph default
-(gray), 
-\emph on
-plateau corners
-\emph default
- (C), and a
-\emph on
- saddle vertex 
-\emph default
-(S).
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
@@ -718,6 +587,137 @@ status collapsed
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Steepest descent graph.
+ 
+\series default
+The central quantity in the watershed algorithm is the steepest descent
+ graph, defined as follows.
+ Consider an undirected weighted graph 
+\begin_inset Formula $G$
+\end_inset
+
+ (Fig.
+ 1(a)).
+ Define the directed graph 
+\begin_inset Formula $G'$
+\end_inset
+
+ in which each undirected edge of 
+\begin_inset Formula $G$
+\end_inset
+
+ is replaced by both directed edges between the same vertices.
+ The 
+\emph on
+steepest descent graph
+\emph default
+ 
+\begin_inset Formula $D$
+\end_inset
+
+ (Fig.
+ 1(b)) is a subgraph of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with the property that 
+\begin_inset Formula $D$
+\end_inset
+
+ includes every edge of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with minimal weight of all edges outgoing from the same vertex.
+ A directed path in 
+\begin_inset Formula $D$
+\end_inset
+
+ is a path of steepest descent in 
+\begin_inset Formula $G$
+\end_inset
+
+.
+ The steepest ascent graph can be defined analogously using edges of maximal
+ weight.
+ Either steepest ascent or descent can be used without loss of generality.
+ For simplicity, for a given vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ we will refer to its edges in 
+\begin_inset Formula $D$
+\end_inset
+
+ as incoming, outgoing, and bidirectional.
+ A 
+\emph on
+plateau
+\emph default
+ is a connected component of the subgraph of 
+\begin_inset Formula $D$
+\end_inset
+
+ containing only bidirectional edges.
+ A 
+\emph on
+plateau corner
+\emph default
+ is a vertex of a 
+\emph on
+plateau
+\emph default
+ that has at least one outgoing edge.
+ 
+\emph on
+Locally minimal plateaus
+\emph default
+ contain no 
+\emph on
+plateau corners, 
+\emph default
+they
+\emph on
+ 
+\emph default
+are equivalent to the regional minima of the original graph.
+ 
+\emph on
+Non-minimal plateaus 
+\emph default
+contain one or more 
+\emph on
+plateau corners.
+ 
+\emph default
+A 
+\emph on
+saddle vertex 
+\emph default
+has more than one outgoing edge.
+ In Fig.
+ 1(c) we show 
+\emph on
+locally minimal plateaus 
+\emph default
+(black), 
+\emph on
+non-minimal plateau 
+\emph default
+(gray), 
+\emph on
+plateau corners
+\emph default
+ (C), and a
+\emph on
+ saddle vertex 
+\emph default
+(S).
 \end_layout
 
 \begin_layout Standard
@@ -1338,16 +1338,12 @@ sizes).
 \end_inset
 
 .
- We first define a non-increasing threshold function of cluster size 
+ We first define a non-increasing threshold function of a cluster size 
 \begin_inset Formula $\tau(s)$
 \end_inset
 
 .
- For a given cluster size 
-\begin_inset Formula $s$
-\end_inset
-
- the value 
+ The value of 
 \begin_inset Formula $\tau(s)$
 \end_inset
 
@@ -1427,7 +1423,9 @@ saliency
 \begin_inset Formula $\tau^{-1}$
 \end_inset
 
- is constant the algorithm will tend to 
+ is constant the algorithm will tend to aggresively merge segments smaller
+ than the given constant.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1551,7 +1549,7 @@ Return the hierarchical segmentation
 
 \end_layout
 
-\begin_layout Theorem*
+\begin_layout Standard
 
 \series bold
 Theorem 1 
@@ -1596,7 +1594,7 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1609,12 +1607,6 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:1a"
-
-\end_inset
-
 
 \end_layout
 
@@ -1831,7 +1823,11 @@ s are represented with RGB; (c) watershed transform output; (d) watershed
 \begin_inset Formula $T_{\max}=0.9$
 \end_inset
 
-; (e) ground truth; (f) our method; (g), (h) segmentation by 
+; (e) ground truth; (f) our method with 
+\begin_inset Formula $\tau^{1}(w)=3000\left(1-w\right)$
+\end_inset
+
+; (g), (h) segmentation by 
 \emph on
 
 \begin_inset CommandInset citation
@@ -1875,11 +1871,8 @@ Results
 We have applied our method to 3D electron microscopic (cite e2198) brain
  images (Fig.
  3(a)).
- We obtained disaffinity graphs with values in 
-\begin_inset Formula $\left[0,1\right]$
-\end_inset
-
- range using convolutional neural networks described by Turaga 
+ We obtained disaffinity graphs using convolutional neural networks described
+ by Turaga 
 \emph on
 et al.
 
@@ -1893,13 +1886,14 @@ key "Turaga2009,Turaga2010"
 
  (Fig.
  3(b)).
- 
-\change_deleted -190403614 1425608918
-We have 
-\change_inserted -190403614 1425611493
-We define the size of a segment to be the number of 3D pixels contained
+ We define the size of a segment to be the number of 3D pixels contained
  inside the segment.
- In the first step we have applied our watershed transform with thresholds
+ In Fig 4.
+ we show the results of the watershed transform (Fig.
+ 3(c)), the watershed transform on the pre-processed graph with thresholds
+\change_deleted -190403614 1425657145
+ 
+\change_unchanged
  
 \begin_inset Formula $T_{\min}=0.01$
 \end_inset
@@ -1908,15 +1902,51 @@ We define the size of a segment to be the number of 3D pixels contained
 \begin_inset Formula $T_{\max}=0.9$
 \end_inset
 
-.
+ (Fig.
+ 3(d)).
  We have tested our method on three intuitive threshold functions.
  The first one enforces all the segments to be at least some size, second
  and the third one require the minimal size of the segment to be proportional
  to the affinity (square of affinity) and are therefore allowing bigger
  object to be created....
  
-\change_unchanged
+\end_layout
 
+\begin_layout Subsubsection
+Metric
+\end_layout
+
+\begin_layout Standard
+A good metric for evaluating a segmentation should ideally tell us how good
+ the segmentation is for using in practice.
+ Mainly how much manual corrections are needed to acheve the correct segmentatio
+n.
+ Often foreground-restricted Rand Index 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Rand2009"
+
+\end_inset
+
+ between the proposed segmentation and the ground truth is used.
+ However it has problems when the number of segments is large as the dynamics
+ range gets smaller.
+ A better metric is introduced by introduced by Arganda at al, separating
+ the rand indices for splits and mergers.
+ Explain the metric briefly.
+ Let 
+\begin_inset Formula $p_{ij}$
+\end_inset
+
+ is the probability that a randomly chosen pixel belongs to segiment 
+\begin_inset Formula $i$
+\end_inset
+
+ in the proposed segmentation and segment 
+\begin_inset Formula $j$
+\end_inset
+
+ in the ground truth.
 \end_layout
 
 \begin_layout Standard
@@ -1983,8 +2013,6 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-
-\change_inserted -190403614 1425609524
 (a) Performance of our method and the method described in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1993,14 +2021,7 @@ key "Felzenszwalb2004"
 \end_inset
 
 ; (b) Segmentation obtained by our method with 
-\begin_inset Formula $\tau^{-1}(w)=1000(1-w)$
-\end_inset
-
-
-\change_unchanged
-
-\end_layout
-
+\begin_inset Formula $\tau^{-1}(w)=3000(1-w)$
 \end_inset
 
 
@@ -2011,46 +2032,28 @@ key "Felzenszwalb2004"
 
 \end_layout
 
-\begin_layout Subsubsection
-Metric
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-A good metric for evaluating a segmentation should ideally tell us how good
- the segmentation is for using in practice.
- Mainly how much manual corrections are needed to acheve the correct segmentatio
-n.
- Often foreground-restricted Rand Index 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Rand2009"
-
-\end_inset
-
- between the proposed segmentation and the ground truth is used.
- However it has problems when the number of segments is large as the dynamics
- range gets smaller.
-
-\change_deleted -190403614 1425609079
- A better method is proposed by Arganda et al in preparation that better
- estimastes the amount of user reaction needed to correct the segmentation.
-
-\change_inserted -190403614 1425610464
- A better metric is introduced by introduced by Arganda at al, separating
- the rand indices for splits and mergers.
- Explain the metric briefly.
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -190403614 1425610773
 We see that the method blah starts introducing mergers for some values of
  k while there's still a lot of splits around.
  It's because the other method has stricter guarantees (not to corse or
  fine) where as we we relax the too corse requirement and just hierustically
  produce a segmentation that is not too fine.
  (not sure we need this)
-\change_unchanged
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+V_{\textrm{split}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}t_{k}^{2}}\textrm{ and }V_{\textrm{merge}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}s_{k}^{2}}
+\end{equation}
+
+\end_inset
+
 
 \end_layout
 
@@ -2059,22 +2062,13 @@ Conclusions
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -190403614 1425609221
 Our method is superior for segmenting images where we have prior knowledge
  about the size of the true segments, which makes it ideal for segmenting
  3D EM images.
- 
-\change_deleted -190403614 1425609237
-We can produce great over-segmentation.
- 
-\change_inserted -190403614 1425609338
-For conservative threshold functions our method can greatly reduce the number
- of segments without introducing mergers, which makes it ideal as pre processing
- method for some other methods.
- 
-\change_unchanged
-Final segmentation can be obtained by merging our segments.
+ For conservative threshold functions our method can greatly reduce the
+ number of segments without introducing mergers, which makes it ideal as
+ pre processing method for some other methods.
+ Final segmentation can be obtained by merging our segments.
  It would be a good input to a lot of other methods like 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2082,7 +2076,9 @@ key "Mustafa"
 
 \end_inset
 
-prior knowledge about segments assumes all have the same size properties
+prior knowledge about segments assumes all have the same size properties.
+ Useful when proofreading done by non-experts (just by merging segments)
+ eyewire ref,
 \end_layout
 
 \begin_layout Standard
@@ -2110,8 +2106,8 @@ bibname{References}
 \begin_layout Standard
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
-bibfiles "References/Some"
-options "splncsnat"
+bibfiles "References/references"
+options "References/splncs"
 
 \end_inset
 
