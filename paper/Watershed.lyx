@@ -1868,8 +1868,8 @@ Results
 \end_layout
 
 \begin_layout Standard
-We have applied our method to 3D electron microscopic (cite e2198) brain
- images (Fig.
+We have applied our method to 3D electron microscopic brain images obtained
+ by [cite e2198] (Fig.
  3(a)).
  We obtained disaffinity graphs using convolutional neural networks described
  by Turaga 
@@ -1888,12 +1888,9 @@ key "Turaga2009,Turaga2010"
  3(b)).
  We define the size of a segment to be the number of 3D pixels contained
  inside the segment.
- In Fig 4.
+ In Fig 3.
  we show the results of the watershed transform (Fig.
  3(c)), the watershed transform on the pre-processed graph with thresholds
-\change_deleted -190403614 1425657145
- 
-\change_unchanged
  
 \begin_inset Formula $T_{\min}=0.01$
 \end_inset
@@ -1904,23 +1901,41 @@ key "Turaga2009,Turaga2010"
 
  (Fig.
  3(d)).
- We have tested our method on three intuitive threshold functions.
+ We have tested our method on three intuitive, paramatrized, threshold functions.
  The first one enforces all the segments to be at least some size, second
  and the third one require the minimal size of the segment to be proportional
- to the affinity (square of affinity) and are therefore allowing bigger
- object to be created....
- 
-\end_layout
-
-\begin_layout Subsubsection
-Metric
+ to the affinity (or the square of affinity).
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -190403614 1425658098
+
+\series bold
+Error metric
+\change_inserted -190403614 1425658105
+Measuring the quality of the segmentations
+\change_unchanged
+.
+
+\change_inserted -190403614 1425658093
+ 
+\change_unchanged
+
+\series default
 A good metric for evaluating a segmentation should ideally tell us how good
- the segmentation is for using in practice.
- Mainly how much manual corrections are needed to acheve the correct segmentatio
-n.
+ the segmentation is for using in practice
+\change_inserted -190403614 1425658114
+,
+\change_deleted -190403614 1425658113
+.
+
+\change_unchanged
+ 
+\change_deleted -190403614 1425658116
+Mainly 
+\change_unchanged
+how much manual corrections are needed to acheve the correct segmentation.
  Often foreground-restricted Rand Index 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1933,7 +1948,6 @@ key "Rand2009"
  range gets smaller.
  A better metric is introduced by introduced by Arganda at al, separating
  the rand indices for splits and mergers.
- Explain the metric briefly.
  Let 
 \begin_inset Formula $p_{ij}$
 \end_inset
@@ -1947,9 +1961,13 @@ key "Rand2009"
 \end_inset
 
  in the ground truth.
+ The Rand split score and Rand merge score are defined as follows, with
+ the higher value representing better segmentation:
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -190403614 1425658244
 \begin_inset Float figure
 wide false
 sideways false
@@ -2035,15 +2053,8 @@ key "Felzenszwalb2004"
 \end_inset
 
 
-\end_layout
+\change_unchanged
 
-\begin_layout Standard
-We see that the method blah starts introducing mergers for some values of
- k while there's still a lot of splits around.
- It's because the other method has stricter guarantees (not to corse or
- fine) where as we we relax the too corse requirement and just hierustically
- produce a segmentation that is not too fine.
- (not sure we need this)
 \end_layout
 
 \begin_layout Standard
@@ -2054,6 +2065,120 @@ V_{\textrm{split}}^{\textrm{Rand}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}t_{k}^{2
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1425658247
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425658246
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425658246
+\begin_inset Graphics
+	filename Figures/results.eps
+	width 7cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425658246
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425658246
+\begin_inset Graphics
+	filename Figures/3da.png
+	width 5.5cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425658246
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425658246
+(a) Performance of our method and the method described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Felzenszwalb2004"
+
+\end_inset
+
+; (b) Segmentation obtained by our method with 
+\begin_inset Formula $\tau^{-1}(w)=3000(1-w)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We see that the method blah starts introducing mergers for some values of
+ k while there's still a lot of splits around.
+ It's because the other method has stricter guarantees
+\change_inserted -190403614 1425658246
+ (not to corse or fine) where as we we relax the too corse requirement and
+ just hierustically produce a segmentation that is not too fine.
+ (not sure we need this)
+\change_unchanged
 
 \end_layout
 
