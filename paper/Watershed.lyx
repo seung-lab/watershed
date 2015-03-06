@@ -75,6 +75,7 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author -190403614 "Aleksandar Zlateski" 
 \end_header
 
 \begin_body
@@ -182,7 +183,7 @@ Introduction
 \begin_layout Standard
 When segmenting very large volumes an efficient segmentation algorithms
  are required.
- We can obtain terabate scale volumes of EM data, we need close to linear
+ We can obtain terabyte scale volumes of EM data, we need close to linear
  time segmentation methods.
  Watershed is known to be fast but it tends to produce severe over-segmentation,
  which can be counteracted by pre- and/or post-processing.
@@ -1173,8 +1174,12 @@ n where each cluster represents a segment.
 \emph on
 single linkage
 \emph default
- clustering, each step we merges two clusters connected by an edge with
- the lowest weight in the original graph.
+ clustering, each step 
+\change_deleted -190403614 1425664339
+we 
+\change_unchanged
+merges two clusters connected by an edge with the lowest weight in the original
+ graph.
  
 \emph on
 Single linkage 
@@ -1418,7 +1423,7 @@ saliency
 \begin_inset Formula $\tau^{-1}$
 \end_inset
 
- is constant the algorithm will tend to aggresively merge segments smaller
+ is constant the algorithm will tend to aggressively merge segments smaller
  than the given constant.
  
 \end_layout
@@ -1841,7 +1846,7 @@ with
 \begin_inset Formula $k=10$
 \end_inset
 
- respectivelly.
+ respectively.
 \end_layout
 
 \end_inset
@@ -1896,7 +1901,7 @@ key "Turaga2009,Turaga2010"
 
  (Fig.
  3(d)).
- We have tested our method on three intuitive, paramatrized, threshold functions.
+ We have tested our method on three intuitive, parametrized, threshold functions.
  The first one enforces all the segments to be at least some size, second
  and the third one require the minimal size of the segment to be proportional
  to the affinity (or the square of affinity).
@@ -1998,7 +2003,7 @@ Measuring the quality of the segmentations.
 \series default
 A good metric for evaluating a segmentation should ideally tell us how good
  the segmentation is for using in practice, how much manual corrections
- are needed to acheve the correct segmentation.
+ are needed to achieve the correct segmentation.
  Often foreground-restricted Rand Index 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2015,7 +2020,7 @@ key "Rand2009"
 \begin_inset Formula $p_{ij}$
 \end_inset
 
- is the probability that a randomly chosen pixel belongs to segiment 
+ is the probability that a randomly chosen pixel belongs to segment 
 \begin_inset Formula $i$
 \end_inset
 
@@ -2031,7 +2036,7 @@ key "Rand2009"
 \begin_inset Formula $t_{j}$
 \end_inset
 
- be the probability of randombly chosen pixel beloning to the component
+ be the probabilities of randomly chosen pixel belonging to the component
  
 \begin_inset Formula $i$
 \end_inset
@@ -2040,7 +2045,7 @@ key "Rand2009"
 \begin_inset Formula $j$
 \end_inset
 
- in the ground truth respectivelly.
+ in the ground truth respectively.
  The Rand split score and Rand merge score are defined as follows, with
  the higher value representing better segmentation:
 \end_layout
