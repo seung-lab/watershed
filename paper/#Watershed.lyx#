@@ -156,11 +156,7 @@ ty graph on the image, over-segments it into watershed basins, defines a
  microscopic brain images.
  Our watershed transform works by finding the basins of attraction of steepest
  descent dynamics, and has runtime that is linear in the number of graph
- edges
-\change_inserted -190403614 1425581719
-.
-\change_unchanged
-
+ edges.
 \end_layout
 
 \begin_layout Abstract
@@ -186,12 +182,26 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-.
-
-\change_deleted -190403614 1425581721
+- we need close to linear time.
+ watershed is well known to be fast.
  
-\change_unchanged
-It yields basins similar to those of watershed cuts, except that plateaus
+\end_layout
+
+\begin_layout Standard
+-huge images (neuroscience application easy to produce a terabyte with 3d
+ microscpoy)
+\end_layout
+
+\begin_layout Standard
+- needed linear time segmentation.
+\end_layout
+
+\begin_layout Standard
+- 
+\end_layout
+
+\begin_layout Standard
+.It yields basins similar to those of watershed cuts, except that plateaus
  are divided between basins consistently and in a more even way.
  In general, watershed algorithms tend to produce severe over-segmentation,
  which can be counteracted by pre- and/or post-processing.
@@ -230,7 +240,25 @@ Related work.
 \end_layout
 
 \begin_layout Standard
-Similar agglomerative clustering is 
+Linear time watershed transform algorithms on graphs are introduced by
+\change_inserted -190403614 1425611359
+ Coutsy 
+\emph on
+at al.
+
+\change_unchanged
+
+\emph default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Cousty2009,Cousty2010"
+
+\end_inset
+
+.
+ Alternative close to linear time agglomerative clustering methods are introduce
+d by 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Felzenszwalb2004"
@@ -244,9 +272,10 @@ key "Guimaraes2012"
 
 \end_inset
 
- introduce similar agglomerative clustering method based on an arbitrary
- predicate of the clusters.
- He starts from the set of vertices as individual clusters and produces
+.
+ Their methods are also based on satisfying binary predicates of cluster
+ pairs.
+ They start from the set of vertices as individual clusters and produces
  final segmentation in near linear time for integral and 
 \begin_inset Formula $O(\left|E\right|\log\left|E\right|)$
 \end_inset
@@ -675,9 +704,10 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-(a) An affinity graph; (b) derived steepest descent graph; (c) locally minimal
- plateaus (black), non-minimal plateau (gray), saddle vertex (S), plateau
- corners (C); (d) the two basins of attractions and border vertices (gray)
+(a) An disaffinity graph; (b) derived steepest descent graph; (c) locally
+ minimal plateaus (black), non-minimal plateau (gray), saddle vertex (S),
+ plateau corners (C); (d) the two basins of attractions and border vertices
+ (gray)
 \end_layout
 
 \end_inset
@@ -732,7 +762,7 @@ basins of attraction
 \emph default
  have to be connected.
  We introduce additional constrains.
- The watershed transform to be uniquely defined and the 
+ The watershed transform has to be uniquely defined and the 
 \emph on
 non-minimal plateaus 
 \emph default
@@ -747,10 +777,9 @@ More specifically, we want our dynamics
 \emph default
 to be uniquely defined at 
 \emph on
-saddle vertices.
- 
+saddle vertices, and 
 \emph default
-Also, we want the vertices of the 
+the vertices of the 
 \emph on
 non-minimal plateaus
 \emph default
@@ -776,7 +805,7 @@ plateau corner
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -989,8 +1018,11 @@ descent graph
 
 
 \emph default
-, now considering all the remaining edges as bidirectional will be our watershed
- domains.
+, now considering all the remaining edges as bidirectional will be our 
+\emph on
+basins of attraction
+\emph default
+.
 \end_layout
 
 \begin_layout Standard
@@ -1014,7 +1046,7 @@ regional minima.
  
 \emph default
 We defer the detailed algorithm listing, the proof of correctness and running
- time to the supplementary material.
+ time analysis to the supplementary material.
 \end_layout
 
 \begin_layout Standard
@@ -1069,7 +1101,7 @@ key "Najman1996"
 \end_inset
 
 .
- We are confident 
+ We are confident that 
 \emph on
 disaffinities 
 \emph default
@@ -1078,7 +1110,8 @@ below
 \end_inset
 
  should yield connected vertices.
- An equivalent segmentation can be obtained by replacing all edges in 
+ An equivalent segmentation can be obtained by replacing the weights of
+ all edges in 
 \begin_inset Formula $G$
 \end_inset
 
@@ -1092,17 +1125,7 @@ below
 \end_inset
 
 ) before applying the watershed transform.
- 
-\change_deleted -190403614 1425523470
-We differ the proof 
-\change_inserted -190403614 1425523473
-We prove this claim in the
-\change_deleted -190403614 1425523475
-to the 
-\change_inserted -190403614 1425523476
- 
-\change_unchanged
-supplementary material.
+ We prove this claim in the supplementary material.
  To show confidence about high values of 
 \emph on
 disaffinities
@@ -1137,15 +1160,7 @@ disaffinities
 \emph on
 basin of attraction
 \emph default
- and are considered background, which is often 
-\change_inserted -190403614 1425523499
-a 
-\change_unchanged
-desired
-\change_inserted -190403614 1425523513
- result
-\change_unchanged
-.
+ and are considered background, which is often a desired result.
 \end_layout
 
 \begin_layout Section
@@ -1225,7 +1240,7 @@ watershed basins
 \begin_inset Formula $B_{j}$
 \end_inset
 
-, and has a weight 
+, and has the weight 
 \begin_inset Formula $w(\{B_{i},B_{j}\})$
 \end_inset
 
@@ -1238,7 +1253,11 @@ saliency
 basins.
 
 \emph default
- We will refer to the vertices of the watershed domain graph as 
+ We will refer to the vertices of the 
+\emph on
+watershed basin graph
+\emph default
+ as 
 \emph on
 basins
 \emph default
@@ -1363,11 +1382,6 @@ The intuition behind the predicate is to apply prior knowledge about the
  sizes of the true segments.
  With the threshold function we control the confidence required to grow
  a cluster of a certain size.
-
-\change_inserted -190403614 1425592014
- 
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -1391,21 +1405,35 @@ saliency
 \emph on
 saliency
 \emph default
- as the size
-\change_inserted -190403614 1425591567
-s
-\change_unchanged
- of the clusters grow.
+ as the sizes of the clusters grow.
+ As 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is required to be non-decreasing, we can rewrite the condition in (2) as
+ 
+\begin_inset Formula $\tau^{-1}(d_{C_{1},C_{2}})\ge\min\left\{ S(C_{1}),S(C_{2})\right\} $
+\end_inset
+
+ allowing us to specify either 
+\begin_inset Formula $\tau$
+\end_inset
+
+ or 
+\begin_inset Formula $\tau^{-1}.$
+\end_inset
+
+ When 
+\begin_inset Formula $\tau^{-1}$
+\end_inset
+
+ is constant the algorithm will tend to 
 \end_layout
 
 \begin_layout Standard
 
 \series bold
-Algorithm 1
-\change_deleted -190403614 1425520430
- 
-\change_unchanged
- 
+Algorithm 1 
 \series default
 In our clustering algorithm we visit all the edges of the watershed basin
  graph in non-decreasing order and merge the corresponding clusters based
@@ -1743,7 +1771,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/fe2.png
+	filename Figures/fe1.png
 	width 3cm
 
 \end_inset
@@ -1766,11 +1794,11 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/3d.png
+	filename Figures/fe2.png
 	width 3cm
 
 \end_inset
@@ -1803,7 +1831,7 @@ s are represented with RGB; (c) watershed transform output; (d) watershed
 \begin_inset Formula $T_{\max}=0.9$
 \end_inset
 
-; (e) ground truth; (f) our method; (g), (e) segmentation by 
+; (e) ground truth; (f) our method; (g), (h) segmentation by 
 \emph on
 
 \begin_inset CommandInset citation
@@ -1844,24 +1872,133 @@ Results
 \end_layout
 
 \begin_layout Standard
-We present results on 3D electron microscopic brain images (Fig.
+We have applied our method to 3D electron microscopic (cite e2198) brain
+ images (Fig.
  3(a)).
- We obtain affinity graphs by the methods explained in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Turaga2009"
-
+ We obtained disaffinity graphs with values in 
+\begin_inset Formula $\left[0,1\right]$
 \end_inset
 
- and 
+ range using convolutional neural networks described by Turaga 
+\emph on
+et al.
+
+\emph default
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Turaga2010"
+key "Turaga2009,Turaga2010"
 
 \end_inset
 
  (Fig.
  3(b)).
+ 
+\change_deleted -190403614 1425608918
+We have 
+\change_inserted -190403614 1425610419
+We define the size of a segment to be the number of 3D pixels contained
+ inside the segment.
+ We have tested our method on three intuitive threshold functions.
+ The first one enforces all the segments to be at least some size, second
+ and the third one require the minimal size of the segment to be proportional
+ to the affinity (square of affinity) and are therefore allowing bigger
+ object to be created....
+ 
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/results.eps
+	width 7cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/3da.png
+	width 5.5cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\change_inserted -190403614 1425609524
+(a) Performance of our method and the method described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Felzenszwalb2004"
+
+\end_inset
+
+; (b) Segmentation obtained by our method with 
+\begin_inset Formula $\tau^{-1}(w)=1000(1-w)$
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -1883,8 +2020,28 @@ key "Rand2009"
  between the proposed segmentation and the ground truth is used.
  However it has problems when the number of segments is large as the dynamics
  range gets smaller.
+
+\change_deleted -190403614 1425609079
  A better method is proposed by Arganda et al in preparation that better
  estimastes the amount of user reaction needed to correct the segmentation.
+
+\change_inserted -190403614 1425610464
+ A better metric is introduced by introduced by Arganda at al, separating
+ the rand indices for splits and mergers.
+ Explain the metric briefly.
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -190403614 1425610773
+We see that the method blah starts introducing mergers for some values of
+ k while there's still a lot of splits around.
+ It's because the other method has stricter guarantees (not to corse or
+ fine) where as we we relax the too corse requirement and just hierustically
+ produce a segmentation that is not too fine.
+ (not sure we need this)
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
@@ -1892,8 +2049,22 @@ Conclusions
 \end_layout
 
 \begin_layout Standard
+
+\change_inserted -190403614 1425609221
+Our method is superior for segmenting images where we have prior knowledge
+ about the size of the true segments, which makes it ideal for segmenting
+ 3D EM images.
+ 
+\change_deleted -190403614 1425609237
 We can produce great over-segmentation.
- Final segmentation can be obtained by merging our segments.
+ 
+\change_inserted -190403614 1425609338
+For conservative threshold functions our method can greatly reduce the number
+ of segments without introducing mergers, which makes it ideal as pre processing
+ method for some other methods.
+ 
+\change_unchanged
+Final segmentation can be obtained by merging our segments.
  It would be a good input to a lot of other methods like 
 \begin_inset CommandInset citation
 LatexCommand cite
