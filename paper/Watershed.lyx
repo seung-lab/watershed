@@ -75,7 +75,6 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
-\author -190403614 "Aleksandar Zlateski" 
 \end_header
 
 \begin_body
@@ -240,7 +239,7 @@ We also show how to modify single linkage clustering by making it depend
 Related work.
  
 \series default
-Linear time watershed transform algorithms on graphs are introduced by Coutsy
+Linear time watershed transform algorithms on graphs are studied by Coutsy
  
 \emph on
 at al.
@@ -344,7 +343,7 @@ steepest descent walk
 \begin_inset Formula $e_{i}$
 \end_inset
 
- is locally minimal in respect to 
+ is locally minimal with respect to 
 \begin_inset Formula $v_{i}.$
 \end_inset
 
@@ -360,7 +359,15 @@ regional minimum
 \begin_inset Formula $G$
 \end_inset
 
- such that every 
+ such that there is a 
+\emph on
+steepest descent walk 
+\emph default
+between any pair of vertices in 
+\begin_inset Formula $M$
+\end_inset
+
+, and every 
 \emph on
 steepest descent walk 
 \emph default
@@ -969,7 +976,7 @@ saddle vertices
 \emph default
  we keep only one outgoing edge - the one pointing to a vertex with the
  lowest index.
- We then divide the 
+ In the next step we divide the 
 \emph on
 non-minimal plateaus
 \emph default
@@ -978,8 +985,7 @@ non-minimal plateaus
 \begin_inset Formula $Q$
 \end_inset
 
-.
- We then mark all the 
+, mark all the 
 \emph on
 plateau corner
 \emph default
@@ -996,13 +1002,22 @@ plateau corner
 \begin_inset Formula $v$
 \end_inset
 
- from the top of the queue, we then follow all the bidirectional edges.
- If the vertex 
+ from the top of the queue, we then explore all the bidirectional edges
+ 
+\begin_inset Formula $\{v,u\}$
+\end_inset
+
+.
+ If 
 \begin_inset Formula $u$
 \end_inset
 
- on the other side of the edge is not visited, we mark it as such, insert
- it to the back of the queue and change the edge to be incoming.
+ is not visited, we mark it as such, insert it to the back of the queue
+ and change the edge to be incoming 
+\begin_inset Formula $(v\leftarrow u)$
+\end_inset
+
+.
  Otherwise, if the vertex was already visited we just remove the edge.
  The resulting steepest descent graph is shown on Fig.
  2(c) - the dotted edges are removed.
@@ -1174,12 +1189,8 @@ n where each cluster represents a segment.
 \emph on
 single linkage
 \emph default
- clustering, each step 
-\change_deleted -190403614 1425664339
-we 
-\change_unchanged
-merges two clusters connected by an edge with the lowest weight in the original
- graph.
+ clustering, each step merges two clusters connected by an edge with the
+ lowest weight in the original graph.
  
 \emph on
 Single linkage 
@@ -1333,11 +1344,6 @@ basins
 basin 
 \emph default
 sizes).
- The size can be any measure of a cluster with the property that 
-\begin_inset Formula $S(C_{1}\cup C_{2})\ge S(C_{1})$
-\end_inset
-
-.
  We first define a non-increasing threshold function of a cluster size 
 \begin_inset Formula $\tau(s)$
 \end_inset
@@ -1406,21 +1412,25 @@ saliency
 \begin_inset Formula $\tau$
 \end_inset
 
- is required to be non-decreasing, we can rewrite the condition in (2) as
- 
-\begin_inset Formula $\tau^{-1}(d_{C_{1},C_{2}})\ge\min\left\{ S(C_{1}),S(C_{2})\right\} $
+ is required to be non-decreasing, we can find a function 
+\begin_inset Formula $\omega$
 \end_inset
 
- allowing us to specify either 
+ such that when (2) is satisfied 
+\begin_inset Formula $\omega(d_{C_{1},C_{2}})\ge\min\left\{ S(C_{1}),S(C_{2})\right\} $
+\end_inset
+
+.
+ This allows us to either specify either 
 \begin_inset Formula $\tau$
 \end_inset
 
  or 
-\begin_inset Formula $\tau^{-1}.$
+\begin_inset Formula $\omega.$
 \end_inset
 
- When 
-\begin_inset Formula $\tau^{-1}$
+ For example, when 
+\begin_inset Formula $\omega$
 \end_inset
 
  is constant the algorithm will tend to aggressively merge segments smaller
@@ -1439,7 +1449,7 @@ In our clustering algorithm we visit all the edges of the watershed basin
 \end_layout
 
 \begin_layout Enumerate
-Sort 
+Order 
 \begin_inset Formula $E_{W}$
 \end_inset
 
@@ -1588,7 +1598,7 @@ The steps 2-5 of the algorithm have near linear complexity.
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -1824,7 +1834,7 @@ s are represented with RGB; (c) watershed transform output; (d) watershed
 \end_inset
 
 ; (e) ground truth; (f) our method with 
-\begin_inset Formula $\tau^{1}(w)=3000\left(1-w\right)$
+\begin_inset Formula $\omega(w)=3000\left(1-w\right)$
 \end_inset
 
 ; (g), (h) segmentation by 
@@ -1911,7 +1921,7 @@ key "Turaga2009,Turaga2010"
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -1979,7 +1989,7 @@ key "Felzenszwalb2004"
 \end_inset
 
 ; (b) Segmentation obtained by our method with 
-\begin_inset Formula $\tau^{-1}(w)=3000(1-w)$
+\begin_inset Formula $\omega(w)=3000(1-w)$
 \end_inset
 
 
@@ -2001,21 +2011,23 @@ key "Felzenszwalb2004"
 Measuring the quality of the segmentations.
  
 \series default
-A good metric for evaluating a segmentation should ideally tell us how good
- the segmentation is for using in practice, how much manual corrections
- are needed to achieve the correct segmentation.
- Often foreground-restricted Rand Index 
+Usually, in order for the segmenttion to be usable in practice, some human
+ corrections are required.
+ A good metric for evaluating a segmentation should ideally tell us how
+ much manual corrections are needed.
+ This is typically done by measuring the proposed segmentation to the ground
+ truth using foreground-restricted Rand Index 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Rand2009"
 
 \end_inset
 
- between the proposed segmentation and the ground truth is used.
+.
  However it has problems when the number of segments is large as the dynamics
  range gets smaller.
- A better metric is introduced by introduced by Arganda at al, separating
- the rand indices for splits and mergers.
+ A better metric is introduced by Arganda at al, separating the rand indices
+ for splits and mergers.
  Let 
 \begin_inset Formula $p_{ij}$
 \end_inset
@@ -2081,7 +2093,20 @@ watershed basin graph
 \end_layout
 
 \begin_layout Standard
-A sentence explaining the results (why would we expect this?)
+Even though the two algorithm seem similar, the design of the two predicates
+ differ significately.
+ In order to achieve a final segmentation that is not too coarse, as defined
+ in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Felzenszwalb2004"
+
+\end_inset
+
+, the predicate has to guarantee that once it satisfied for a pair of clusters,
+ the two clusters will be part of the final segmentation.
+ Our predicate is loosening the requirement which allows us to be much more
+ aggresive in merging clusters, which in practice gives better results.
 \end_layout
 
 \begin_layout Section
@@ -2089,21 +2114,19 @@ Conclusions
 \end_layout
 
 \begin_layout Standard
-Our method is superior for segmenting images where we have prior knowledge
+Our method is very suitable for segmenting images where we have prior knowledge
  about the size of the true segments, which makes it ideal for segmenting
  3D EM images.
  For conservative threshold functions our method can greatly reduce the
  number of segments without introducing mergers, which makes it ideal as
- pre processing method for some other methods.
- Final segmentation can be obtained by merging our segments.
- It would be a good input to a lot of other methods like 
+ a pre-processing step for methods operating on watershed segmentation 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Mustafa"
+key "Mustafa,Chklovskii2010"
 
 \end_inset
 
-prior knowledge about segments assumes all have the same size properties.
+.
  Useful when proofreading done by non-experts (just by merging segments)
  eyewire ref,
 \end_layout
