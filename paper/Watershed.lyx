@@ -1740,7 +1740,7 @@ Segmentation of a
 \end_inset
 
  merges neurons.
- (h) ground truth segmentation from human expert; 
+ (h) ground truth segmentation from human expert
 \end_layout
 
 \end_inset
@@ -1773,11 +1773,6 @@ We applied our method to 3D electron microscopic brain images [9] (Fig.
  The second and the third functions require the minimal size of the segment
  to be proportional to the affinity (or the square of affinity).
  
-\end_layout
-
-\begin_layout Standard
-Our result in Fig.
- 3
 \end_layout
 
 \begin_layout Standard
