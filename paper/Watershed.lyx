@@ -1926,14 +1926,14 @@ watershed basin graph
 \begin_inset Formula $k$
 \end_inset
 
- in both methods determens the trade-off between the amount of mergers and
- splits.
+ in both methods determines the trade-off between the amount of mergers
+ and splits.
  When 
 \begin_inset Formula $k$
 \end_inset
 
- in the method of [5] is optimized to have approximately same amount of
- mergers as our method, large amount of splits are introduced (Fig.
+ in the method of [5] is optimized to have approximately the same amount
+ of mergers as our method, large amount of splits are introduced (Fig.
  3(f)) and vice versa (Fig.
  3(g)).
 \end_layout
