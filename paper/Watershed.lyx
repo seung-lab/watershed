@@ -328,7 +328,7 @@ regional minimum
 
  
 \emph default
-if there exist a 
+if there exists a 
 \emph on
 steepest descent walk 
 \emph default
@@ -345,7 +345,7 @@ from
 \begin_inset Formula $v$
 \end_inset
 
- can belong 
+ can belong to 
 \emph on
 basins of attractions
 \emph default
