@@ -85,65 +85,29 @@ Image Segmentation by Size-Dependent Single Linkage Clustering of a Watershed
 \end_layout
 
 \begin_layout Author
-Aleksandar Zlateski
-\begin_inset script superscript
-
-\begin_layout Plain Layout
-1
-\end_layout
-
-\end_inset
-
- and H.
- Sebastian Seung
-\begin_inset script superscript
-
-\begin_layout Plain Layout
-2
-\end_layout
-
-\end_inset
-
-
+*******************
 \end_layout
 
 \begin_layout Institute
-\begin_inset script superscript
-
-\begin_layout Plain Layout
-1
-\end_layout
-
-\end_inset
-
- Massachusetts Institute of Technology, Cambridge, USA
+***********
 \begin_inset Newline newline
 \end_inset
 
 
 \family typewriter
-zlateski@mit.edu
+*********
 \family default
 
 \begin_inset Newline newline
 \end_inset
 
-
-\begin_inset script superscript
-
-\begin_layout Plain Layout
-2
-\end_layout
-
-\end_inset
-
- Princeton University, Princeton, USA
+***********
 \begin_inset Newline newline
 \end_inset
 
 
 \family typewriter
-sseung@princeton.edu
+*********
 \end_layout
 
 \begin_layout Abstract
