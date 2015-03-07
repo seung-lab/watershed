@@ -1769,7 +1769,8 @@ We applied our method to 3D electron microscopic brain images [9] (Fig.
  Size-dependent single linkage clustering further reduced oversegmentation
  (Fig.
  3(e)).
- The first function enforced all the segments to be at least some size.
+ The first function enforced all the segments to be at least some minimal
+ size.
  The second and the third functions require the minimal size of the segment
  to be proportional to the affinity (or the square of affinity).
  
