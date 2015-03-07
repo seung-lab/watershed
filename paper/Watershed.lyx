@@ -181,12 +181,11 @@ Introduction
 
 \begin_layout Standard
 Light and electron microscopy can now produce terascale 3D images within
- hours (tomer2012quantitative, http://www.nature.com/nature/journal/v503/n7474/ful
-l/503147a.html?WT.ec_id=NATURE-20131107).
+ hours [1, 2].
  For segmenting such large images, efficient algorithms are important.
  The watershed algorithm has linear runtime but tends to produce severe
  over-segmentation, which is typically counteracted by pre- and/or post-processi
-ng (cite).
+ng.
  Here we update this classic approach, providing a new algorithm for watershed
  on edge-weighted graphs, and a novel post-processing method based on single
  linkage clustering modified to use prior knowledge of segment sizes.
@@ -199,15 +198,8 @@ The input is assumed to be a disaffinity graph, in which a small edge weight
  Our watershed transform works by finding the basins of attraction of steepest
  descent dynamics, and has runtime that is linear in the number of disaffinity
  graph edges.
- It yields basins similar to those of watershed cuts 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Cousty2009"
-
-\end_inset
-
-(cite Cousty 2010), except that plateaus are divided between basins consistently
- and in a more even way.
+ It yields basins similar to those of watershed cuts [3, 4], except that
+ plateaus are divided between basins consistently and in a more even way.
  Our post-processing starts by examining the new graph on the basins, in
  which the edge connecting two basins is assigned the same weight as the
  minimal edge connecting the basins in the original disaffinity graph.
@@ -242,29 +234,20 @@ We also show how to modify single linkage clustering by making it depend
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
- and 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Guimaraes2012"
-
-\end_inset
-
- have proposed efficient image segmentation methods that are quasilinear
+Felzenszwalb 
+\emph on
+et al.
+ 
+\emph default
+[5] and Guimaraes 
+\emph on
+et al.
+ 
+\emph default
+[6] have proposed efficient image segmentation methods that are quasilinear
  in the number of edges in the disaffinity graph.
- We show that our method produces superior results to that of 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
- for the segmentation of neural images from serial electron microscopy.
+ We show that our method produces superior results to that of [5] for the
+ segmentation of neural images from serial electron microscopy.
 \end_layout
 
 \begin_layout Section
@@ -276,20 +259,13 @@ Inspired by the
 \emph on
 drop of water principle 
 \emph default
-
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Cousty2009"
-
-\end_inset
-
- we define a steepest descent discrete dynamics on a connected edge-weighted
+[3] we define a steepest descent discrete dynamics on a connected edge-weighted
  graph 
 \begin_inset Formula $G=(V,E)$
 \end_inset
 
  with non-negative weights.
- A water drop travels from a vertex to a vertex using only 
+ A water drop travels from a vertex to another vertex using only 
 \emph on
 locally minimal
 \emph default
@@ -310,7 +286,7 @@ locally minimal
 \begin_inset Formula $E$
 \end_inset
 
- containing 
+ incident to 
 \begin_inset Formula $u$
 \end_inset
 
@@ -564,10 +540,10 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-(a) An disaffinity graph; (b) derived steepest descent graph; (c) locally
- minimal plateaus (black), non-minimal plateau (gray), saddle vertex (S),
- plateau corners (C); (d) the two basins of attractions and border vertices
- (gray)
+(a) A disaffinity graph; (b) derived steepest descent graph; (c) locally
+ minimal plateaus (black), non-minimal plateau (dark gray), saddle vertex
+ (S), plateau corners (C); (d) the two basins of attractions and border
+ vertices (dark gray)
 \end_layout
 
 \end_inset
@@ -700,7 +676,7 @@ locally minimal plateaus
 \emph on
 non-minimal plateau 
 \emph default
-(gray), 
+(dark gray), 
 \emph on
 plateau corners
 \emph default
@@ -731,19 +707,12 @@ regional minima.
 \emph on
 border
 \emph default
- vertices are shown in gray and belong to both 
+ vertices are shown in dark gray and belong to both 
 \emph on
 basins of attraction.
  
 \emph default
-Watershed cuts 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Cousty2009,Cousty2010"
-
-\end_inset
-
- assign 
+Watershed cuts [3, 4] assign 
 \emph on
 border
 \emph default
@@ -990,7 +959,7 @@ plateau corner
 \begin_inset Formula $v$
 \end_inset
 
- from the top of the queue, we then explore all the bidirectional edges
+ from the front of the queue, we then explore all the bidirectional edges
  
 \begin_inset Formula $\{v,u\}$
 \end_inset
@@ -1009,15 +978,12 @@ plateau corner
  Otherwise, if the vertex was already visited we just remove the edge.
  The resulting steepest descent graph is shown on Fig.
  2(c) - the dotted edges are removed.
- The connected components of the modified 
+ Considering all the remaining edges as bidirectional, the connected components
+ of the modified descent graph D will be the 
 \emph on
-descent graph 
-\begin_inset Formula $D$
-\end_inset
-
-
+watershed
 \emph default
-, now considering all the remaining edges as bidirectional will be our 
+ 
 \emph on
 basins of attraction
 \emph default
@@ -1030,14 +996,7 @@ The algorithm runs in linear time with respect to the number of edges in
 \begin_inset Formula $G$
 \end_inset
 
- and produces an optimal partitioning as defined in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Cousty2009"
-
-\end_inset
-
-.
+ and produces an optimal partitioning as defined in [3].
  The total number of segments in the partitioning will equal to the total
  number of 
 \emph on
@@ -1054,29 +1013,6 @@ We defer the detailed algorithm listing, the proof of correctness and running
 Reducing over-segmentation
 \series default
 .
- Often the edge weights of 
-\begin_inset Formula $G$
-\end_inset
-
- represent 
-\emph on
-disaffinities
-\emph default
- - confidence that the two vertices don't belong to the same segment.
- The 
-\emph on
-disaffinity 
-\emph default
-between two vertices not connected by an edge is considered to be infinite.
- The 
-\emph on
-saliency 
-\emph default
-of two adjacent segments is the value of the minimal 
-\emph on
-disaffinity
-\emph default
- between the vertices of the two segments.
  Noisy values of 
 \emph on
 disaffinities 
@@ -1092,15 +1028,17 @@ below some given threshold
 \begin_inset Formula $T_{\min}$
 \end_inset
 
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Najman1996"
-
-\end_inset
-
-.
- We are confident that 
+ [7].
+ The 
+\emph on
+saliency 
+\emph default
+of two adjacent segments is defined as the value of the minimal 
+\emph on
+disaffinity
+\emph default
+ between the vertices of the two segments.
+ That means that we are confident that 
 \emph on
 disaffinities 
 \emph default
@@ -1108,7 +1046,7 @@ below
 \begin_inset Formula $T_{\min}$
 \end_inset
 
- should yield connected vertices.
+ connect vertices of the same segment.
  An equivalent segmentation can be obtained by replacing the weights of
  all edges in 
 \begin_inset Formula $G$
@@ -1184,14 +1122,7 @@ single linkage
 Single linkage 
 \emph default
 clustering is equivalent to finding the minimum spanning tree of the graph
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Gower1969"
-
-\end_inset
-
-.
+ [8].
 \end_layout
 
 \begin_layout Standard
@@ -1400,23 +1331,25 @@ saliency
 \begin_inset Formula $\tau$
 \end_inset
 
- is required to be non-decreasing, we can find a function 
+ is required to be non-decreasing, we can find a non-increasing function
+ 
 \begin_inset Formula $\omega$
 \end_inset
 
  such that when (2) is satisfied 
-\begin_inset Formula $\omega(d_{C_{1},C_{2}})\ge\min\left\{ S(C_{1}),S(C_{2})\right\} $
+\begin_inset Formula $\omega(d_{C_{1},C_{2}})\le\min\left\{ S(C_{1}),S(C_{2})\right\} $
 \end_inset
 
-.
+ is satisfied.
  This allows us to either specify either 
 \begin_inset Formula $\tau$
 \end_inset
 
  or 
-\begin_inset Formula $\omega.$
+\begin_inset Formula $\omega$
 \end_inset
 
+ used for the predicate.
  For example, when 
 \begin_inset Formula $\omega$
 \end_inset
@@ -1592,7 +1525,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1707,7 +1640,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/gt.png
+	filename Figures/all.png
 	width 3cm
 
 \end_inset
@@ -1734,7 +1667,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/all.png
+	filename Figures/fe2.png
 	width 3cm
 
 \end_inset
@@ -1788,7 +1721,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename Figures/fe2.png
+	filename Figures/gt.png
 	width 3cm
 
 \end_inset
@@ -1815,19 +1748,8 @@ Segmentation of a
 \begin_inset Formula $256^{3}$
 \end_inset
 
- EM image by our method and that of 
-\emph on
-
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
-
-\emph default
- (a) slice of the raw image; (b) slice of nearest neighbor disaffinity graph,
- with 
+ EM image by our method and that of [5] (a) slice of the raw image; (b)
+ slice of nearest neighbor disaffinity graph, with 
 \begin_inset Formula $xyz$
 \end_inset
 
@@ -1845,22 +1767,11 @@ key "Felzenszwalb2004"
 \begin_inset Formula $\omega(w)=3000\left(1-w\right)$
 \end_inset
 
-; (f, g)
-\emph on
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
-
-\emph default
- with 
+; (f, g) [5] with 
 \begin_inset Formula $k=0.5$
 \end_inset
 
- yields oversegmentation while 
+ yields severe oversegmentation while 
 \begin_inset Formula $k=10$
 \end_inset
 
@@ -1878,48 +1789,38 @@ key "Felzenszwalb2004"
 
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
 \begin_layout Section
 Results
 \end_layout
 
 \begin_layout Standard
-We applied our method to 3D electron microscopic brain images [cite e2198,
- Briggman et al.
- (2011)] (Fig.
+We applied our method to 3D electron microscopic brain images [9] (Fig.
  3(a)).
- Disaffinity graphs were computed using convolutional networks [Helmstaedter
- et al.
- (2013)] (Fig.
+ Disaffinity graphs were computed using convolutional networks [10] (Fig.
  3(b)).
  The watershed transform produced severe oversegmentation (Fig.
- 3(a)), which was reduced by pre-processing the disaffinity graph with upper
+ 3(c)), which was reduced by pre-processing the disaffinity graph with upper
  and lower thresholds (Fig.
- 3(b)).
+ 3(d)).
  Size-dependent single linkage clustering further reduced oversegmentation
  (Fig.
- 3.
+ 3(e)).
  The first function enforced all the segments to be at least some size.
  The second and the third functions require the minimal size of the segment
  to be proportional to the affinity (or the square of affinity).
- We also applied the algorithm of 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
+ 
+\end_layout
 
-\end_inset
-
- ....
+\begin_layout Standard
+Our result in Fig.
+ 3
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -1979,22 +1880,9 @@ status collapsed
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Scores of our method and that of 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
- relative to the ground truth segmentation (a) Our method with several threshold
- functions, versus that of 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
- applied to disaffinity graph and to watershed basin graph.
+Scores of our method and that of relative to the ground truth segmentation
+ (a) Our method with several threshold functions, versus that of applied
+ to disaffinity graph and to watershed basin graph.
  Upper right is better, lower left is worse; (b) Segmentation obtained by
  our method with 
 \begin_inset Formula $\omega(w)=3000(1-w)$
@@ -2063,65 +1951,109 @@ where
 
  respectively.
  The scores are similar to the Rand index, a well-known metric for clustering
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Rand2009"
-
-\end_inset
-
-, except that they distinguish between split and merge errors.
+ [11], except that they distinguish between split and merge errors.
  Higher scores mean fewer errors.
  Scoring was restricted to the foreground voxels in the ground truth.
  We tested our method with several threshold functions, and also applied
- the method of 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Felzenszwalb2004"
-
-\end_inset
-
- to the disaffinity graph and to the 
+ the method of [5] to the disaffinity graph and to the 
 \emph on
 watershed basin graph
 \emph default
 .
- Our method achieved better scores (Fig.
+ Our method achieved superior scores (Fig.
  4(a)).
- 
+ The paremeter 
+\begin_inset Formula $k$
+\end_inset
+
+ in both methods determens the trade-off between the amount of mergers and
+ splits.
+ When 
+\begin_inset Formula $k$
+\end_inset
+
+ in the method of [5] is optimized to have approximately same amount of
+ mergers as our method, large amount of splits are introduced (Fig.
+ 3(f)) and vice versa (Fig.
+ 3(g)).
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
+In conclusion, the runtime of our method makes it very suitable for segmenting
+ very large images.
+ It greatly outperforms other methods similar in runtime complexity.
+ Our method can greatly reduce the oversegmentation while introducing virtually
+ no mergers.
 \end_layout
 
-\begin_layout Plain Layout
-
-
-\backslash
-renewcommand
-\backslash
-bibname{References}
+\begin_layout Section*
+References
 \end_layout
 
-\end_inset
-
-
+\begin_layout Enumerate
+Tomer, R., Khairy, K., Amat, F., Keller, P.J.: Quantitative high-speed imaging
+ of entire developing embryos with simultaneous multiview lightsheet microscopy.
+ Nature Methods 9 755–763 (2012)
 \end_layout
 
-\begin_layout Standard
-\begin_inset CommandInset bibtex
-LatexCommand bibtex
-bibfiles "References/references"
-options "References/splncs"
+\begin_layout Enumerate
+Marx, V.: Neurobiology: Brain mapping in high resolution.
+ Nature 503 147–52 (2013)
+\end_layout
 
-\end_inset
+\begin_layout Enumerate
+Cousty, J., Bertrand, G., Najman, L., Couprie, M.: Watershed cuts: Minimum spanning
+ forests and the drop of water principle.
+ IEEE Transactions on Pattern Analysis and Machine Intelligence 31 1362–1374
+ (2009) 
+\end_layout
 
+\begin_layout Enumerate
+Felzenszwalb, P.F., Huttenlocher, D.P.: Efficient graph-based image segmentation.
+ International Journal of Computer Vision 59 167–181 (2004) 
+\end_layout
 
+\begin_layout Enumerate
+Guimarães, S.J.F., Cousty, J., Kenmochi, Y., Najman, L.: A Hierarchical Image
+ Segmentation Algorithm Based on an Observation Scale.
+ 116– 125 (2012) 
+\end_layout
+
+\begin_layout Enumerate
+Cousty, J., Bertrand, G., Najman, L., Couprie, M.: Watershed cuts: Thinnings,
+ shortest path forests, and topological watersheds.
+ IEEE Transactions on Pattern Analysis and Machine Intelligence 32 925–939
+ (2010) 
+\end_layout
+
+\begin_layout Enumerate
+Najman, L., Schmitt, M.: Geodesic Saliency of Watershed Contours and Hierarchical
+ Segmentation.
+ Analysis 18 1163–1173 (1996)
+\end_layout
+
+\begin_layout Enumerate
+Gower, J.C., Ross, G.J.S.: Minimum Spanning Trees and Single Linkage Cluster
+ Analysis.
+ Journal of the Royal Statistical Society.
+ Series C (Applied Statistics) 18 54–64 (1969) 
+\end_layout
+
+\begin_layout Enumerate
+Briggman, K.L., Helmstaedter, M., Denk, W.: Wiring specificity in the direction-sele
+ctivity circuit of the retina.
+ Nature 471 183–188 (2011) 
+\end_layout
+
+\begin_layout Enumerate
+Helmstaedter, M., Briggman, K.L., Turaga, S.C., Jain, V., Seung, H.S., Denk, W.:
+ Connectomic reconstruction of the inner plexiform layer in the mouse retina.
+ Nature 500 168–74 (2013) 
+\end_layout
+
+\begin_layout Enumerate
+Rand, W.M..: Objective Criteria for the Evaluation of Clustering Methods.
+ Journal of the American Statistical Association 66 846–850 (1971)
 \end_layout
 
 \end_body
