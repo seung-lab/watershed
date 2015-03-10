@@ -1,0 +1,136 @@
+\documentclass{llncs}
+
+%\usepackage{graphicx}
+%
+\usepackage[named]{algo}
+
+\begin{document}
+
+
+\title{Image Segmentation by Size-Dependent Single Linkage
+  Clustering of a Watershed Basin Graph}
+
+\subtitle{Supplementary Material}
+
+\author{{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}}
+
+
+\institute{{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}\\
+\texttt{{*}{*}{*}{*}{*}{*}{*}{*}{*}}\\
+{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}{*}\\
+\texttt{{*}{*}{*}{*}{*}{*}{*}{*}{*}}}
+
+\maketitle
+
+
+\section{The Watershed Transform Algorithm}\label{sec:Introduction}
+
+\begin{algorithm}{CreateSDG}[$G$]{
+    \label{algo:createsdg}
+    \qinput{A weighted graph $G$}
+    \qoutput{Steepest descent graph $G'$}
+    \qcomment{Creates the steepest descent graph}
+    \qcomment{Assumes ordered vertices $v_1,\dots,v_n$}
+  }
+  Create $G'=(V,E'=\emptyset)$ \\
+  $n \qlet |V|$ \\
+  \qfor $i \qlet 1$ \qto $n$ \\
+  \qdo $D(v_i) \qlet \infty$ \qrof \\
+  \qfor $e = \{v_i,v_j\} \in E$ in any order\\
+  \qdo $D(v_i) \qlet \min\{D(v_i),w(e)\}$ \\
+  $D(v_j) \qlet \min\{D(v_j),w(e)\}$ \qrof \\
+  \qfor $e = \{v_i,v_j\} \in E$ in any order \\
+  \qdo \qqif $D(v_i) = w(e)$ \qqthen insert $(v_i,v_j)$ to $E'$ \\
+  \qqif $D(v_j) = w(e)$ \qqthen insert $(v_j,v_i)$ to $E'$ \qrof \\
+  \qreturn $G'$
+\end{algorithm}
+
+
+\begin{algorithm}{ModifySDG}[$G'=(V,E')$]{
+    \label{algo:modifysdg}
+    \qinput{Steepest descent graph}
+    \qoutput{Modified steepest descent graph}
+    \qcomment{Assumes ordered vertices $v_1,\dots,v_n$}
+  }
+  Initialize a queue $Q$ \\
+  $n \qlet |V|$ \\
+  \qfor $i \qlet 1$ \qto $n$ \\
+  \qdo $o \qlet \qfalse$ \\
+  $b \qlet \qfalse$ \\
+  \qfor all edges $(v_i,u) \in E'$ \\
+  \qdo \qif $(u,v_i) \in E'$ \\
+  \qthen $o \qlet \qtrue$ \\
+  \qelse $b \qlet \qtrue$ \qfi \qrof \\
+  \qif $o$ \qand $b$ \\
+  \qthen mark $v_i$ as visited \\
+  add $v_i$ to the end of the queue $Q$ \qfi \qrof \\
+  \qwhile $Q \neq \emptyset$ \\
+  \qdo let $u$ be the first element of $Q$ and remove it from $Q$\\
+  \qfor all edges $(u,v) \in E'$ such that $(v,u)$ exists in $E'$\\
+  \qdo remove $(u,v)$ from $E'$ \\
+  \qif $v$ is visited \\
+  \qthen remove $(v,u)$ from $E'$ \\
+  \qelse mark $v$ as visited, add $v$ to the end of $Q$ \qfi \qend \qrof \\
+  \qreturn $G'=(V,E')$
+\end{algorithm}
+
+
+\begin{algorithm}{GetWatershedBasins}[$G'=(V,E')$]{
+    \label{algo:modifysdg}
+    \qinput{Steepest descent graph}
+    \qoutput{Watershed basins, function $B$ such that $B(v)$ }
+    \qcomment{Assumes ordered vertices $v_1,\dots,v_n$}
+  }
+  $next \qlet 0$ \\
+  $n \qlet |V|$ \\
+  mark all vertices as not visited \\
+  \qfor $i \qlet 1$ \qto $n$ \\
+  \qdo
+\end{algorithm}
+
+
+
+Watershed Transform
+
+2) prove $T_{\min}$ claim.
+-
+
+\section{Hierarchical Clustering of the Watershed Basin Graph}\label{sec:Others}
+
+The following algorithm and theorem were introduced in the main manuscript.
+
+\textbf{Algorithm 1 } Size-dependent single linkage clustering
+\begin{enumerate}
+\item Order $E_{W}$ into $\pi(e_{1},\dots,e_{n})$, by non-decreasing edge
+weight.
+\item Start with basins as singleton clusters $S^{0}=\{C_{1}=\{B_{1}\},C_{2}=\{B_{2}\},\dots\}$
+\item Repeat step $4$ for $k=1,\dots,n$
+\item Construct $S^{k}$ from $S^{k-1}$. Let $e_{k}=\{B_{i},B_{j}\}$ be
+the $k$-th edge in the ordering. Let $C_{i}^{k-1}$ and $C_{j}^{k-1}$
+be components of $S^{k-1}$ containing $B_{i}$ and $B_{j}$. If $C_{i}^{k-1}\neq C_{j}^{k-1}$
+and $\Lambda(C_{i}^{k-1},C_{j}^{k-1})$ is not satisfied then $S^{k}$ is created from
+$S^{k-1}$ by merging $C_{i}^{k-1}$ and $C_{j}^{k-1}$, otherwise
+$S^{k}=S^{k-1}.$
+\item Return the hierarchical segmentation $(S^{0},\dots,S^{n})$
+\end{enumerate}
+\textbf{Theorem 1 }\emph{The highest level of the hierarchical segmentation
+produced by algorithm (1) will have the predicate $\Lambda$ satisfied
+for all pairs of the clusters. The complexity of the algorithm is
+$\left|E_{W}\right|\log\left|E_{W}\right|$. The algorithm can be
+modified to consider only the edges of the minimum cost spanning tree
+of $G_{W}$.}
+
+1. by contradiction. Assume lambda not satisfied for some edge $e_W$ and connecting some clusters A and B in the final segmentation.. that means...
+at the time when blah was considered they could have been only smaller.. bla...
+
+2. The sorting is dominnant, the second part is using union find blah blah
+
+3. Assume edge $e_w$ not on the MST is considered and has unsatisfied predicate. let $e_w$ connect two basins A and B in the watershed basin graph.
+as $e_w$ is not on the MST, there exist a path between A and B such that all the edges have smaller or values than $e_w$, so they have all been considered
+befire $e_w$. WLG let S(A) < S(B). then $e_w \le \tau(S(A))$. look at the path $e_1$, $e_2$... $e_n$ on the mst from A to B.
+\section{More Results}\label{sec:Conclusion}
+
+More results
+
+
+\end{document}

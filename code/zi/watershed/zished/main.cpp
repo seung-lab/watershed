@@ -550,7 +550,7 @@ int main()
     //
     // Linear
     //
-    if ( 0 )
+    if ( 1 )
     {
         std::vector<double> r;
         for ( std::size_t thold = 200; thold <= 100000; thold += 100 )

@@ -4,6 +4,8 @@
 
 #include <zi/disjoint_sets/disjoint_sets.hpp>
 #include <map>
+#include <vector>
+#include <set>
 
 template< typename ID, typename F, typename L, typename M >
 inline void merge_segments( const volume_ptr<ID>& seg_ptr,
@@ -80,6 +82,8 @@ inline void merge_segments( const volume_ptr<ID>& seg_ptr,
 
     region_graph<ID,F> new_rg;
 
+    std::vector<std::set<ID>> in_rg;
+
     for ( auto& it: rg )
     {
         ID s1 = remaps[sets.find_set(std::get<1>(it))];
@@ -88,7 +92,11 @@ inline void merge_segments( const volume_ptr<ID>& seg_ptr,
         if ( s1 != s2 && s1 && s2 )
         {
             auto mm = std::minmax(s1,s2);
-            new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
+            if ( in_rg[mm.first].count(mm.second) == 0 )
+            {
+                new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
+                in_rg[mm.first].insert(mm.second);
+            }
         }
     }
 
@@ -172,6 +180,8 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
 
     region_graph<ID,F> new_rg;
 
+    std::vector<std::set<ID>> in_rg;
+
     for ( auto& it: rg )
     {
         ID s1 = remaps[sets.find_set(std::get<1>(it))];
@@ -180,7 +190,11 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
         if ( s1 != s2 && s1 && s2 )
         {
             auto mm = std::minmax(s1,s2);
-            new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
+            if ( in_rg[mm.first].count(mm.second) == 0 )
+            {
+                new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
+                in_rg[mm.first].insert(mm.second);
+            }
         }
     }
 
@@ -448,6 +462,8 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
 
     region_graph<ID,F> new_rg;
 
+    std::vector<std::set<ID>> in_rg;
+
     for ( auto& it: rg )
     {
         ID s1 = remaps[sets.find_set(std::get<1>(it))];
@@ -456,7 +472,11 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
         if ( s1 != s2 && s1 && s2 )
         {
             auto mm = std::minmax(s1,s2);
-            new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
+            if ( in_rg[mm.first].count(mm.second) == 0 )
+            {
+                new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
+                in_rg[mm.first].insert(mm.second);
+            }
         }
     }
 
