@@ -20,7 +20,7 @@ im = toColormappedChannel(squeeze(all(128,:,:)), cmap, squeeze(caff(128,:,:)), 0
 pngExport(im, '../../../paper/Figures/fe2.png', 16, 10);
 
 
-all = load_volume('./zished/experiments/square/10000.dat', 256);
+all = load_volume('./zished/experiments/square/3000.dat', 256);
 im = toColormappedChannel(squeeze(all(128,:,:)), cmap, squeeze(caff(128,:,:)), 0.5);
 pngExport(im, '../../../paper/Figures/all.png', 16, 10);
 

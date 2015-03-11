@@ -22,8 +22,21 @@
 
 \maketitle
 
-
 \section{The Watershed Transform Algorithm}\label{sec:Introduction}
+
+
+
+\textbf{Algorithm 1 } Performs the watershed transform on an undirected weighted graph
+$G=(V,E)$
+
+\begin{enumerate}
+\item Create the steepest descent graph $G'=(V',E')$.
+  \begin{enumerate}
+  \item First set $V'=V$
+  \item For each vertex $v_i$ find the value of the steepest descent, that is
+    $\min_{u \in V, \{v_i,u\} \in E}w(\{v_i,u\})$
+  \end{enumerate}
+\end{enumerate}
 
 \begin{algorithm}{CreateSDG}[$G$]{
     \label{algo:createsdg}
