@@ -514,11 +514,11 @@ int main()
     // load the ground truth and the affinity graph
 
     volume_ptr<uint32_t> gt_ptr =
-        read_volume<uint32_t>("../../../data/gt.in", 256);
+        read_volume<uint32_t>("./data/gt.in", 256);
 
 
     affinity_graph_ptr<float> aff =
-        read_affinity_graph<float>("../../../data/ws_test_256.raw",
+        read_affinity_graph<float>("./data/ws_test_256.raw",
                                    256, 256, 256);
 
 
@@ -543,7 +543,7 @@ int main()
         //     write_volume("./experiments/voutall.out", segg);
         // }
 
-        return 0;
+        //return 0;
     }
 
 

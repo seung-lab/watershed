@@ -82,7 +82,7 @@ inline void merge_segments( const volume_ptr<ID>& seg_ptr,
 
     region_graph<ID,F> new_rg;
 
-    std::vector<std::set<ID>> in_rg;
+    std::vector<std::set<ID>> in_rg(next_id);
 
     for ( auto& it: rg )
     {
@@ -180,7 +180,7 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
 
     region_graph<ID,F> new_rg;
 
-    std::vector<std::set<ID>> in_rg;
+    std::vector<std::set<ID>> in_rg(next_id);
 
     for ( auto& it: rg )
     {
@@ -192,7 +192,7 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
             auto mm = std::minmax(s1,s2);
             if ( in_rg[mm.first].count(mm.second) == 0 )
             {
-                new_rg.emplace_back(std::get<0>(it), mm.first, mm.second);
+                new_rg.push_back(std::make_tuple(std::get<0>(it), mm.first, mm.second));
                 in_rg[mm.first].insert(mm.second);
             }
         }
@@ -462,7 +462,7 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
 
     region_graph<ID,F> new_rg;
 
-    std::vector<std::set<ID>> in_rg;
+    std::vector<std::set<ID>> in_rg(next_id);
 
     for ( auto& it: rg )
     {
