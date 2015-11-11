@@ -1,0 +1,2020 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass llncs
+\begin_preamble
+\usepackage {url}
+\usepackage [numbers]{natbib}
+\renewcommand{\fnum@figure}{\bf Fig.~\thefigure .}
+\usepackage{caption}
+\usepackage[labelsep=space]{caption}
+
+
+\renewcommand{\bibsection}{\section*{\bibname}}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Image Segmentation by Size-Dependent Single Linkage Clustering of a Watershed
+ Basin Graph 
+\end_layout
+
+\begin_layout Author
+*******************
+\end_layout
+
+\begin_layout Institute
+***********
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+*********
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+***********
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+*********
+\end_layout
+
+\begin_layout Abstract
+We present a method for hierarchical image segmentation that defines a disaffini
+ty graph on the image, over-segments it into watershed basins, defines a
+ new graph on the basins, and then merges basins with a modified, size-dependent
+ version of single linkage clustering.
+ The quasilinear runtime of the method makes it suitable for segmenting
+ large images.
+ We illustrate the method on the challenging problem of segmenting 3D electron
+ microscopic brain images.
+ 
+\end_layout
+
+\begin_layout Abstract
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+
+\series bold
+Keywords: 
+\series default
+Watershed, image segmentation, hierarchical clustering, electron microscopy
+\end_layout
+
+\begin_layout Section
+
+\series bold
+Introduction
+\end_layout
+
+\begin_layout Standard
+Light and electron microscopy can now produce terascale 3D images within
+ hours [1, 2].
+ For segmenting such large images, efficient algorithms are important.
+ The watershed algorithm has linear runtime but tends to produce severe
+ over-segmentation, which is typically counteracted by pre- and/or post-processi
+ng.
+ Here we update this classic approach, providing a new algorithm for watershed
+ on edge-weighted graphs, and a novel post-processing method based on single
+ linkage clustering modified to use prior knowledge of segment sizes.
+\end_layout
+
+\begin_layout Standard
+The input is assumed to be a disaffinity graph, in which a small edge weight
+ indicates that the image voxels connected by the edge are likely to belong
+ to the same segment.
+ Our watershed transform works by finding the basins of attraction of steepest
+ descent dynamics, and has runtime that is linear in the number of disaffinity
+ graph edges.
+ It yields basins similar to those of watershed cuts [3, 4], except that
+ plateaus are divided between basins consistently and in a more even way.
+ Our post-processing starts by examining the new graph on the basins, in
+ which the edge connecting two basins is assigned the same weight as the
+ minimal edge connecting the basins in the original disaffinity graph.
+ Then single linkage clustering yields a hierarchical segmentation in which
+ the lowest level consists of the watershed basins.
+ Each level of single linkage clustering is a flat segmentation in which
+ some of the basins are merged.
+ If we only expect to use levels above some minimum value 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
+, then it turns out to be equivalent and more efficient to preprocess the
+ original disaffinity graph before watershed by setting all edge weights
+ below 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
+ to a common low value.
+ In another pre-processing step we remove the edges with disaffinity to
+ allow for unsegmented regions.
+\end_layout
+
+\begin_layout Standard
+We also show how to modify single linkage clustering by making it depend
+ not only on edge weights but also on cluster size.
+ The modification is useful when there is prior knowledge about the size
+ of true segments, and is shown to have an efficient implementation because
+ size is a property that is guaranteed to increase with each agglomerative
+ step.
+ The runtime of single linkage clustering is quasilinear in the number of
+ edges in the watershed basin graph.
+\end_layout
+
+\begin_layout Standard
+Felzenszwalb 
+\emph on
+et al.
+ 
+\emph default
+[5] and Guimaraes 
+\emph on
+et al.
+ 
+\emph default
+[6] have proposed efficient image segmentation methods that are quasilinear
+ in the number of edges in the disaffinity graph.
+ We show that our method produces superior results to that of [5] for the
+ segmentation of neural images from serial electron microscopy.
+\end_layout
+
+\begin_layout Section
+Watershed Transform
+\end_layout
+
+\begin_layout Standard
+Inspired by the 
+\emph on
+drop of water principle 
+\emph default
+[3] we define a steepest descent discrete dynamics on a connected edge-weighted
+ graph 
+\begin_inset Formula $G=(V,E)$
+\end_inset
+
+ with non-negative weights.
+ A water drop travels from a vertex to another vertex using only 
+\emph on
+locally minimal
+\emph default
+ edges.
+ An edge 
+\begin_inset Formula $\{u,v\}$
+\end_inset
+
+ is 
+\emph on
+locally minimal
+\emph default
+ with respect to 
+\begin_inset Formula $u$
+\end_inset
+
+ if there is no edge in 
+\begin_inset Formula $E$
+\end_inset
+
+ incident to 
+\begin_inset Formula $u$
+\end_inset
+
+ with lower weight.
+ Starting from a vertex 
+\begin_inset Formula $v_{0}$
+\end_inset
+
+ the evolution of the system can be represented as a 
+\emph on
+steepest descent walk
+\emph default
+ 
+\begin_inset Formula $\left\langle v_{0},e_{0},v_{1},e_{1},v_{2},\dots\right\rangle $
+\end_inset
+
+ where every edge 
+\begin_inset Formula $e_{i}$
+\end_inset
+
+ is locally minimal with respect to 
+\begin_inset Formula $v_{i}.$
+\end_inset
+
+ A 
+\emph on
+regional minimum 
+\begin_inset Formula $M$
+\end_inset
+
+
+\emph default
+ is a connected subgraph of 
+\begin_inset Formula $G$
+\end_inset
+
+ such that there is a 
+\emph on
+steepest descent walk 
+\emph default
+between any pair of vertices in 
+\begin_inset Formula $M$
+\end_inset
+
+, and every 
+\emph on
+steepest descent walk 
+\emph default
+in 
+\begin_inset Formula $G$
+\end_inset
+
+ starting from a vertex in 
+\begin_inset Formula $M$
+\end_inset
+
+ will stay within 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ A vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ belongs to the 
+\emph on
+basin of attraction
+\emph default
+ of a 
+\emph on
+regional minimum 
+\begin_inset Formula $M$
+\end_inset
+
+ 
+\emph default
+if there exists a 
+\emph on
+steepest descent walk 
+\emph default
+from 
+\begin_inset Formula $v$
+\end_inset
+
+ to any vertex in 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ Note that 
+\begin_inset Formula $v$
+\end_inset
+
+ can belong to 
+\emph on
+basins of attractions
+\emph default
+ of multiple 
+\emph on
+regional minima
+\emph default
+.
+ In our 
+\emph on
+watershed transform
+\emph default
+ we partition 
+\begin_inset Formula $V$
+\end_inset
+
+ into 
+\emph on
+basins of attraction
+\emph default
+ of 
+\emph on
+the regional minima.
+ 
+\emph default
+Vertices belonging to more than one 
+\emph on
+basin of attraction 
+\emph default
+will be referred to as 
+\emph on
+border vertices
+\emph default
+ and will be assigned to one of the 
+\emph on
+basins
+\emph default
+ as described below.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/affinity_graph.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/sd_graph.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/sd_graph_plateaus.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/ws_result.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(a) A disaffinity graph; (b) derived steepest descent graph; (c) locally
+ minimal plateaus (black), non-minimal plateau (dark gray), saddle vertex
+ (S), plateau corners (C); (d) the two basins of attractions and border
+ vertices (dark gray)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Steepest descent graph.
+ 
+\series default
+The central quantity in the watershed algorithm is the steepest descent
+ graph, defined as follows.
+ Consider an undirected weighted graph 
+\begin_inset Formula $G$
+\end_inset
+
+ (Fig.
+ 1(a)).
+ Define the directed graph 
+\begin_inset Formula $G'$
+\end_inset
+
+ in which each undirected edge of 
+\begin_inset Formula $G$
+\end_inset
+
+ is replaced by both directed edges between the same vertices.
+ The 
+\emph on
+steepest descent graph
+\emph default
+ 
+\begin_inset Formula $D$
+\end_inset
+
+ (Fig.
+ 1(b)) is a subgraph of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with the property that 
+\begin_inset Formula $D$
+\end_inset
+
+ includes every edge of 
+\begin_inset Formula $G'$
+\end_inset
+
+ with minimal weight of all edges outgoing from the same vertex.
+ A directed path in 
+\begin_inset Formula $D$
+\end_inset
+
+ is a path of steepest descent in 
+\begin_inset Formula $G$
+\end_inset
+
+.
+ The steepest ascent graph can be defined analogously using edges of maximal
+ weight.
+ Either steepest ascent or descent can be used without loss of generality.
+ For simplicity, for a given vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ we will refer to its edges in 
+\begin_inset Formula $D$
+\end_inset
+
+ as incoming, outgoing, and bidirectional.
+ A 
+\emph on
+plateau
+\emph default
+ is a connected component of the subgraph of 
+\begin_inset Formula $D$
+\end_inset
+
+ containing only bidirectional edges.
+ A 
+\emph on
+plateau corner
+\emph default
+ is a vertex of a 
+\emph on
+plateau
+\emph default
+ that has at least one outgoing edge.
+ 
+\emph on
+Locally minimal plateaus
+\emph default
+ contain no 
+\emph on
+plateau corners, 
+\emph default
+they
+\emph on
+ 
+\emph default
+are equivalent to the regional minima of the original graph.
+ 
+\emph on
+Non-minimal plateaus 
+\emph default
+contain one or more 
+\emph on
+plateau corners.
+ 
+\emph default
+A 
+\emph on
+saddle vertex 
+\emph default
+has more than one outgoing edge.
+ In Fig.
+ 1(c) we show 
+\emph on
+locally minimal plateaus 
+\emph default
+(black), 
+\emph on
+non-minimal plateau 
+\emph default
+(dark gray), 
+\emph on
+plateau corners
+\emph default
+ (C), and a
+\emph on
+ saddle vertex 
+\emph default
+(S).
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Assigning border vertices.
+ 
+\series default
+In Fig.
+ 1(d) we show the 
+\emph on
+basins of attraction
+\emph default
+ of the two 
+\emph on
+regional minima.
+
+\emph default
+ The 
+\emph on
+border
+\emph default
+ vertices are shown in dark gray and belong to both 
+\emph on
+basins of attraction.
+ 
+\emph default
+Watershed cuts [3, 4] assign 
+\emph on
+border
+\emph default
+ vertices with a single constraint that all the 
+\emph on
+basins of attraction
+\emph default
+ have to be connected.
+ We introduce additional constrains.
+ The watershed transform has to be uniquely defined and the 
+\emph on
+non-minimal plateaus 
+\emph default
+should be divided evenly
+\emph on
+.
+ 
+\emph default
+More specifically, we want our dynamics
+\emph on
+ 
+\emph default
+to be uniquely defined at 
+\emph on
+saddle vertices, and 
+\emph default
+the vertices of the 
+\emph on
+non-minimal plateaus
+\emph default
+ to be assigned to the same 
+\emph on
+basin of attraction
+\emph default
+ as the nearest 
+\emph on
+plateau corner - 
+\emph default
+a 
+\emph on
+plateau corner
+\emph default
+ reachable in fewest steps following the rules of our dynamics
+\emph on
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/sd_graph_ordered.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/sd_graph_plateaus_ordered.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/sd_graph_plateaus_modified.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/final_segmentation.eps
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(a) Vertex indices; (b) distances to the nearest plateau corner; (c) modificatio
+ns to the steepest descent graph; (d) final watershed partition of the graph
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Watershed transform algorithm.
+ 
+\series default
+We introduce an ordering function 
+\begin_inset Formula $\alpha:V\to\{1,2,...,|V|\}$
+\end_inset
+
+ such that 
+\begin_inset Formula $\alpha(u)\neq\alpha(v)$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $u\neq v$
+\end_inset
+
+.
+ We'll refer to 
+\begin_inset Formula $\alpha(u)$
+\end_inset
+
+ as the index of 
+\begin_inset Formula $u$
+\end_inset
+
+ (Fig.
+ 2(a)).
+ In the first part of the algorithm we modify 
+\begin_inset Formula $D$
+\end_inset
+
+ by removing edges.
+ For all 
+\emph on
+saddle vertices
+\emph default
+ we keep only one outgoing edge - the one pointing to a vertex with the
+ lowest index.
+ In the next step we divide the 
+\emph on
+non-minimal plateaus
+\emph default
+.
+ We initialize a global FIFO queue 
+\begin_inset Formula $Q$
+\end_inset
+
+, mark all the 
+\emph on
+plateau corner
+\emph default
+ vertices as visited and insert them into 
+\begin_inset Formula $Q$
+\end_inset
+
+ in increasing order of their index.
+ While 
+\begin_inset Formula $Q$
+\end_inset
+
+ is not empty we remove the vertex 
+\begin_inset Formula $v$
+\end_inset
+
+ from the front of the queue, we then explore all the bidirectional edges
+ 
+\begin_inset Formula $\{v,u\}$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $u$
+\end_inset
+
+ is not visited, we mark it as such, insert it to the back of the queue
+ and change the edge to be incoming 
+\begin_inset Formula $(v\leftarrow u)$
+\end_inset
+
+.
+ Otherwise, if the vertex was already visited we just remove the edge.
+ The resulting steepest descent graph is shown on Fig.
+ 2(c) - the dotted edges are removed.
+ Considering all the remaining edges as bidirectional, the connected components
+ of the modified descent graph D will be the 
+\emph on
+watershed
+\emph default
+ 
+\emph on
+basins of attraction
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+The algorithm runs in linear time with respect to the number of edges in
+ 
+\begin_inset Formula $G$
+\end_inset
+
+ and produces an optimal partitioning as defined in [3].
+ The total number of segments in the partitioning will equal to the total
+ number of 
+\emph on
+regional minima.
+ 
+\emph default
+We defer the detailed algorithm listing, the proof of correctness and running
+ time analysis to the supplementary material.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Reducing over-segmentation
+\series default
+.
+ Noisy values of 
+\emph on
+disaffinities 
+\emph default
+can produce severe over-segmentation (Fig.
+ 3(c)).
+ In order to reduce the over-segmentation we often merge adjacent segments
+ with the 
+\emph on
+saliency 
+\emph default
+below some given threshold 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
+ [7].
+ The 
+\emph on
+saliency 
+\emph default
+of two adjacent segments is defined as the value of the minimal 
+\emph on
+disaffinity
+\emph default
+ between the vertices of the two segments.
+ That means that we are confident that 
+\emph on
+disaffinities 
+\emph default
+below 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
+ connect vertices of the same segment.
+ An equivalent segmentation can be obtained by replacing the weights of
+ all edges in 
+\begin_inset Formula $G$
+\end_inset
+
+ with the weight smaller than 
+\begin_inset Formula $T_{\min}$
+\end_inset
+
+ to a common low value (e.g.
+ 
+\begin_inset Formula $0$
+\end_inset
+
+) before applying the watershed transform.
+ We prove this claim in the supplementary material.
+ To show confidence about high values of 
+\emph on
+disaffinities
+\emph default
+, and in order to prevent undesired mergers, we introduce a threshold 
+\begin_inset Formula $T_{\max}$
+\end_inset
+
+ by erasing all the edges from 
+\begin_inset Formula $G$
+\end_inset
+
+ with the weight higher than 
+\begin_inset Formula $T_{\max}$
+\end_inset
+
+, and essentially setting them to 
+\begin_inset Formula $\infty$
+\end_inset
+
+.
+ The 
+\begin_inset Formula $T_{\max}$
+\end_inset
+
+ threshold can produce singleton vertices in 
+\begin_inset Formula $G$
+\end_inset
+
+.
+ The singleton vertices are not assigned to any 
+\emph on
+basin of attraction
+\emph default
+ and are considered background, which is often a desired result.
+\end_layout
+
+\begin_layout Section
+Hierarchical Clustering of the Watershed Basin Graph
+\end_layout
+
+\begin_layout Standard
+A hierarchical clustering of an undirected weighted graph treats each vertex
+ as a singleton cluster and successively merges clusters connected by an
+ edge in the graph.
+ A cluster is always a connected subset of the graph's vertices.
+ Each merge operations creates a new level of the hierarchy - a flat segmentatio
+n where each cluster represents a segment.
+ In 
+\emph on
+single linkage
+\emph default
+ clustering, each step merges two clusters connected by an edge with the
+ lowest weight in the original graph.
+ 
+\emph on
+Single linkage 
+\emph default
+clustering is equivalent to finding the minimum spanning tree of the graph
+ [8].
+\end_layout
+
+\begin_layout Standard
+In this section we propose a size-dependent single linkage clustering.
+ The method can be applied to any edge weighted graph, however we find it
+ superior when used on the 
+\emph on
+watershed basin graph
+\emph default
+ defined as follows.
+ Let 
+\begin_inset Formula $V_{W}=\{B_{1},B_{2},\dots\}$
+\end_inset
+
+ be the set of 
+\emph on
+watershed basins
+\emph default
+ obtained by the watershed transform of a graph 
+\begin_inset Formula $G=(V,E)$
+\end_inset
+
+.
+ We define the watershed basin graph of 
+\begin_inset Formula $G$
+\end_inset
+
+ as 
+\begin_inset Formula $G_{W}=(V_{W},E_{W})$
+\end_inset
+
+ where an edge 
+\begin_inset Formula $\{B_{i},B_{j}\}$
+\end_inset
+
+ exists in 
+\begin_inset Formula $E_{W}$
+\end_inset
+
+ for all neighboring basins 
+\begin_inset Formula $B_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $B_{j}$
+\end_inset
+
+, and has the weight 
+\begin_inset Formula $w(\{B_{i},B_{j}\})$
+\end_inset
+
+ equal to the 
+\emph on
+saliency
+\emph default
+ of the two 
+\emph on
+basins.
+
+\emph default
+ We will refer to the vertices of the 
+\emph on
+watershed basin graph
+\emph default
+ as 
+\emph on
+basins
+\emph default
+ and to the edge weights as 
+\emph on
+saliencies.
+\end_layout
+
+\begin_layout Standard
+In our size-dependent 
+\emph on
+single linkage
+\emph default
+ clustering method, in each step we merge clusters with the lowest 
+\emph on
+saliency
+\emph default
+ that don't satisfy a given predicate.
+ 
+\emph on
+Saliency 
+\emph default
+of two clusters is defined as the minimal 
+\emph on
+saliency 
+\emph default
+of any two members:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+d_{C_{1},C_{2}}=\underset{B_{i}\in C_{1},B_{j}\in C_{2},\{B_{i},B_{j}\}\in E_{W}}{\min}w(\{B_{i},B_{j}\})
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At the last level of the hierarchy all pairs of clusters will satisfy the
+ predicate.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Size-dependent comparison predicate.
+ 
+\series default
+We define a predicate 
+\begin_inset Formula $\Lambda,$
+\end_inset
+
+ for evaluating whether two clusters should be merged.
+ The predicate is based on the sizes of the two clusters.
+ Let 
+\begin_inset Formula $S(C)$
+\end_inset
+
+ represent the size of 
+\begin_inset Formula $C$
+\end_inset
+
+ (e.g.
+ number of 
+\emph on
+basins
+\emph default
+ in the cluster or the sum of the 
+\emph on
+basin 
+\emph default
+sizes).
+ We first define a non-increasing threshold function of a cluster size 
+\begin_inset Formula $\tau(s)$
+\end_inset
+
+.
+ The value of 
+\begin_inset Formula $\tau(s)$
+\end_inset
+
+ represents the maximal 
+\emph on
+saliency
+\emph default
+ allowed between a cluster of size 
+\begin_inset Formula $s$
+\end_inset
+
+ and any adjacent cluster.
+ Our predicate is then defined as:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\Lambda(C_{1},C_{2})=\begin{cases}
+\textrm{t\textrm{rue}} & \textrm{if }d_{C_{1},C_{2}}\ge\tau\left(\min\left\{ S(C_{1}),S(C_{2})\right\} \right)\\
+\textrm{false} & \textrm{otherwise\textrm{ }}
+\end{cases}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The intuition behind the predicate is to apply prior knowledge about the
+ sizes of the true segments.
+ With the threshold function we control the confidence required to grow
+ a cluster of a certain size.
+\end_layout
+
+\begin_layout Standard
+With a slight modification of the predicate we could allow for an arbitrary
+ threshold function (changing the condition to 
+\begin_inset Formula $d_{C_{1},C_{2}}\ge\min\left\{ \tau(S(C_{1})),\tau(S(C_{2}))\right\} )$
+\end_inset
+
+.
+ However, restricting the function to be non-decreasing allows us to design
+ a more efficient
+\emph on
+ 
+\emph default
+algorithm.
+ It is also more intuitive to allow higher 
+\emph on
+saliency
+\emph default
+ for merging small clusters and require lower 
+\emph on
+saliency
+\emph default
+ as the sizes of the clusters grow.
+ As 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is required to be non-decreasing, we can find a non-increasing function
+ 
+\begin_inset Formula $\omega$
+\end_inset
+
+ such that when (2) is satisfied 
+\begin_inset Formula $\omega(d_{C_{1},C_{2}})\le\min\left\{ S(C_{1}),S(C_{2})\right\} $
+\end_inset
+
+ is satisfied.
+ This allows us to either specify either 
+\begin_inset Formula $\tau$
+\end_inset
+
+ or 
+\begin_inset Formula $\omega$
+\end_inset
+
+ used for the predicate.
+ For example, when 
+\begin_inset Formula $\omega$
+\end_inset
+
+ is constant the algorithm will tend to aggressively merge segments smaller
+ than the given constant.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Algorithm 1 
+\series default
+In our clustering algorithm we visit all the edges of the watershed basin
+ graph in non-decreasing order and merge the corresponding clusters based
+ on the introduced predicate.
+\end_layout
+
+\begin_layout Enumerate
+Order 
+\begin_inset Formula $E_{W}$
+\end_inset
+
+ into 
+\begin_inset Formula $\pi(e_{1},\dots,e_{n})$
+\end_inset
+
+, by non-decreasing edge weight.
+\end_layout
+
+\begin_layout Enumerate
+Start with basins as singleton clusters 
+\begin_inset Formula $S^{0}=\{C_{1}=\{B_{1}\},C_{2}=\{B_{2}\},\dots\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Repeat step 
+\begin_inset Formula $4$
+\end_inset
+
+ for 
+\begin_inset Formula $k=1,\dots,n$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Construct 
+\begin_inset Formula $S^{k}$
+\end_inset
+
+ from 
+\begin_inset Formula $S^{k-1}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $e_{k}=\{B_{i},B_{j}\}$
+\end_inset
+
+ be the 
+\begin_inset Formula $k$
+\end_inset
+
+-th edge in the ordering.
+ Let 
+\begin_inset Formula $C_{i}^{k-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $C_{j}^{k-1}$
+\end_inset
+
+ be components of 
+\begin_inset Formula $S^{k-1}$
+\end_inset
+
+ containing 
+\begin_inset Formula $B_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $B_{j}$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $C_{i}^{k-1}\neq C_{j}^{k-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\Lambda(C_{i}^{k-1},C_{j}^{k-1})$
+\end_inset
+
+ is not satisfied then 
+\begin_inset Formula $S^{k}$
+\end_inset
+
+ is created from 
+\begin_inset Formula $S^{k-1}$
+\end_inset
+
+ by merging 
+\begin_inset Formula $C_{i}^{k-1}$
+\end_inset
+
+ and 
+\begin_inset Formula $C_{j}^{k-1}$
+\end_inset
+
+, otherwise 
+\begin_inset Formula $S^{k}=S^{k-1}.$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Return the hierarchical segmentation 
+\begin_inset Formula $(S^{0},\dots,S^{n})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Theorem 1 
+\series default
+\emph on
+The highest level of the hierarchical segmentation produced by algorithm
+ (1) will have the predicate 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+ satisfied for all pairs of the clusters.
+ The complexity of the algorithm is 
+\begin_inset Formula $\left|E_{W}\right|\log\left|E_{W}\right|$
+\end_inset
+
+.
+ The algorithm can be modified to consider only the edges of the minimum
+ cost spanning tree of 
+\begin_inset Formula $G_{W}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We defer the proof the supplementary material.
+\end_layout
+
+\begin_layout Standard
+The steps 2-5 of the algorithm have near linear complexity.
+ Once we have a sorted list of the edges we can re-run the algorithm for
+ different threshold functions more efficiently.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/chan.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/aff.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/raw.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/minmax.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/all.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/fe2.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/fe1.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/gt.png
+	width 3cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Segmentation of a 
+\begin_inset Formula $256^{3}$
+\end_inset
+
+ EM image by our method and that of [5] (a) slice of the raw image; (b)
+ slice of nearest neighbor disaffinity graph, with 
+\begin_inset Formula $xyz$
+\end_inset
+
+ disaffinities represented with RGB; (c) watershed transform of raw image;
+ (d) watershed transform after preprocessing with 
+\begin_inset Formula $T_{\min}=0.01$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{\max}=0.9$
+\end_inset
+
+; (e) post-processing with size-dependent single linkage clustering using
+ 
+\begin_inset Formula $\omega(w)=3000\left(1-w\right)$
+\end_inset
+
+; (f, g) [5] with 
+\begin_inset Formula $k=0.5$
+\end_inset
+
+ yields severe oversegmentation while 
+\begin_inset Formula $k=10$
+\end_inset
+
+ merges neurons.
+ (h) ground truth segmentation from human expert
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+We applied our method to 3D electron microscopic brain images [9] (Fig.
+ 3(a)).
+ Disaffinity graphs were computed using convolutional networks [10] (Fig.
+ 3(b)).
+ The watershed transform produced severe oversegmentation (Fig.
+ 3(c)), which was reduced by pre-processing the disaffinity graph with upper
+ and lower thresholds (Fig.
+ 3(d)).
+ Size-dependent single linkage clustering further reduced oversegmentation
+ (Fig.
+ 3(e)).
+ The first function enforced all the segments to be at least some minimal
+ size.
+ The second and the third functions require the minimal size of the segment
+ to be proportional to the affinity (or the square of affinity).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/results2.eps
+	width 7cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Figures/3da.png
+	width 5.5cm
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Scores of our method and that of relative to the ground truth segmentation
+ (a) Our method with several threshold functions, versus that of applied
+ to disaffinity graph and to watershed basin graph.
+ Upper right is better, lower left is worse; (b) Segmentation obtained by
+ our method with 
+\begin_inset Formula $\omega(w)=3000(1-w)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Measuring the quality of the segmentations.
+ 
+\series default
+We evaluated the segmentations by comparing to the ground truth generated
+ by a human expert.
+ Split and merge scores were computed by
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+V_{\textrm{split}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}t_{k}^{2}}\textrm{ and }V_{\textrm{merge}}=\frac{{\sum_{ij}p_{ij}^{2}}}{\sum_{k}s_{k}^{2}}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $p_{ij}$
+\end_inset
+
+ is the probability that a randomly chosen voxel belongs to segment 
+\begin_inset Formula $i$
+\end_inset
+
+ in the proposed segmentation and segment 
+\begin_inset Formula $j$
+\end_inset
+
+ in the ground truth, 
+\begin_inset Formula $s_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $t_{j}$
+\end_inset
+
+ are probabilities of a randomly chosen voxel belonging to predicted segment
+ 
+\begin_inset Formula $i$
+\end_inset
+
+ and ground truth segment 
+\begin_inset Formula $j$
+\end_inset
+
+ respectively.
+ The scores are similar to the Rand index, a well-known metric for clustering
+ [11], except that they distinguish between split and merge errors.
+ Higher scores mean fewer errors.
+ Scoring was restricted to the foreground voxels in the ground truth.
+ We tested our method with several threshold functions, and also applied
+ the method of [5] to the disaffinity graph and to the 
+\emph on
+watershed basin graph
+\emph default
+.
+ Our method achieved superior scores (Fig.
+ 4(a)).
+ The paremeter 
+\begin_inset Formula $k$
+\end_inset
+
+ in both methods determines the trade-off between the amount of mergers
+ and splits.
+ When 
+\begin_inset Formula $k$
+\end_inset
+
+ in the method of [5] is optimized to have approximately the same amount
+ of mergers as our method, large amount of splits are introduced (Fig.
+ 3(f)) and vice versa (Fig.
+ 3(g)).
+\end_layout
+
+\begin_layout Standard
+In conclusion, the runtime of our method makes it very suitable for segmenting
+ very large images.
+ It greatly outperforms other methods similar in runtime complexity.
+ Our method can greatly reduce the oversegmentation while introducing virtually
+ no mergers.
+\end_layout
+
+\begin_layout Section*
+References
+\end_layout
+
+\begin_layout Enumerate
+Tomer, R., Khairy, K., Amat, F., Keller, P.J.: Quantitative high-speed imaging
+ of entire developing embryos with simultaneous multiview lightsheet microscopy.
+ Nature Methods 9 755–763 (2012)
+\end_layout
+
+\begin_layout Enumerate
+Marx, V.: Neurobiology: Brain mapping in high resolution.
+ Nature 503 147–52 (2013)
+\end_layout
+
+\begin_layout Enumerate
+Cousty, J., Bertrand, G., Najman, L., Couprie, M.: Watershed cuts: Minimum spanning
+ forests and the drop of water principle.
+ IEEE Transactions on Pattern Analysis and Machine Intelligence 31 1362–1374
+ (2009) 
+\end_layout
+
+\begin_layout Enumerate
+Felzenszwalb, P.F., Huttenlocher, D.P.: Efficient graph-based image segmentation.
+ International Journal of Computer Vision 59 167–181 (2004) 
+\end_layout
+
+\begin_layout Enumerate
+Guimarães, S.J.F., Cousty, J., Kenmochi, Y., Najman, L.: A Hierarchical Image
+ Segmentation Algorithm Based on an Observation Scale.
+ 116– 125 (2012) 
+\end_layout
+
+\begin_layout Enumerate
+Cousty, J., Bertrand, G., Najman, L., Couprie, M.: Watershed cuts: Thinnings,
+ shortest path forests, and topological watersheds.
+ IEEE Transactions on Pattern Analysis and Machine Intelligence 32 925–939
+ (2010) 
+\end_layout
+
+\begin_layout Enumerate
+Najman, L., Schmitt, M.: Geodesic Saliency of Watershed Contours and Hierarchical
+ Segmentation.
+ Analysis 18 1163–1173 (1996)
+\end_layout
+
+\begin_layout Enumerate
+Gower, J.C., Ross, G.J.S.: Minimum Spanning Trees and Single Linkage Cluster
+ Analysis.
+ Journal of the Royal Statistical Society.
+ Series C (Applied Statistics) 18 54–64 (1969) 
+\end_layout
+
+\begin_layout Enumerate
+Briggman, K.L., Helmstaedter, M., Denk, W.: Wiring specificity in the direction-sele
+ctivity circuit of the retina.
+ Nature 471 183–188 (2011) 
+\end_layout
+
+\begin_layout Enumerate
+Helmstaedter, M., Briggman, K.L., Turaga, S.C., Jain, V., Seung, H.S., Denk, W.:
+ Connectomic reconstruction of the inner plexiform layer in the mouse retina.
+ Nature 500 168–74 (2013) 
+\end_layout
+
+\begin_layout Enumerate
+Rand, W.M..: Objective Criteria for the Evaluation of Clustering Methods.
+ Journal of the American Statistical Association 66 846–850 (1971)
+\end_layout
+
+\end_body
+\end_document
