@@ -1,4 +1,5 @@
-\documentclass[10pt, conference, compsocconf]{IEEEtran}
+%\documentclass[10pt, conference, compsocconf]{IEEEtran}
+\documentclass{article}\usepackage{times}
 \usepackage{xcolor}
 \usepackage{mathtools}
 \usepackage{enumerate}
@@ -23,8 +24,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{A Parallel Watershed Algorithm for $N$--dimensional Affinity
-  Graphs by Merging Local Watersheds}
+\title{Algorithm for watershed on graphs with plateau division by shortest path}
 
 \author{
 Aleksandar Zlateski\\ Massachusetts Institute of Technology\\ Cambridge, MA\\
@@ -61,32 +61,93 @@ Abstract
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
+The watershed transform is a standard method for image segmentation
+that is based on defining a dynamical system that is discrete in space
+and time.  The dynamical system steps from pixel to pixel while taking
+a path of steepest descent on the pixel values.  The basins of
+attraction of the dynamics constitute the resulting segmentation of
+the image.
 
+The watershed transform has previously been generalized from images to
+graphs by an algorithm called ``watershed
+cuts.''\cite{Cousty2009,Cousty2010}.  Here we provide a new algorithm
+for watershed on graphs.  The main motivation is to handle the
+division of plateaus in a systematic way. The definition of the
+watershed transform becomes subtle in the presence of plateaus.  In
+these ``flat'' parts of an image or graph, the direction of steepest
+descent is not well-defined.  Our algorithm divides plateaus evenly,
+in the sense that from any node on the plateau, the dynamics follows
+the shortest path to a plateau corner.
 
-\section{Watershed Transform Algorithm}
+Light and electron microscopy can now produce terascale 3D images within hours. For segmenting such large images, efficient algorithms are important. The watershed algorithm has linear runtime but tends to produce severe over-segmentation, which is typically counteracted by pre- and/or post-processing.
 
-Inspired by the \emph{drop of water principle}~\cite{Cousty2009} we
-define a steepest descent discrete dynamics on a connected
-edge-weighted graph $G=(V,E)$ with non-negative weights. A water drop
-travels from a vertex to another vertex using only \emph{locally
-  minimal} edges. An edge $\{u,v\}$ is \emph{locally minimal} with
-respect to $u$ if there is no edge in $E$ incident to $u$ with lower
-weight. Starting from a vertex $v_{0}$ the evolution of the system can
-be represented as a \emph{steepest descent walk} $\left\langle
-v_{0},e_{0},v_{1},e_{1},v_{2}, \dots \right\rangle$ where every edge
-$e_{i}$ is locally minimal with respect to $v_{i}.$ A \emph{regional
-  minimum $M$} is a connected subgraph of $G$ such that there is a
-\emph{steepest descent walk} between any pair of vertices in $M$, and
-every \emph{steepest descent walk} in $G$ starting from a vertex in
-$M$ will stay within $M$. A vertex $v$ belongs to the \emph{basin of
+The Cousty algorithm alternates between depth first search (DFS) and
+breadth first search (BFS) for an attractor of the gradient descent
+dynamics.  It starts with DFS, switches to BFS when it enters a
+plateau, and switches back to DFS when it exits a plateau, and continues alternating in this way until an attractor is found.
+
+Our algorithm splits the search process into several passes through the graph.  The first pass explicitly computes a steepest descent graph.  The second pass removes saddle vertices and identifies plateau corners. The third pass divides plateaus via BFS. The fourth pass finds connected components.
+
+Like watershed cuts, our algorithm has linear time complexity.
+The use of multiple passes makes it possible to divide plateaus
+evenly.  A second motivation for our algorithm is that it separates
+the computation into two passes that are parallelizable versus two
+passes that are not.  A parallel variant of our algorithm will be described in a future paper.
+
+The input is assumed to be a disaffinity graph, in which a small edge weight indicates that the image voxels connected by the edge are likely to belong to the same segment.
+
+The watershed transform is known to generate overly fragmented
+segmentations, because every local minimum gives rise to a watershed
+basin.  Therefore the image or graph is often smoothed before the
+watershed transform is applied, to reduce the number of local minima.
+A simple smoothing method is to set all edge weights below a threshold
+$T_{\min}$ to a common low value.  
+
+\section{The algorithm}
+
+Consider a connected graph $G=(V,E)$ with non-negative edge
+weights. An edge $\{u,v\}$ is \emph{locally maximal} for
+$u$ if there is no other edge incident to $u$ with higher weight.  A
+\emph{steepest ascent path} $\left\langle
+v_{0},e_{0},v_{1},e_{1},v_{2}, \dots \right\rangle$ is one
+for which every edge $e_{i}$ is locally minimal with respect to
+$v_{i}.$
+
+A \emph{regional minimum} $M$ is a connected subgraph of $G$ such that
+there is a steepest descent path between any pair of vertices in $M$,
+and every steepest descent path starting in $M$ will
+stay within $M$. A vertex $v$ belongs to the \emph{basin of
   attraction} of a \emph{regional minimum $M$} if there exists a
-\emph{steepest descent walk} from $v$ to any vertex in $M$. Note that
-$v$ can belong to \emph{basins of attractions} of multiple
-\emph{regional minima}. In our \emph{watershed transform} we partition
-$V$ into \emph{basins of attraction} of \emph{the regional
-  minima}. Vertices belonging to more than one \emph{basin of
-  attraction} will be referred to as \emph{border vertices} and will
-be assigned to one of the \emph{basins} as described below.
+steepest descent path from $v$ to any vertex in $M$.
+
+In the special case where all edge weights take on unique values, the
+locally minimal edge is uniquely defined for each vertex.  It follows
+that the steepest descent path from every vertex is uniquely defined,
+and that every vertex belongs to exactly one basin of
+attraction.\footnote{Every basin consists of two vertices, and the
+  steepest descent path within a basin cycles between the two
+  vertices.}  The basins form a partition of the graph, which is
+defined as the output of the watershed transform.
+
+[describe standard algorithms for finding the basins.  MST, Prim, Kruskal. disjoint sets ]
+
+More generally, a locally minimal edge for a vertex may not be unique,
+because of the possibility of ties.  It follows that a steepest
+descent path starting from a vertex may not be unique, and that a
+vertex may belong to more than one basin of attraction.  Furthermore,
+there may exist steepest descent paths that never converge to a
+regional minimum but remain stuck on non-minimal ``plateaus.''  In
+this case, the definition of the watershed transform is more subtle.
+
+[describe watershed cuts]
+
+Our algorithm explicitly computes a new directed graph $D_1$ from the
+original undirected graph $G$.  The edges of $D_1$ are the steepest
+descent edges of $G$, and the paths of $D_1$ are the steepest descent
+paths of the original graph.  Then edges are eliminated from $D_1$ to
+create $D_2$, in which all steepest descent paths (1) converge to
+regional minima, (2) are unique outside regional minima, and (3)
+divide plateaus evenly.
 
 \begin{figure}
   \centering
@@ -101,47 +162,29 @@ be assigned to one of the \emph{basins} as described below.
     the two basins of attractions and border vertices (dark gray)}
 \end{figure}
 
-
 \subsection{Steepest descent graph}
+The starting point is an undirected weighted graph $G$.  Replace each
+edge of $G$ by edges in both directions between the same vertices
+(Fig. 1(a)).  Then for every vertex retain the outgoing edge with
+minimal weight and eliminate other outgoing edges.  The resulting
+directed unweighted graph is called $D_1$.
 
-The central quantity in the watershed algorithm is the steepest
-descent graph, defined as follows. Consider an undirected weighted
-graph $G$ (Fig. 1(a)). Define the directed graph $G'$ in which each
-undirected edge of $G$ is replaced by both directed edges between the
-same vertices. The \emph{steepest descent graph} $D$ (Fig. 1(b)) is a
-subgraph of $G'$ with the property that $D$ includes every edge of
-$G'$ with minimal weight of all edges outgoing from the same vertex. A
-directed path in $D$ is a path of steepest descent in $G$. The
+If there are ties between outgoing edges (Fig. 1b), they are resolved
+by assuming a pre-existing ordering of the vertices.  The ordering
+could be represented by a bijective map
+$\alpha:V\to\{1,2,...,|V|\}$. We refer to $\alpha(u)$ as the index of
+$u$ (Fig. 2a).  The winning edge is the one pointing to the vertex
+with the lowest index.
+
+If a pair of vertices has edges in both directions, they are
+represented by a single ``bidirectional edge'' in Fig. 1b, and we will
+use this term for convenience.  Threrefore, the edges of any vertex in
+$D_1$ can be classified as incoming, outgoing, and bidirectional.
+
+A directed path in $D_1$ is a path of steepest descent in $G$.  A
 steepest ascent graph can be defined analogously using edges of
 maximal weight. Either steepest ascent or descent can be used without
-loss of generality. For simplicity, for a given vertex $v$ we will
-refer to its edges in $D$ as incoming, outgoing, and bidirectional. A
-\emph{plateau} is a connected component of the subgraph of $D$
-containing only bidirectional edges. A \emph{plateau corner} is a
-vertex of a \emph{plateau} that has at least one outgoing
-edge. \emph{Locally minimal plateaus} contain no \emph{plateau
-  corners,} they are equivalent to the regional minima of the original
-graph. \emph{Non-minimal plateaus} contain one or more \emph{plateau
-  corners}. A \emph{saddle vertex} has more than one outgoing edge. In
-Fig. 1(c) we show \emph{locally minimal plateaus }(black),
-\emph{non-minimal plateau} (dark gray), \emph{plateau corners} (C),
-and a\emph{ saddle vertex} (S).
-
-\subsection{Assigning border vertices}
-
-In Fig. 1(d) we show the \emph{basins of attraction} of the two
-\emph{regional minima}. The \emph{border} vertices are shown in dark
-gray and belong to both \emph{basins of attraction}. Watershed
-cuts~\cite{Cousty2009,Cousty2010} assign \emph{border} vertices with a
-single constraint that all the \emph{basins of attraction} have to be
-connected. We introduce additional constrains. The watershed transform
-has to be uniquely defined and the \emph{non-minimal plateaus} should
-be divided evenly. More specifically, we want our dynamics to be
-uniquely defined at \emph{saddle vertices, and }the vertices of the
-\emph{non-minimal plateaus} to be assigned to the same \emph{basin of
-  attraction} as the nearest \emph{plateau corner - }a \emph{plateau
-  corner} reachable in fewest steps following the rules of our
-dynamics.
+loss of generality.
 
 \begin{figure}
   \centering
@@ -155,41 +198,67 @@ dynamics.
     (d) final watershed partition of the graph}
 \end{figure}
 
+\subsection{Plateau division}
+While no vertex in $D_1$ has two or more outgoing edges, directed
+paths are still not uniquely defined, because of the existence of
+plateaus.
 
-\section{Watershed transform algorithm}
+A \emph{plateau} is a connected component of the subgraph of $D_1$
+containing only bidirectional edges.  A plateau \emph{corner} is a
+plateau vertex with an outgoing edge.
+% there can't be more than one, since saddles were eliminated, right?
+\emph{Locally minimal} plateaus contain no corners; they are
+equivalent to the regional minima of the original graph.  If a
+directed path of $D_1$ enters a locally minimal plateau, it remains
+within the plateau for all future time.
 
- We introduce an ordering function $\alpha:V\to\{1,2,...,|V|\}$ such
- that $\alpha(u)\neq\alpha(v)$ if and only if $u\neq v$. We'll refer
- to $\alpha(u)$ as the index of $u$ (Fig. 2(a)). In the first part of
- the algorithm we modify $D$ by removing edges. For all \emph{saddle
-   vertices} we keep only one outgoing edge - the one pointing to a
- vertex with the lowest index. In the next step we divide the
- \emph{non-minimal plateaus}. We initialize a global FIFO queue $Q$,
- mark all the \emph{plateau corner} vertices as visited and insert
- them into $Q$ in increasing order of their index. While $Q$ is not
- empty we remove the vertex $v$ from the front of the queue, we then
- explore all the bidirectional edges $\{v,u\}$. If $u$ is not visited,
- we mark it as such, insert it to the back of the queue and change the
- edge to be incoming $(v\leftarrow u)$. Otherwise, if the vertex was
- already visited we just remove the edge. The resulting steepest
- descent graph is shown on Fig. 2(c) - the dotted edges are
- removed. Considering all the remaining edges as bidirectional, the
- connected components of the modified descent graph $D$ will be the
- \emph{watershed} \emph{basins of attraction}.
+\emph{Non-minimal} plateaus contain one or more corners.  If a
+directed path enters a non-minimal plateau, it may stay within the
+plateau, or exit through one of the corners.  These types
+of plateaus are illustrated in Fig. 1c.
 
- The algorithm runs in linear time with respect to the number of edges
- in $G$ and produces an optimal partitioning as defined
- in~\cite{Cousty2009}. The total number of segments in the
- partitioning will equal to the total number of \emph{regional
-   minima}. We defer the detailed algorithm listing, the proof of
- correctness and running time analysis to the supplementary material.
+We would like to alter $D_1$ so that any directed path that enters a
+non-minimal plateau will not get stuck there, but will eventually
+exit.  This guarantees that any directed path will eventually reach a
+locally minimal plateaus, i.e., locally minimal plateaus are the only
+attractors of the dynamics.
 
+Furthermore, we would like a non-minimal plateau with multiple corners
+to be divided evenly, in the following sense.  From each vertex in the
+plateau, the directed path should lead to the nearest corner, where
+nearest is defined based on graph distance.  If there is a tie between
+corners, it should be resolved using the same ordering function as before. 
 
- We present the watershed transform algorithm from {\bf Section 2} of
- the main manuscript. We assume there is an ordering of the vertices
- in $V$. Usually the information about the vertices is stored in an
- array, where the $i$-th element of the array contains the vertex with
- index $i$.
+Both of these goals are achieved by applying the following algorithm
+to every non-minimal plateau.  We initialize a global FIFO queue $Q$,
+mark all the corner vertices as visited and insert them into $Q$ in
+increasing order of their index. While $Q$ is not empty we remove the
+vertex $v$ from the front of the queue, and loop over all its
+bidirectional edges $\{v,u\}$.  If $u$ has not yet been visited, we
+mark it as visited, insert it to the back of the queue, and change the
+edge from bidirectional to incoming $(v\leftarrow u)$. If $u$ has
+already been visited, we remove the bidirectional edge $\{v,u\}$
+completely.
+
+After this BFS is completed, the non-minimal plateau will no longer
+have bidirectional edges, and every vertex will have a single outgoing
+edge.  Furthermore, every directed path will lead to the nearest
+corner.
+
+\subsection{Connected components}
+After applying this BFS to every non-minimal plateau, we arrive at the
+modified steepest descent graph $D_2$ (Fig. 2c).  Every directed path eventually reaches a locally minimal plateau.  The path from any vertex to its corresponding locally minimal plateau is unique.  Therefore, the graph can be segmented into the basins of attraction of the dynamics.
+
+The basins can be found by regarding $D_2$ as an undirected graph and
+computing its connected components.  [via what algorithm]
+
+\section{Formal description}
+Our algorithm runs in linear time with respect to the number of edges
+in $G$ and produces an optimal partitioning as defined
+in~\cite{Cousty2009}. The total number of segments in the partitioning
+will equal to the total number of \emph{regional minima}.
+
+%We defer the detailed algorithm listing, the proof of correctness and running time analysis to the supplementary material.
 
 \begin{enumerate}
 \item Apply the threshold $T_{\min}$ and $T_{\max}$:
@@ -341,3 +410,12 @@ will be part of the same watershed basin in $W'$.
 }
 
 \end{document}
+
+\subsection{Assigning border vertices}
+In Fig. 1(d) we show the \emph{basins of attraction} of the two
+\emph{regional minima}. The \emph{border} vertices are shown in dark
+gray and belong to both \emph{basins of attraction}. Watershed
+cuts~\cite{Cousty2009,Cousty2010} assign \emph{border} vertices with a
+single constraint that all the \emph{basins of attraction} have to be
+connected.
+
