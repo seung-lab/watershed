@@ -57,19 +57,18 @@ H. Sebastian Seung\\ Princeton University\\ Princeton, NJ\\
 We present a new definition and algorithm for hierarchical watershed
 segmentation of an affinity graph.  Our algorithm computes a directed
 graph that defines a unique direction of steepest ascent for every
-vertex in the affinity graph.
+vertex in the affinity graph, and then finds the basins of attraction
+of this steepest ascent dynamics.
 % Every steepest ascent path is guaranteed to converge to a regional maximum of the affinity graph, and escape from any plateau through the closest plateau corner.
-The basins of attraction of the steepest ascent dynamics constitute a
-flat segmentation.  The result is similar to ``watershed cuts,''
-except that plateaus are divided in a systematic and even manner.
-Applying single linkage clustering to the watershed basins yields a
-hierarchy of segmentations.  We prove that this is a ``natural''
-definition of hierarchy, in the sense that each of its levels is
-equivalent to the flat watershed segmentation of some upper
-thresholding of the original affinity graph. The time complexity
-scales quasilinearly with the number of edges, making our algorithm
-practical even for very large graphs.
-
+The resulting watershed basins constitute a flat segmentation of the
+affinity graph.  The result is similar to ``watershed cuts,'' except
+that plateaus are divided more evenly.  Applying
+single linkage clustering to the watershed basins yields a hierarchy
+of segmentations.  We prove that this is a ``natural'' definition of
+hierarchy, in the sense that each level is equivalent to the flat
+watershed segmentation of some upper thresholding of the affinity
+graph. The time complexity scales quasilinearly with the number of
+edges, making our algorithm practical even for very large graphs.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,58 +81,61 @@ practical even for very large graphs.
 
 \section{Introduction}
 Many interesting computational problems can be formulated as the
-partitioning or segmentation of a weighted undirected graph.  The
-weight of an edge between two vertices represents their ``affinity'' for each other (cite).  High affinity indicates that the vertices should be in
-the same segment, and low affinity indicates that the vertices should
-be in different segments.  This statement has been formalized by
-various objective functions, and many algorithms have been studied for
-optimizing the objective functions.  Polynomial time algorithms are of
-practical interest.  For very large graphs, it would be desirable to
-have an algorithm that runs in linear time or close-to-linear time.
-Only a few of these have been proposed.  One example is the
-``watershed cuts'' algorithm \cite{Cousty2009,Cousty2010}.
+partitioning or segmentation of an edge-weighted undirected graph.
+The weight of an edge between two vertices represents their
+``affinity'' for each other, so we will use the term ``affinity
+graph.''  A common approach to segmentation is to formulate an
+objective function favoring placement of high affinity vertex pairs in
+the same segment, and low affinity pairs in different segments.  Then
+an optimization algorithm is applied to obtain a segmentation
+\cite{shi2000normalized,kolmogorov2002energy}.  These algorithms
+typically run in polynomial time, but the exponent is larger than one,
+limiting their applicability to very large graphs.
+% say smth about vertex-weighting
 
-Here we provide a new algorithm for watershed segmentation of graphs.
-As in watershed cuts, the algorithm utilizes a dynamical system that
-is discrete in space and time.  The dynamical system steps from pixel
-to pixel while taking a path of steepest ascent on the pixel values.
-The basins of attraction of the dynamics constitute the resulting
-segmentation.
+On the other hand, the family of watershed algorithms achieves linear
+time complexity, and is therefore practical for large graphs.  The
+watershed segmentation is defined as the basins of attraction of a
+steepest ascent dynamics on the graph.  The basins are in one-to-one
+correspondence with the regional maxima of the graph.  The definition
+becomes subtle in regions of the graph that are ``flat'' but not
+regional maxima.  In such ``non-maximal plateaus,'' the direction of
+steepest ascent is not uniquely defined.
 
-The main motivation is to handle the division of plateaus in a
-systematic way. The watershed definition becomes subtle in the
-presence of plateaus.  In these ``flat'' parts of a graph, the
-direction of steepest ascent is not uniquely defined.  Our algorithm
-divides plateaus evenly, in the sense that the dynamics follows the
-shortest path to escape from any plateau.
+Here we propose a new definition for watershed segmentation that is
+similar to the previously proposed ``watershed cuts''
+\cite{Cousty2009,Cousty2010}, except that non-maximal plateaus are
+divided more evenly.  The steepest ascent path from any plateau vertex
+is defined as the unique path that exits the plateau in the shortest
+possible time.  This idea was previously proposed for watershed
+segmentation of images [cite], but is apparently novel for graphs.  We
+also provide an algorithm that computes the watershed segmentation in
+linear time.
 
-The watershed cuts algorithm alternates between depth first search
-(DFS) and breadth first search (BFS) for an attractor of the gradient
-descent dynamics.  It starts with DFS, switches to BFS when it enters
-a plateau, and switches back to DFS when it exits a plateau, and
-continues alternating in this way until an attractor is found.
+Watershed algorithms often give rise to severe oversegmentation,
+because noise creates many regional maxima, and every regional maximum
+corresponds to a watershed basin. The oversegmentation can be reduced
+by agglomerating watershed basins.  We propose to agglomerate using
+single linkage clustering.  This method is not expected to produce
+performance superior to more sophisticated agglomeration methods
+\cite{beucher1994watershed}.  However, the method is efficient and
+``natural'' in the following sense.
 
-Our algorithm splits the search process into several passes through
-the graph.  The first pass explicitly computes a steepest ascent
-graph.  The second pass divides plateaus via BFS. The third pass finds
-connected components.
+Consider the following alternative method of reducing
+oversegmentation.  Smooth the affinity graph by upper thresholding,
+i.e., set all affinities above a threshold $\theta$ to infinity.  This
+operation will tend to reduce the number of regional maxima.  Then
+generate a flat watershed segmentation of the modified affinity graph.
+We will prove that varying $\theta$ causes this method to yield
+exactly the same hierarchy of segmentations as single linkage
+clustering of the original watershed basins.
 
-Like watershed cuts, our algorithm has linear time complexity.  The
-use of multiple passes makes it possible to divide plateaus evenly.  A
-second motivation for our algorithm is that it separates the
-computation into two passes that are parallelizable versus two passes
-that are not.  A parallel variant of our algorithm will be described
-in a future paper.
+Finally, we provide a C++ implementation for affinity graphs in which
+vertices represent the voxels of 3D images, and edges represent
+nearest neighbor pairs of voxels.  The results of the algorithm are
+illustrated by segmenting images from 3D electron microscopy.
 
-Watershed segmentation typically generates too many segments, because
-every local maximum gives rise to a watershed basin.  The number of
-local maxima can be reduced by smoothing the graph before the
-watershed algorithm is applied.  A simple smoothing method is to set
-all affinities above a threshold $\theta$ to infinity.
-
-Varying $\theta$ gives rise to a family of watershed segmentations.  We show that this hierarchy is equivalent to single linkage clustering of watershed basins. 
-
-\section{Flat segmentation}
+\section{Flat watershed segmentation}
 Consider a connected graph $G=(V,E)$ with non-negative edge
 weights. An edge $\{u,v\}$ is \emph{locally maximal} for
 $u$ if there is no other edge incident to $u$ with higher weight.  A
@@ -155,8 +157,7 @@ that the steepest ascent path from every vertex is uniquely defined,
 and that every vertex belongs to exactly one basin of
 attraction.\footnote{Every basin consists of two vertices, and the
   steepest ascent path within a basin cycles between the two
-  vertices.}  The basins form a partition of the graph, which is
-defined as the output of the watershed transform.
+  vertices.}  The basins constitute a segmentation of the graph.
 
 [describe standard algorithms for finding the basins.  MST, Prim, Kruskal. disjoint sets ]
 
@@ -168,15 +169,21 @@ there may exist steepest ascent paths that never converge to a
 regional maximum but remain stuck on non-maximal ``plateaus.''  In
 this case, the definition of the watershed transform is more subtle.
 
-[describe watershed cuts]
+The ``watershed cuts'' algorithm \cite{Cousty2009,Cousty2010} divides
+plateaus as follows. It alternates between depth first search (DFS)
+and breadth first search (BFS) for an attractor of the gradient
+descent dynamics.  It starts with DFS, switches to BFS when it enters
+a plateau, and switches back to DFS when it exits a plateau, and
+continues alternating in this way until an attractor is found.
 
-Our algorithm explicitly computes a new directed graph $D_1$ from the
-original undirected graph $G$.  The edges of $D_1$ are the steepest
-ascent edges of $G$, and the paths of $D_1$ are the steepest ascent
-paths of the original graph.  Then edges are eliminated from $D_1$ to
-create $D_2$, in which all steepest ascent paths (1) converge to
-regional maxima, (2) are unique outside regional maxima, and (3)
-divide plateaus evenly.
+Our algorithm splits the search process into several passes through
+the affinity graph.  The first pass explicitly computes a steepest
+ascent graph. The second pass eliminates edges from the steepest
+ascent graph to divide plateaus via BFS.  In the final steepest
+ascent graph, all paths (1) converge to regional maxima, (2) are
+unique outside regional maxima, and (3) divide plateaus evenly.  The
+third pass finds the watershed basins by computing the connected
+components of the steepest ascent graph.
 
 \begin{figure}
   \centering
@@ -185,36 +192,36 @@ divide plateaus evenly.
   \subfloat[]{\protect\includegraphics[scale=0.66]{fig/sd_graph_plateaus}}
   \subfloat[]{\protect\includegraphics[scale=0.66]{fig/ws_result}}
 
-  \protect\caption{(a) A disaffinity graph; (b) derived steepest
-    descent graph; (c) locally minimal plateaus (black), non-minimal
-    plateau (dark gray), saddle vertex (S), plateau corners (C); (d)
-    the two basins of attractions and border vertices (dark gray)}
+  \protect\caption{The plateau division problem. (a) Affinity graph;
+    (b) Retaining only maximal edges for each vertex yields this
+    steepest ascent graph; (c) locally maximal plateaus (black),
+    non-maximal plateau (dark gray), saddle vertex (S), plateau
+    corners (C); (d) the two basins of attractions and border vertices
+    (dark gray)}
 \end{figure}
 
 \subsection{Steepest ascent graph}
-The starting point is an undirected weighted graph $G$.  Replace each
-edge of $G$ by edges in both directions between the same vertices
-(Fig. 1(a)).  Then for every vertex retain the outgoing edge with
-maximal weight and eliminate other outgoing edges.  The resulting
-directed unweighted graph is called $D_1$.
-
-If there are ties between outgoing edges (Fig. 1b), they are resolved
-by assuming a pre-existing ordering of the vertices.  The ordering
-could be represented by a bijective map
+The inputs to the algorithm are an undirected weighted graph $G$, and
+an ordering of the vertices of $G$ that is used for tie-breaking. The
+ordering could be represented by a bijective map
 $\alpha:V\to\{1,2,...,|V|\}$. We refer to $\alpha(u)$ as the index of
-$u$ (Fig. 2a).  The winning edge is the one pointing to the vertex
+$u$ (Fig. 2a).
+
+Replace each edge of $G$ by edges in both directions between the same
+vertices (Fig. 1(a)).  Then for every vertex retain the outgoing edge
+with maximal weight and eliminate other outgoing edges.  The resulting
+graph, called $D_1$ is directed and unweighted.  If there are ties
+between outgoing edges (Fig. 1b), they are resolved by using the
+vertex ordering.  The winning edge is the one pointing to the vertex
 with the lowest index.
 
-If a pair of vertices has edges in both directions, they are
-represented by a single ``bidirectional edge'' in Fig. 1b, and we will
-use this term for convenience.  Threrefore, the edges of any vertex in
-$D_1$ can be classified as incoming, outgoing, and bidirectional.
+By construction, any directed path in $D_1$ is a path of steepest
+ascent in $G$.  If a pair of vertices has edges in both directions,
+they are represented by a single ``bidirectional edge'' in Fig. 1b.
+Therefore, the edges of any vertex in $D_1$ can be classified as
+incoming, outgoing, and bidirectional.
 
-A directed path in $D_1$ is a path of steepest ascent in $G$.
-
-A steepest descent graph can be defined analogously using edges of
-minimal weight. Either steepest ascent or descent can be used without
-loss of generality.
+%A steepest descent graph can be defined analogously using edges of minimal weight. Either steepest ascent or descent can be used without loss of generality.
 
 \begin{figure}
   \centering
@@ -223,17 +230,18 @@ loss of generality.
   \subfloat[]{\protect\includegraphics[scale=0.66]{fig/sd_graph_plateaus_modified}}
   \subfloat[]{\protect\includegraphics[scale=0.66]{fig/final_segmentation}}
 
-  \protect\caption{(a) Vertex indices; (b) distances to the nearest
-    plateau corner; (c) modifications to the steepest descent graph;
-    (d) final watershed partition of the graph}
+  \protect\caption{Watershed algorithm that divides plateaus
+    evenly. (a) existence of a vertex ordering is assumed; (b) Every
+    plateau vertex is labeled by its graph distance to the nearest
+    plateau corner; (c) the steepest ascent graph defines unique paths;
+    (d) final watershed segmentation}
 \end{figure}
 
 \subsection{Plateau division}
-While no vertex in $D_1$ has two or more outgoing edges, directed
-paths are still not uniquely defined, because of the existence of
-plateaus.  A \emph{plateau} is a connected component of the subgraph
-of $D_1$ containing only bidirectional edges.  A plateau \emph{corner}
-is a plateau vertex with an outgoing edge.
+Directed paths in $D_1$ may not be unique, if plateaus exist.  A
+\emph{plateau} is a connected component of the subgraph of $D_1$
+containing only bidirectional edges.  A plateau \emph{corner} is a
+plateau vertex with an outgoing edge.
 % there can't be more than one, since saddles were eliminated, right?
 \emph{Locally maximal} plateaus contain no corners; they are
 equivalent to the regional maxima of the original graph.  If a
@@ -254,10 +262,10 @@ Furthermore, we would like a non-maximal plateau with multiple corners
 to be divided evenly, in the following sense.  From each vertex in the
 plateau, the directed path should lead to the nearest corner, where
 nearest is defined based on graph distance.  If there is a tie between
-corners, it should be resolved using the same ordering function as
+corners, it should be resolved using the same vertex ordering as
 before.  Both of these goals are achieved for a non-maximal plateau by
 performing a breadth first search (BFS) for all of its vertices,
-starting from its corners with the canonical ordering.
+starting from its corners with the vertex ordering.
 
 The BFS proceeds as follows.  We initialize a global FIFO queue $Q$,
 mark all the corner vertices as visited and insert them into $Q$ in
@@ -292,20 +300,16 @@ Basins are in one-to-one correspondence with regional maxima.
 maximal spanning forest
 steepest ascent graph in each basin is maximal spanning tree?
 
-\section{Hierarchical segmentation}
+\section{Hierarchical watershed segmentation}
 Many methods have been proposed for turning a flat watershed
 segmentation into a hierarchical segmentation.  Most methods amount to
 some kind of agglomerative clustering algorithm applied to the
-watershed basins.  Such algorithms define an affinity function for
-pairs of clusters, and merge the pair with highest affinity at each
-step.  Many affinity functions have been proposed
-\cite{Najman1996}(cite Beucher and others).  Here we propose single
-linkage clustering for defining the hierarchy.  Given that this is a
-relatively simple and perhaps even naive method, its performance may
-not be competitive with more sophisticated methods. However, single
-linkage clustering is worth considering because it is (1) efficiently
-computable and (2) leads to a definition of hierarchy that is
-particularly ``natural,'' in a way that will be made precise below.
+watershed basins \cite{beucher1994watershed, Najman1996}.  Here we
+propose the use of single linkage clustering.  Although this is a
+relatively simple and perhaps even naive method, it is worth
+considering because it is (1) efficiently computable and (2) leads to
+a definition of hierarchy that is particularly ``natural,'' in a way
+that will be made precise below.
 
 \subsection{Single linkage clustering}
 In single linkage clustering, the affinity of two clusters is defined
@@ -317,6 +321,10 @@ the affinity at which the two clusters merge.
 [describe efficient algorithm and its time complexity]
 
 % maximin affinity between two regional maxima in two clusters
+
+\begin{figure}
+\caption{dendrogram goes here}
+\end{figure}
 
 \subsection{Upper thresholding of the affinity graph}
 Above we claimed that single linkage clustering leads to a definition
@@ -353,7 +361,7 @@ Now we are ready to prove the following theorem.
 \begin{theorem}
 The following are equivalent:
 \begin{enumerate}
-\item Watershed segmentation of $G$ followed by single linkage clustering of the basins up to affinity $\theta$.
+\item Watershed segmentation of $G$ followed by single linkage clustering of basins down to affinity $\theta$.
 \item Creation of $G'$ from $G$ by replacing all affinities larger
   than $\theta$ by a common high value (e.g. $\infty$), followed by
   watershed segmentation of $G'$.
@@ -361,23 +369,26 @@ The following are equivalent:
 \end{theorem}
 
 \begin{proof}
-  Watershed basins of $W'$ are connected. Hence, they can be obtained by
-merging watershed basins of $W$. We prove that the result of 1. and
-2. are equivalent by showing that two neighboring basins of $W$, $B_i$
-and $B_j$ will be merged in 1. if and only if they are merged in 2.
+Watershed basins are connected. By the Lemma, each $W'$ basin is the
+union of one or more $W$ basins. We will prove that two $W$ basins are
+merged by single linkage clustering down to affinity $\theta$ if and
+only if they belong to the same $W'$ basin.
 
-Let's examine two watershed basins of $W$, $B_i$ and $B_j$. If there
-is an edge $\{u,v\}$ in $G$ such that $u \in B_i$ and $v \in B_j$ with
-the weight smaller than $T_{\min}$, then $u$ and $v$ will be part of
-the same regional minima in $W'$. Hence, the two basins of $W$ belong
-to a single basin of $W'$. We also know that the saliency between
-$B_i$ and $B_j$ has to be smaller than $T_{\min}$, therefore they will
-belong to the same segment when applying the algorithm 1. Similarly,
-if the saliency $d_{ij}$ between $B_i$ and $B_j$ is below $T_{\min}$,
-then there exist an edge $\{u,v\}$ in $G$ such that $u \in B_i$ and $v
-\in B_j$ with the weight equal to $d_{ij} < T_{\min}$. Therefore $u$
-and $v$ will be part of the same regional minima, and $B_i$ and $B_j$
-will be part of the same watershed basin in $W'$.
+Suppose that $B_i$ and $B_j$ are merged by single linkage clustering
+down to affinity $\theta_{\max}$.  This means that there exists an
+edge in $G$ connecting the two basins with affinity larger than
+$\theta$. The edge and its two vertices will belong to some regional
+maximum of $G'$, and hence a single basin of $W'$.  It follows the two
+basins of $W$ belong to a single basin of $W'$.
+
+Conversely, suppose that $B_i$ and $B_j$ belong to the same $W'$
+basin.  Then there exists a steepest ascent path
+
+$\theta_{\max}$, then there exists an edge $\{u,v\}$ in $G$ such that
+$u \in B_i$ and $v \in B_j$ with the weight equal to $d_{ij} <
+T_{\min}$. Therefore $u$ and $v$ will be part of the same regional
+minima, and $B_i$ and $B_j$ will be part of the same watershed basin
+in $W'$.
 \end{proof}
 
 \section{Source code}
@@ -393,6 +404,15 @@ $G$. The singleton vertices are not assigned to any watershed basin
 and are considered background, which is often a desired result.
 
 mention possible improvements to hierarchy
+
+Like watershed cuts, our algorithm has linear time complexity.  The
+use of multiple passes makes it possible to divide plateaus evenly.  A
+second motivation for our algorithm is that it separates the
+computation into two passes that are parallelizable versus two passes
+that are not.  A parallel variant of our algorithm will be described
+in a future paper.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
