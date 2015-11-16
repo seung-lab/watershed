@@ -304,7 +304,7 @@ steepest ascent graph in each basin is maximal spanning tree?
 Many methods have been proposed for turning a flat watershed
 segmentation into a hierarchical segmentation.  Most methods amount to
 some kind of agglomerative clustering algorithm applied to the
-watershed basins \cite{beucher1994watershed, Najman1996}.  Here we
+watershed basins \cite{beucher1994watershed, najman1996geodesic}.  Here we
 propose the use of single linkage clustering.  Although this is a
 relatively simple and perhaps even naive method, it is worth
 considering because it is (1) efficiently computable and (2) leads to
@@ -339,7 +339,7 @@ basins of the original affinity graph.
 
 Define watershed basin graph.
 
-Define lower thresholding as elimination of edges with weight less than $\theta$. 
+Define lower thresholding as elimination of edges with weight less than $\theta$.
 
 These are equivalent:
 \begin{enumerate}
@@ -363,7 +363,7 @@ plateau division. All other vertices of $S_2$ will become part of a
 locally maximal plateau of $S_2'$ (regional maximum of $G'$). All
 locally maximal edges of $S_2$ will stay locally maximal. Therefore
 the only effect of the affinity threshold is to introduce
-bidirectional edges. Therefore, a connected component of $S_2$ must 
+bidirectional edges. Therefore, a connected component of $S_2$ must
 be a subset of a connected component of $S_2'$.
 \end{proof}
 
@@ -393,12 +393,12 @@ following statements are equivalent:
   basin graph after lower thresholding at $\theta$.
 \end{enumerate}
 It follows that every connected component of the watershed basin graph
-after lower thresholding at $\theta$ is some $W'$-basin, and vice versa. 
+after lower thresholding at $\theta$ is some $W'$-basin, and vice versa.
 \end{proof}
 
 \section{Source code}
 3D image
-Nearest neighbor affinity graph 
+Nearest neighbor affinity graph
 
 \section{Discussion}
 To show confidence about high values of \emph{disaffinities}, and in
@@ -442,4 +442,3 @@ gray and belong to both \emph{basins of attraction}. Watershed
 cuts~\cite{Cousty2009,Cousty2010} assign \emph{border} vertices with a
 single constraint that all the \emph{basins of attraction} have to be
 connected.
-
