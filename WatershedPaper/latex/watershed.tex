@@ -328,22 +328,32 @@ the affinity at which the two clusters merge.
 
 \subsection{Upper thresholding of the affinity graph}
 Above we claimed that single linkage clustering leads to a definition
-of hierarchy that is particularly ``natural'' for watershed.  The
-rationale for this claim is as follows.  Suppose that the original
-affinity graph were modified by replacing all affinities larger than
-$\theta_{\max}$ by a common high value (e.g. $\infty$).  The flat watershed
-segmentation of the modified affinity graph would correspond to one of
-the levels of the hierarchical segmentation produced by single linkage
-clustering.
+of hierarchy that is particularly ``natural'' for watershed.  To
+justify this claim, we define \emph{upper thresholding at $\theta$} as
+the following operation on an affinity graph: replace all affinities
+larger than $\theta$ by a common large value (e.g. $\infty$).  We will
+show that the flat watershed segmentation of an upper thresholded
+affinity graph corresponds to one of the levels of the hierarchical
+segmentation produced by single linkage clustering of the watershed
+basins of the original affinity graph.
 
-To prove this, we first prove the following lemma:
+Define watershed basin graph.
+
+Define lower thresholding as elimination of edges with weight less than $\theta$. 
+
+These are equivalent:
+\begin{enumerate}
+\item Watershed segmentation of $G$ followed by single linkage clustering of basins down to affinity $\theta$.
+\item Connected components of the watershed basin graph after lower
+  thresholding at $\theta$.
+  \end{enumerate}
+
 \begin{lemma}
-  Let $G'$ be the affinity graph obtained by setting all affinities of
-  $G$ greater than $\theta$ to a common high value (e.g. $\infty$).
-  Let $W=\{B_1,B_2,\dots\}$ and $W'=\{B'_1,B'_2,\dots\}$ be the
-  watershed segmentations of $G$ and $G'$, respectively.  For each
-  $B_i$ there exists $B'_j$ such that $B_i \subseteq B'_j$.
-\end{lemma}
+  Let $G'$ be the affinity graph obtained by upper thresholding $G$ at
+  $\theta$.  Let $W$ and $W'$ be the watershed segmentations of $G$
+  and $G'$, respectively.  Then every $W$-basin is a subset of some
+  $W'$-basin.
+  \end{lemma}
 
 \begin{proof}
 Let $S_2$ and $S_2'$ be the steepest ascent graphs obtained from $G$
@@ -353,42 +363,37 @@ plateau division. All other vertices of $S_2$ will become part of a
 locally maximal plateau of $S_2'$ (regional maximum of $G'$). All
 locally maximal edges of $S_2$ will stay locally maximal. Therefore
 the only effect of the affinity threshold is to introduce
-bidirectional edges. Therefore, a connected component of $S_2$ has to
-be a subset of a connected component of $S_2'$
+bidirectional edges. Therefore, a connected component of $S_2$ must 
+be a subset of a connected component of $S_2'$.
 \end{proof}
 
 Now we are ready to prove the following theorem.
 \begin{theorem}
 The following are equivalent:
 \begin{enumerate}
-\item Watershed segmentation of $G$ followed by single linkage clustering of basins down to affinity $\theta$.
-\item Creation of $G'$ from $G$ by replacing all affinities larger
-  than $\theta$ by a common high value (e.g. $\infty$), followed by
-  watershed segmentation of $G'$.
-\end{enumerate}
+\item Connected components of the watershed basin graph after lower
+  thresholding at $\theta$.
+\item Watershed segmentation after upper thresholding of $G$ at $\theta$.
+  \end{enumerate}
 \end{theorem}
 
 \begin{proof}
-Watershed basins are connected. By the Lemma, each $W'$ basin is the
-union of one or more $W$ basins. We will prove that two $W$ basins are
-merged by single linkage clustering down to affinity $\theta$ if and
-only if they belong to the same $W'$ basin.
-
-Suppose that $B_i$ and $B_j$ are merged by single linkage clustering
-down to affinity $\theta_{\max}$.  This means that there exists an
-edge in $G$ connecting the two basins with affinity larger than
-$\theta$. The edge and its two vertices will belong to some regional
-maximum of $G'$, and hence a single basin of $W'$.  It follows the two
-basins of $W$ belong to a single basin of $W'$.
-
-Conversely, suppose that $B_i$ and $B_j$ belong to the same $W'$
-basin.  Then there exists a steepest ascent path
-
-$\theta_{\max}$, then there exists an edge $\{u,v\}$ in $G$ such that
-$u \in B_i$ and $v \in B_j$ with the weight equal to $d_{ij} <
-T_{\min}$. Therefore $u$ and $v$ will be part of the same regional
-minima, and $B_i$ and $B_j$ will be part of the same watershed basin
-in $W'$.
+Let $W$ be the watershed segmentation of $G$, and $W'$ the watershed
+segmentation of $G$ after upper thresholding at $\theta$.  By the
+Lemma, every $W'$-basin is some union of $W$-basins.  Then the
+following statements are equivalent:
+\begin{enumerate}
+\item Two $W$-basins are contained in the same $W'$-basin.
+\item The two regional maxima in $G$ corresponding to the $W$-basins
+  are contained in the regional maximum of $G'$ corresponding to the
+  $W'$-basin.
+\item There is a path between the two regional maxima in $G$ with
+  all affinities greater than $\theta$.
+\item There is a path between the two $W$-basins in the watershed
+  basin graph after lower thresholding at $\theta$.
+\end{enumerate}
+It follows that every connected component of the watershed basin graph
+after lower thresholding at $\theta$ is some $W'$-basin, and vice versa. 
 \end{proof}
 
 \section{Source code}
