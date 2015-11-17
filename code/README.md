@@ -14,13 +14,12 @@ Should be master branch until we start tagging.
 Installation
 ------------
 
-Required Libraries
-------------
+###Required Libraries
 
 |Library|Ubuntu package name|
 |-------|-------------------|
 |[boost](http://www.boost.org/)|libboost-all-dev|
-## Compilation
+###Compilation
 ```
 ./make.sh
 ```
