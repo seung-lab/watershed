@@ -1,32 +1,103 @@
 Watershed
 =======
 
-# What is it?
+What is it?
+------------
 
 This code produces an executable to run watershed segmentation with single linkage clustering as outlined in the attached paper.
 
-# The latest version
+The latest version
+------------
 
 Should be master branch until we start tagging.
 
-# Installation
-## Required Libraries
-|Library|Ubuntu package name|
-|[boost](http://www.boost.org/)|libboost-all-dev|
+Installation
+------------
 
+Required Libraries
+------------
+
+|Library|Ubuntu package name|
+|-------|-------------------|
+|[boost](http://www.boost.org/)|libboost-all-dev|
 ## Compilation
 ```
 ./make.sh
 ```
 
-# Usage
-The algorithm is generally split into 4 stages:
-1. [Watershed Segmentation](#Watershed Segmentation)
-1. Generate Watershed Basin Graphs
-1. Merge Basin for Region Graph Generation
-1. Generate Minimum Spanning Tree
+Code Documentation
+------------
 
-## Watershed Sementation
+The algorithm is generally split into 4 stages:
+
+1. [Watershed Segmentation](#watershed-segmentation)
+1. [Generate Watershed Basin Graphs](#generate-watershed-basin-graphs)
+1. [Generate Region Graph](#generate-region-graph)
+1. [Generate Minimum Spanning Tree](#generate-minimum-spanning-tree)
+
+### Watershed Segmentation
+This function takes the Affinity graph and creates the initial watershed segmentation.
+
+####Inputs
+#####`xSize (size_t)`
+######Dimension in x direction
+#####`ySize (size_t)`
+######Dimension in y direction
+#####`zSize (size_t)`
+######Dimension in z direction
+#####`aff (float)`
+######4-Dimensional float array of [xSize][ySize][zSize][3] *TODO need to confirm this* read in fortran_storage_order
+#####`lowv (float)`
+######Minimum threshold for watershed
+#####`highv (float)`
+######Maxmimum threshold for watershed
+####Outputs
+#####`seg (uint32_t)`
+######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the segmentId for each voxel
+#####`counts (size_t)`
+######Number of voxels for each segmentId *TODO confirm/ask later- size of the vector? is the index the segmentId?*
+      
+### Generate Watershed Basin Graphs
+####Inputs
+#####`aff (float)`
+######4-Dimensional float array of [xSize][ySize][zSize][3] *TODO need to confirm this* read in fortran_storage_order
+#####`seg (uint32_t)`
+######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the segmentId for each voxel
+#####`max_segid (size_t)`
+######Maximum segment id value
+####Outputs
+#####`rg Array<tuple<float, uint32_t, uint32_t>>`
+######Watershed basin graph of nodes and weights - sorted and ordered such that maximum weight is at the beginning of the list
+
+### Generate Region Graph
+Use the watershed basin graphs and perform single linkage clustering.  Rewrites the original segmentation and region graphs *TODO does it actually do this?*
+####Inputs
+#####`seg (uint32_t)`
+######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the segmentId for each voxel
+#####`counts (size_t)`
+######Number of voxels for each segmentId *confirm/ask later- size of the vector? is the index the segmentId?*
+#####`func (void*)`
+######A function with an `()` operator that scales the maximum threshold
+#####`thold (size_t)`
+######Maximum size threshold to allow merging two regions together
+#####`lowt (size_t)`
+######Minimum size threshold needed in order to rewrite the old segmentation ids to the new segmentation ids
+####Outputs
+#####`seg (uint32_t)` *INPUT IS MODIFIED*
+######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the new segmentIds
+#####`rg Array<tuple<float, uint32_t, uint32_t>>`  *INPUT IS MODIFIED*
+######Region graph of nodes and weights *TODO is sort order preserved?*
+
+### Generate Minimum Spanning Tree
+####Inputs
+#####`rg Array<tuple<float, uint32_t, uint32_t>>`
+######Region graph of nodes and weights
+#####`max_seg_id (size_t)`
+######Maximum segment id
+
+Usage
+-------
+All steps can be automatically performed with the `./bin/rws` binary. Inputs are as indicated from `--help` option.
 ```
 ./bin/rws --help
 Basic command to run watershed on affifinity graph with single linkage clustering. Options:
@@ -88,8 +159,7 @@ Watershed Options:
                                                        dendPairs file
 
 Usage Examples:
-	ws ws.affinity.data 256 256 256 0.3 0.9 250 10 ws.segment.data ws.dend_pairs ws.dend_values
+    ws ws.affinity.data 256 256 256 0.3 0.9 250 10 ws.segment.data ws.dend_pairs ws.dend_values
 ```
-
 See arguments specified from `--help`
 
