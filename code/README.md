@@ -29,12 +29,13 @@ Code Documentation
 
 The algorithm is generally split into 4 stages:
 
-1. [Watershed Segmentation](#watershed-segmentation)
-1. [Generate Watershed Basin Graphs](#generate-watershed-basin-graphs)
-1. [Generate Region Graph](#generate-region-graph)
-1. [Generate Minimum Spanning Tree](#generate-minimum-spanning-tree)
+1. [Watershed](#watershed)
+1. [Region Graph](#region-graph)
+1. [Merge Regions](#merge-regions)
+1. [Maximal Spanning Tree](#maximal-spanning-tree)
 
-### Watershed Segmentation
+### Watershed
+`(./bin/watershed)`
 This function takes the Affinity graph and creates the initial watershed segmentation.
 
 ####Inputs
@@ -45,21 +46,22 @@ This function takes the Affinity graph and creates the initial watershed segment
 #####`zSize (size_t)`
 ######Dimension in z direction
 #####`aff (float)`
-######4-Dimensional float array of [xSize][ySize][zSize][3] *TODO need to confirm this* read in fortran_storage_order
+######Affinity graph represented as a 4-Dimensional float array of [xSize][ySize][zSize][3].*TODO need to confirm this* read in fortran_storage_order
 #####`lowv (float)`
 ######Minimum threshold for watershed
 #####`highv (float)`
-######Maxmimum threshold for watershed
+######Maximum threshold for watershed
 ####Outputs
 #####`seg (uint32_t)`
 ######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the segmentId for each voxel
 #####`counts (size_t)`
 ######Number of voxels for each segmentId *TODO confirm/ask later- size of the vector? is the index the segmentId?*
       
-### Generate Watershed Basin Graphs
+### Region Graph
+`(./regionGraph)`
 ####Inputs
 #####`aff (float)`
-######4-Dimensional float array of [xSize][ySize][zSize][3] *TODO need to confirm this* read in fortran_storage_order
+######Affinity graph represented as a 4-Dimensional float array of [xSize][ySize][zSize][3] *TODO need to confirm this* read in fortran_storage_order
 #####`seg (uint32_t)`
 ######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the segmentId for each voxel
 #####`max_segid (size_t)`
@@ -68,31 +70,39 @@ This function takes the Affinity graph and creates the initial watershed segment
 #####`rg Array<tuple<float, uint32_t, uint32_t>>`
 ######Watershed basin graph of nodes and weights - sorted and ordered such that maximum weight is at the beginning of the list
 
-### Generate Region Graph
-Use the watershed basin graphs and perform single linkage clustering.  Rewrites the original segmentation and region graphs *TODO does it actually do this?*
+### Merge Regions
+`(./bin/mergeRegions)`
+Apply size dependent single linkage clustering to merge regions in a region graph. Merged regions are replaced a single region in the region graph and segmentation. TODO add note about func
 ####Inputs
 #####`seg (uint32_t)`
 ######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the segmentId for each voxel
+#####`rg Array<tuple<float, uint32_t, uint32_t>>` 
+######Region graph as a list of edges: weight, segmentId, segmentId
 #####`counts (size_t)`
 ######Number of voxels for each segmentId *confirm/ask later- size of the vector? is the index the segmentId?*
 #####`func (void*)`
-######A function with an `()` operator that scales the maximum threshold
+######A function with an `()` operator that scales the maximum threshold *Not yet implemented*
 #####`thold (size_t)`
 ######Maximum size threshold to allow merging two regions together
 #####`lowt (size_t)`
 ######Minimum size threshold needed in order to rewrite the old segmentation ids to the new segmentation ids
 ####Outputs
-#####`seg (uint32_t)` *INPUT IS MODIFIED*
+#####`seg (uint32_t)` 
 ######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the new segmentIds
-#####`rg Array<tuple<float, uint32_t, uint32_t>>`  *INPUT IS MODIFIED*
+#####`rg Array<tuple<float, uint32_t, uint32_t>>`  
 ######Region graph of nodes and weights *TODO is sort order preserved?*
 
-### Generate Minimum Spanning Tree
+### Maximal Spanning Tree
+`(./bin/maximalSpanningTree)`
+Given a graph, find the maximal spanning tree.
 ####Inputs
 #####`rg Array<tuple<float, uint32_t, uint32_t>>`
-######Region graph of nodes and weights
+######Graph as a list of edges: weight, nodeId, nodeId.  Sorted by descending weight. 
 #####`max_seg_id (size_t)`
 ######Maximum segment id
+####Outputs
+#####`mst Array<tuple<float, uint32_t, uint32_t>>`
+######Graph as a list of edges: weight, nodeId, nodeId.  Sorted by descending weight. Parent node on the left. *TODO confirm this*
 
 Usage
 -------
