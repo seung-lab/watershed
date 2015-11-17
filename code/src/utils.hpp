@@ -71,7 +71,6 @@ write_volume( const std::string& fname,
     return true;
 }
 
-
 template< typename ID, typename F >
 inline bool write_region_graph( const std::string& fname,
                                 const region_graph<ID,F>& rg )
@@ -93,6 +92,39 @@ inline bool write_region_graph( const std::string& fname,
     f.write( reinterpret_cast<char*>(data), rg.size() * 3 * sizeof(F));
 
     delete [] data;
+
+    return true;
+}
+
+
+template< typename ID, typename F >
+inline bool write_region_graph_old_format( const std::string& dendPairsFilename,
+                                const std::string& dendValuesFilename,
+                                const region_graph<ID,F>& rg )
+{
+    std::ofstream dendPairsFile(dendPairsFilename.c_str(), (std::ios::out | std::ios::binary) );
+    std::ofstream dendValuesFile(dendValuesFilename.c_str(), (std::ios::out | std::ios::binary) );
+    if ( !dendPairsFile ) return false;
+    if ( !dendValuesFile ) return false;
+
+    F* dendPairs = new F[rg.size() * 2];
+    F* dendValues = new F[rg.size()];
+
+    std::size_t dendPairsIdx = 0;
+    std::size_t dendValuesIdx = 0;
+
+    for ( const auto& e: rg )
+    {
+        dendPairs[dendPairsIdx++] = static_cast<F>(std::get<1>(e));
+        dendPairs[dendPairsIdx++] = static_cast<F>(std::get<2>(e));
+        dendValues[dendValuesIdx++] = static_cast<F>(std::get<0>(e));
+    }
+
+    dendPairsFile.write( reinterpret_cast<char*>(dendPairs), rg.size() * 2 * sizeof(F));
+    dendValuesFile.write( reinterpret_cast<char*>(dendValues), rg.size() * sizeof(F));
+
+    delete [] dendPairs;
+    delete [] dendValues;
 
     return true;
 }
