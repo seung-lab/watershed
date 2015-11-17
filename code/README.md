@@ -160,5 +160,4 @@ Watershed Options:
 Usage Examples:
     ws ws.affinity.data 256 256 256 0.3 0.9 250 10 ws.segment.data ws.dend_pairs ws.dend_values
 ```
-See arguments specified from `--help`
 
