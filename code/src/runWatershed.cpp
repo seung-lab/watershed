@@ -68,24 +68,25 @@ int parseCmdLine(int argc, char *argv[], Config &config)
             "  Data: \tAffinity graph values\n"
             "  Data Format: \t 4-D float array of [3][xSize][ySize][zSize] *need to confirm this* read in fortran_storage_order"
         ) // TODO fortran_storage_order should be a configuration option
-        ("xSize", po::value<size_t>(&config.xSize)->required(),"Length of X dimension of input file.")
-        ("ySize", po::value<size_t>(&config.ySize)->required(),"Length of Y dimension of input file.")
-        ("zSize", po::value<size_t>(&config.zSize)->required(),"Length of Z dimension of input file.");
+        ("xSize", po::value<size_t>(&config.xSize)->required(),"Dimension in X Direction.")
+        ("ySize", po::value<size_t>(&config.ySize)->required(),"Dimension in Y Direction.")
+        ("zSize", po::value<size_t>(&config.zSize)->required(),"Dimension in Z Direction.");
 
     po::options_description watershedOptions("Watershed Options");
     watershedOptions.add_options()
-        ("lowv", po::value<float>(&config.lowv)->default_value(0.3),"Minimum watershed.")
-        ("highv", po::value<float>(&config.highv)->default_value(0.9),"Maximum thresholding for waterhsed.")
+        ("lowv", po::value<float>(&config.lowv)->default_value(0.3),"Minimum threshold for watershed.")
+        ("highv", po::value<float>(&config.highv)->default_value(0.9),"Maximum threshold for waterhsed.")
         ("lowt", po::value<size_t>(&config.thold)->default_value(256),"Minimum merge size")
         ("thold", po::value<size_t>(&config.thold)->default_value(256),"Maximum merge size (calculated from --func")
-        ("funcName", po::value<std::string>(&config.funcName)->default_value("constant"),"Merge thresholding function.\n\t"
+        ("funcName", po::value<std::string>(&config.funcName)->default_value("constant"),"Merge thresholding function.\n"
+            "** NOT IMPLEMENTED Defaults to const_above_threshold(.3, thold)**\n\t"
             "Example inputs:\n"
             "  --funcName=const --funcArg1=.3 --funcArg2=1000\n"
             "  --funcName=linear --funcArg1=100\n"
             "  --funcName=square --funcArg1=100\n"
             "  --funcName=power --funcArg1=2 --funcArg2=5000"
         )
-        ("funcArg1", po::value<double>(&config.funcArg1),"Argument 1 for merge thresholding function")
+        ("funcArg1", po::value<double>(&config.funcArg1)->default_value(.3),"Argument 1 for merge thresholding function")
         ("funcArg2", po::value<double>(&config.funcArg2),"Argument 2 for merge thresholding function")
         ("funcArg3", po::value<double>(&config.funcArg3),"Argument 3 for merge thresholding function");
 
@@ -94,22 +95,22 @@ int parseCmdLine(int argc, char *argv[], Config &config)
         ("outFileSegment", po::value<std::string>(&config.outFileSegment)->
                 default_value("ws.segment.data.out"),
             "Filename of the segmentation output file.\n"
-            "  Data: \tSegmentation Ids\n"
-            "  Data Format: \t3-D float array of [zSize][ySize][xSize] in row-major order"
+            "  Data: \tSegmentation Ids for each voxel\n"
+            "  Data Format: \t3-Dimensional uint32_t array [xSize][ySize][zSize] "
         )
         ("outFileDendPairs", po::value<std::string>(&config.outFileDendPairs)->
                 default_value("ws.dend_pairs"),
             "Filename of the MST Dendrogram pairs file. Sorted by weight first as specified in "
-			"the dendValues file.\n"
-            "  Data: \tSegmentation Ids\n"
+            "the dendValues file.\n"
+            "  Data: \tGraph Edges for MST (weights in another file)\n"
             "  Data Format: \t2-D array of uint32_t pairs i.e. [[SegId1, SegId2][SegId1, SegId3]...]"
         )
         ("outFileDendValues", po::value<std::string>(&config.outFileDendValues)->
                 default_value("ws.dend_values"),
             "Filename of the MST Dendrogram values file.\n"
-            "  Data: \tEdge Weight Probabilities\n"
+            "  Data: \tGraph Edge Weight Probabilities\n"
             "  Data Format: \t1-D array of decreasing floats corresponding to the pair of SegIds "
-			"specified in the dendPairs file"
+            "specified in the dendPairs file"
         );
 
     po::variables_map variableMap;
@@ -130,7 +131,7 @@ int parseCmdLine(int argc, char *argv[], Config &config)
         {
             std::cout << "Basic command to run watershed on affifinity graph with single linkage clustering. "
                 "Options:\n" << cmdlineOptions << "\nUsage Examples:\n\t"
-                "ws ws.affinity.data 256 256 256 0.3 0.9 250 10 ws.segment.data ws.dend_pairs ws.dend_values"
+                "runWatershedFull ws.affinity.data 256 256 256 0.3 0.9 250 10 ws.segment.data ws.dend_pairs ws.dend_values"
                 << std::endl;
             return SUCCESS;
         }
@@ -154,6 +155,12 @@ int main(int argc, char *argv[])
     Config config = Config();
     parseCmdLine(argc, argv, config);
 
+    if (config.inputFile.empty())
+    {
+        return ERROR_COMMAND_LINE;
+    }
+
+
     std::cout << "Reading in file " << config.inputFile 
         << " with x=" << config.xSize 
         << " y=" << config.ySize
@@ -174,7 +181,7 @@ int main(int argc, char *argv[])
         << "(" << config.funcArg1 << "," << config.funcArg2 << "," << config.funcArg3 << ")"
         << " thold=" << config.thold << " lowt= " << config.lowt;
     // use const_above_threshold with 250
-    merge_segments_with_function (seg, rg, counts, linear(config.thold), config.lowt);
+    merge_segments_with_function (seg, rg, counts, const_above_threshold(config.funcArg1, config.thold), config.lowt);
 
     auto mt = get_merge_tree(*rg, counts.size()-1);
 
