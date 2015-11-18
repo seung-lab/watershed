@@ -127,7 +127,9 @@ Input options:
 
 Watershed Options:
   --lowv arg (=0.300000012)             Minimum threshold for watershed.
-  --highv arg (=0.899999976)            Maximum threshold for waterhsed.
+  --highv arg (=0.899999976)            Maximum threshold for watershed.
+  --enableMerge arg (=1)                Enable merge region step for single 
+                                        linkage clustering
   --lowt arg (=256)                     Minimum merge size
   --thold arg (=256)                    Maximum merge size (calculated from 
                                         --func
@@ -177,6 +179,6 @@ Watershed Options:
                                                        dendPairs file
 
 Usage Examples:
-	runWatershedFull ws.affinity.data 256 256 256 0.3 0.9 250 10 ws.segment.data ws.dend_pairs ws.dend_values
+    runWatershedFull ws.affinity.data 256 256 256 0.3 0.9 250 10 ws.segment.data ws.dend_pairs ws.dend_values
 ```
 

@@ -47,6 +47,7 @@ struct Config
     size_t zSize;
     float lowv;
     float highv;
+	bool enableMerge;
     size_t thold;
     int lowt;
     std::string funcName;
@@ -75,7 +76,8 @@ int parseCmdLine(int argc, char *argv[], Config &config)
     po::options_description watershedOptions("Watershed Options");
     watershedOptions.add_options()
         ("lowv", po::value<float>(&config.lowv)->default_value(0.3),"Minimum threshold for watershed.")
-        ("highv", po::value<float>(&config.highv)->default_value(0.9),"Maximum threshold for waterhsed.")
+        ("highv", po::value<float>(&config.highv)->default_value(0.9),"Maximum threshold for watershed.")
+        ("enableMerge", po::value<bool>(&config.enableMerge)->default_value(true),"Enable merge region step for single linkage clustering")
         ("lowt", po::value<size_t>(&config.thold)->default_value(256),"Minimum merge size")
         ("thold", po::value<size_t>(&config.thold)->default_value(256),"Maximum merge size (calculated from --func")
         ("funcName", po::value<std::string>(&config.funcName)->default_value("constant"),"Merge thresholding function.\n"
@@ -177,11 +179,17 @@ int main(int argc, char *argv[])
     std::cout << "Getting region graph";
     auto rg = get_region_graph(aff, seg , counts.size()-1);
 
-    std::cout << "Merging with funcName=" << config.funcName 
-        << "(" << config.funcArg1 << "," << config.funcArg2 << "," << config.funcArg3 << ")"
-        << " thold=" << config.thold << " lowt= " << config.lowt;
-    // use const_above_threshold with 250
-    merge_segments_with_function (seg, rg, counts, const_above_threshold(config.funcArg1, config.thold), config.lowt);
+    if (config.enableMerge)
+    {
+        std::cout << "Merging with funcName=" << config.funcName 
+            << "(" << config.funcArg1 << "," << config.funcArg2 << "," << config.funcArg3 << ")"
+            << " thold=" << config.thold << " lowt= " << config.lowt;
+        merge_segments_with_function (seg, rg, counts, const_above_threshold(config.funcArg1, config.thold), config.lowt);
+    }
+    else
+    {
+        std::cout << "Merging regions disabled" << std::endl;
+    }
 
     auto mt = get_merge_tree(*rg, counts.size()-1);
 
