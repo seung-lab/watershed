@@ -26,7 +26,7 @@ function steepestascent(aff,low,high)
                 posz = (z<zdim) ? aff[x,y,z+1,3] : low
                 # aff=low for edges directed outside boundaries of image 
 
-                m = max(negx,negy,negz,posx,posy,posz)
+                m = maximum((negx,negy,negz,posx,posy,posz))
 
                 #                @printf("%d %d %d %f %f %f %f %f %f\n",x,y,z,negx,negy,negz,posx,posy,posz)
 
