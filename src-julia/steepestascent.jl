@@ -12,7 +12,7 @@ function steepestascent(aff,low,high)
         * `sag`: steepest ascent graph.  sag[x,y,z] contains 6-bit number encoding presence or absence of outgoing edges from voxel at (x,y,z)
         """    
     (xdim,ydim,zdim) = size(aff)     # extract image size
-    sag=zeros(UInt32,xdim,ydim,zdim)  # initialize steepest ascent graph
+    sag=zeros(UInt8,xdim,ydim,zdim)  # initialize steepest ascent graph
 
     for z = 1:zdim
         for y=1:ydim

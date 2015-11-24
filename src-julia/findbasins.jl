@@ -1,4 +1,4 @@
-function findbasins(sag::Array{UInt32,3})
+function findbasins(sag::Array{UInt8,3})
     """
     input is the steepest ascent graph
     all paths are unique, except in maximal plateaus
@@ -8,7 +8,7 @@ function findbasins(sag::Array{UInt32,3})
     then assign voxels on path to same ID.
     (2) If you run out of voxels, assign voxels on path to new ID.
     """
-    seg=copy(sag)
+    seg=convert(Array{UInt32,3}, sag)
     counts0 = 0  # number of singleton vertices
     counts=[]   # will store voxel counts for each segment
     bfs=[]
@@ -36,8 +36,7 @@ function findbasins(sag::Array{UInt32,3})
             bfs_index = 1  # follow trajectory starting from idx
             while ( bfs_index <= length(bfs) )
                 me = bfs[bfs_index]
-                d=1
-                while d<7
+                for d = 1:6
                     if ( seg[me] & dirmask[d] ) !=0  # outgoing edge
                         him = me + dir[d]  # target of edge
                         if ( seg[him] & high_bit ) !=0 # if already assigned
@@ -47,13 +46,12 @@ function findbasins(sag::Array{UInt32,3})
                                 seg[it] = seg[him]  # including high bit
                             end
                             bfs = []  # empty queue
-                            d = 6  # break
+                            break
                         elseif ( ( seg[him] & 0x40 ) == 0 )  # not yet visited
                             seg[him] |= 0x40;    # mark as visited
                             push!(bfs,him)    # enqueue
                         end
                     end
-                    d +=1
                 end
                 bfs_index += 1      # go to next vertex in queue
             end

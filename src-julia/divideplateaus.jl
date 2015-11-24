@@ -13,27 +13,25 @@ Note this is an in-place modification of `sag`
     # queue all vertices for which a purely outgoing edge exists
     bfs = []
     for idx in eachindex(sag)
-        d = 1
-        while d<7
+        for d = 1:6
             if (sag[idx] & dirmask[d]) != 0   # outgoing edge exists
                 if (sag[idx+dir[d]] & idirmask[d]) == 0  # no incoming edge
                     sag[idx] |= 0x40;
                     push!(bfs,idx);
-                    d = 6; # break;
+                    break;
                 end
             end
-            d += 1
         end
     end
 
     # divide plateaus
-    bfs_index = 1;
+    bfs_index = 1
     while bfs_index <= length(bfs)
         idx = bfs[bfs_index]
         to_set = 0
         for d=1:6
             if (sag[idx] & dirmask[d]) !=0    # outgoing edge exists
-                if (sag[idx+dir[d]] & idirmask[d]) !=0  # incoming edge
+                if (sag[idx+dir[d]] & idirmask[d]) !=0  # incoming edge exists
                     if ( sag[idx+dir[d]] & 0x40 ) == 0
                         push!(bfs,idx+dir[d])
                         sag[idx+dir[d]] |= 0x40
