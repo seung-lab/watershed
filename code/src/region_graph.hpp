@@ -17,7 +17,7 @@ get_region_graph( const affinity_graph_ptr<F>& aff_ptr,
     std::ptrdiff_t ydim = aff_ptr->shape()[1];
     std::ptrdiff_t zdim = aff_ptr->shape()[2];
 
-    volume<ID>& seg = *seg_ptr;
+    volume_ref<ID>& seg = *seg_ptr;
     affinity_graph<F> aff = *aff_ptr;
 
     region_graph_ptr<ID,F> rg_ptr( new region_graph<ID,F> );

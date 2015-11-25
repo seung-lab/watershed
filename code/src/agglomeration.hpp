@@ -220,8 +220,8 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
     std::ptrdiff_t ydim = seg_ptr->shape()[1];
     std::ptrdiff_t zdim = seg_ptr->shape()[2];
 
-    volume<ID>& seg = *seg_ptr;
-    volume<ID>& gt  = *gt_ptr;
+    volume_ref<ID>& seg = *seg_ptr;
+    volume_ref<ID>& gt  = *gt_ptr;
 
     zi::disjoint_sets<ID> sets(counts.size());
 

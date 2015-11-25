@@ -19,6 +19,7 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     std::ptrdiff_t ydim = aff_ptr->shape()[1];
     std::ptrdiff_t zdim = aff_ptr->shape()[2];
 
+	std::cout << "xdim is " << xdim << " ydim is " << ydim << " zdim is " << zdim << std::endl;
     std::ptrdiff_t size = xdim * ydim * zdim;
 
     std::tuple< volume_ptr<id_t>, std::vector<std::size_t> > result
@@ -29,8 +30,8 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     auto& counts = std::get<1>(result);
     counts[0] = 0;
 
-    affinity_graph<F>& aff = *aff_ptr;
-    volume<id_t>&      seg = *std::get<0>(result);
+    affinity_graph_ref<F>& aff = *aff_ptr;
+    volume_ref<id_t>&      seg = *std::get<0>(result);
 
     id_t* seg_raw = seg.data();
 

@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
     affinity_graph_ptr<float> aff =
         read_affinity_graph<float>(config.inputFile, config.xSize, config.ySize, config.zSize);
 
-    volume_ptr<uint32_t> seg;
+    volume_ptr_ref<uint32_t> seg;
     std::vector<std::size_t> counts;
 
     std::cout << "Running watershed with lowv=" << config.lowv << " highv=" << config.highv;
