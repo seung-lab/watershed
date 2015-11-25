@@ -4,6 +4,7 @@
 
 #include <cstdio>
 #include <fstream>
+#include <iostream>
 #include <type_traits>
 
 template < typename T >
@@ -71,6 +72,10 @@ write_volume( const std::string& fname,
     return true;
 }
 
+/*
+ * Warning this only works if ID and F are the same size i.e. both 32 bits or
+ * both 64 bits!
+ */
 template< typename ID, typename F >
 inline bool write_region_graph( const std::string& fname,
                                 const region_graph<ID,F>& rg )
@@ -84,8 +89,8 @@ inline bool write_region_graph( const std::string& fname,
 
     for ( const auto& e: rg )
     {
-        data[idx++] = static_cast<F>(std::get<1>(e));
-        data[idx++] = static_cast<F>(std::get<2>(e));
+        data[idx++] = static_cast<ID>(std::get<1>(e));
+        data[idx++] = static_cast<ID>(std::get<2>(e));
         data[idx++] = static_cast<F>(std::get<0>(e));
     }
 
@@ -107,21 +112,31 @@ inline bool write_region_graph_old_format( const std::string& dendPairsFilename,
     if ( !dendPairsFile ) return false;
     if ( !dendValuesFile ) return false;
 
-    F* dendPairs = new F[rg.size() * 2];
-    F* dendValues = new F[rg.size()];
+    ID* dendPairs = new ID[rg.size() * 2];
+    // TODO ALWAYS SINGLE?
+    float* dendValues = new float[rg.size()];
 
     std::size_t dendPairsIdx = 0;
     std::size_t dendValuesIdx = 0;
 
+    int i = 0;
     for ( const auto& e: rg )
     {
-        dendPairs[dendPairsIdx++] = static_cast<F>(std::get<1>(e));
-        dendPairs[dendPairsIdx++] = static_cast<F>(std::get<2>(e));
-        dendValues[dendValuesIdx++] = static_cast<F>(std::get<0>(e));
+        dendPairs[dendPairsIdx++] = static_cast<uint32_t>(std::get<1>(e));
+        dendPairs[dendPairsIdx++] = static_cast<uint32_t>(std::get<2>(e));
+        dendValues[dendValuesIdx++] = static_cast<float>(std::get<0>(e));
+        if (i++ < 10) {
+            std::cout << "orig: [" << std::get<1>(e) << "," << std::get<2>(e) << "]"
+                << "=" << std::get<0>(e) << std::endl;
+            std::cout << "new [" << dendPairs[dendPairsIdx-2] << "," << dendPairs[dendPairsIdx-1] << "]"
+                << "=" << dendValues[dendValuesIdx-1] << std::endl;
+        }
     }
+    std::cout << "total dend pairs index now is : " << dendPairsIdx << std::endl;
+    std::cout << "total dend value index now is : " << dendValuesIdx << std::endl;
 
-    dendPairsFile.write( reinterpret_cast<char*>(dendPairs), rg.size() * 2 * sizeof(F));
-    dendValuesFile.write( reinterpret_cast<char*>(dendValues), rg.size() * sizeof(F));
+    dendPairsFile.write( reinterpret_cast<char*>(dendPairs), rg.size() * 2 * sizeof(ID));
+    dendValuesFile.write( reinterpret_cast<char*>(dendValues), rg.size() * sizeof(float));
 
     delete [] dendPairs;
     delete [] dendValues;

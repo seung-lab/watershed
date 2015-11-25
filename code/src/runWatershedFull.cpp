@@ -45,8 +45,8 @@ struct Config
     size_t xSize;
     size_t ySize;
     size_t zSize;
-    float lowv;
-    float highv;
+    double lowv;
+    double highv;
 	bool enableMerge;
     size_t thold;
     int lowt;
@@ -75,8 +75,8 @@ int parseCmdLine(int argc, char *argv[], Config &config)
 
     po::options_description watershedOptions("Watershed Options");
     watershedOptions.add_options()
-        ("lowv", po::value<float>(&config.lowv)->default_value(0.3),"Minimum threshold for watershed.")
-        ("highv", po::value<float>(&config.highv)->default_value(0.9),"Maximum threshold for watershed.")
+        ("lowv", po::value<double>(&config.lowv)->default_value(0.3),"Minimum threshold for watershed.")
+        ("highv", po::value<double>(&config.highv)->default_value(0.9),"Maximum threshold for watershed.")
         ("enableMerge", po::value<bool>(&config.enableMerge)->default_value(true),"Enable merge region step for single linkage clustering")
         ("lowt", po::value<size_t>(&config.thold)->default_value(256),"Minimum merge size")
         ("thold", po::value<size_t>(&config.thold)->default_value(256),"Maximum merge size (calculated from --func")
@@ -149,26 +149,14 @@ int parseCmdLine(int argc, char *argv[], Config &config)
     return SUCCESS;
 }
 
-/*
- * Run with args: inputFile outSegmentationFileName outFileDendPairs outFileDendValues xSize, ySize, zSize, lowv, highv, thold, lowt
- */
-int main(int argc, char *argv[])
+int runWatershedFull(Config &config)
 {
-    Config config = Config();
-    parseCmdLine(argc, argv, config);
-
-    if (config.inputFile.empty())
-    {
-        return ERROR_COMMAND_LINE;
-    }
-
-
     std::cout << "Reading in file " << config.inputFile 
         << " with x=" << config.xSize 
         << " y=" << config.ySize
         << " z=" << config.zSize << std::endl;
-    affinity_graph_ptr<float> aff =
-        read_affinity_graph<float>(config.inputFile, config.xSize, config.ySize, config.zSize);
+    affinity_graph_ptr<double> aff =
+        read_affinity_graph<double>(config.inputFile, config.xSize, config.ySize, config.zSize);
 
     volume_ptr<uint32_t> seg;
     std::vector<std::size_t> counts;
@@ -193,8 +181,31 @@ int main(int argc, char *argv[])
 
     auto mt = get_merge_tree(*rg, counts.size()-1);
 
+    for (int i = 0; i < 10; ++i) {
+        std::tuple<double, uint32_t, uint32_t> edge = (*mt)[i];
+        std::cout << "[" << std::get<1>(edge) << "," << std::get<2>(edge) << "]"
+            << "=" << std::get<0>(edge) << std::endl;
+    }
+
     write_volume(config.outFileSegment, seg);
 
     write_region_graph_old_format(config.outFileDendPairs, config.outFileDendValues, *mt);
-    return 0;
-}
+    return SUCCESS;
+};
+
+/*
+ * Run with args: inputFile outSegmentationFileName outFileDendPairs outFileDendValues xSize, ySize, zSize, lowv, highv, thold, lowt
+ */
+int main(int argc, char *argv[])
+{
+    Config config = Config();
+    parseCmdLine(argc, argv, config);
+
+    if (config.inputFile.empty())
+    {
+        return ERROR_COMMAND_LINE;
+    }
+
+    return runWatershedFull(config);
+};
+
