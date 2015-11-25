@@ -27,7 +27,7 @@ function mst(rg, max_segid)
 
     # rest is only necessary for ordering the vertex pairs in each edge
     # bfs (level order) tree traversal
-    order = zeros(max_segid)   # will contain numbering of vertices
+    order = zeros(UInt32,max_segid)   # will contain numbering of vertices
     curr = 1
 
     for i = 1:max_segid
@@ -60,5 +60,5 @@ function mst(rg, max_segid)
         end
     end
         
-    return regiontree
-}
+    return regiontree, order
+end

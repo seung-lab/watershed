@@ -1,8 +1,9 @@
-function merge_segments(seg, rg, counts, thresholds, dust_size = 0)
+function mergeregions(seg, rg, counts, thresholds, dust_size = 0)
     """
-    seg - segmentation.  IDs of foreground segments are 1:length(counts).  ID of background is 0
+    seg - segmentation.  IDs of foreground segments are 1:length(counts).  ID of background is 0 (modified in place)
     rg - region graph.  IDs should be same as in seg, except no zeros
-    counts - sizes of regions in `seg`
+    new_rg - new region graph (output)
+    counts - sizes of regions in `seg` (modified in place)
     thresholds - sequence of (size_th,weight_th) pairs to be used for merging
     dust_size - after merging, tiny regions less than dust_size to be eliminated by changing them to background voxels
     """
