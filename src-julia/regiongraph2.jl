@@ -1,4 +1,4 @@
-function regiongraph2(aff,seg,max_segid)
+function regiongraph2{T}(aff::Array{T,4},seg,max_segid)
     """
     # given a segmentation and an affinity graph, create a region graph
     # edge weight is maximum affinity between two regions
@@ -8,12 +8,12 @@ function regiongraph2(aff,seg,max_segid)
     (xdim,ydim,zdim)=size(seg)
 
     # edge list representation
-    edges=Dict{Tuple{UInt32,UInt32},Float64}()
+    edges=Dict{Tuple{UInt32,UInt32},T}()
     # keys are vertex pairs (i,j) where i \leq j
     # values are edge weights
     # efficiency is competitive with Array of Dicts and code is simpler
     
-    low = 0  # choose a value lower than any affinity in the region graph
+    low = convert(T,0)  # choose a value lower than any affinity in the region graph
     
     for z=1:zdim
         for y=1:ydim

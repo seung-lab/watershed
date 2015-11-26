@@ -7,7 +7,6 @@ include("mergeregions2.jl")
 include("mst.jl")
 
 using HDF5
-using DataStructures
 aff=h5read("../../out1/out1.affinity.h5","out1")
 println("read affinity graph")
 low = .3

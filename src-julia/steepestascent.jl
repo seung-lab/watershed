@@ -1,4 +1,8 @@
-function steepestascent(aff,low,high)
+function steepestascent{T}(aff::Array{T},low,high)
+    steepestascent(aff,convert(T,low),convert(T,high))
+end
+
+function steepestascent{T}(aff::Array{T},low::T,high::T)
     """
     Construct steepest ascent graph from affinity graph.  
     Directed paths in steepest ascent graph are steepest ascent paths in affinity graph.
@@ -26,8 +30,12 @@ function steepestascent(aff,low,high)
                 posz = (z<zdim) ? aff[x,y,z+1,3] : low
                 # aff=low for edges directed outside boundaries of image 
 
-                m = maximum((negx,negy,negz,posx,posy,posz))
-
+                m=max(negx,negy)
+		m=max(m,negz)
+		m=max(m,posx)
+		m=max(m,posy)
+		m=max(m,posz)
+#                m = maximum((negx,negy,negz,posx,posy,posz))
                 #                @printf("%d %d %d %f %f %f %f %f %f\n",x,y,z,negx,negy,negz,posx,posy,posz)
 
                 # keep edges with maximal affinity

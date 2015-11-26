@@ -1,3 +1,5 @@
+using DataStructures
+
 function mergeregions(seg, rg, counts, thresholds, dust_size = 0)
     """
     seg - segmentation.  IDs of foreground segments are 1:length(counts).  ID of background is 0 (modified in place)

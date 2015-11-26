@@ -1,3 +1,5 @@
+using DataStructures
+
 function mst(rg, max_segid)
     """
     compute maximal spanning tree from weighted graph
