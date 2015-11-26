@@ -11,7 +11,7 @@ Note this is an in-place modification of `sag`
     const idirmask = [0x08, 0x10, 0x20, 0x01, 0x02, 0x04]
 
     # queue all vertices for which a purely outgoing edge exists
-    bfs = []
+    bfs = UInt32[]
     for idx in eachindex(sag)
         d = 1
         while d<7
