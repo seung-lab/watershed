@@ -10,8 +10,8 @@ function findbasins(sag::Array{UInt32,3})
     """
     seg=copy(sag)
     counts0 = 0  # number of singleton vertices
-    counts=[]   # will store voxel counts for each segment
-    bfs=[]
+    counts=Int[]   # will store voxel counts for each segment
+    bfs=Int[]
 #    counts=Array{Int64,1}(0)     # why is this slower?
 #    bfs=Array{Int64,1}(0)
 
@@ -46,7 +46,7 @@ function findbasins(sag::Array{UInt32,3})
                             for it in bfs
                                 seg[it] = seg[him]  # including high bit
                             end
-                            bfs = []  # empty queue
+                            bfs = Int[]  # empty queue
                             d = 6  # break
                         elseif ( ( seg[him] & 0x40 ) == 0 )  # not yet visited
                             seg[him] |= 0x40;    # mark as visited
@@ -64,7 +64,7 @@ function findbasins(sag::Array{UInt32,3})
                     seg[it] = high_bit | next_id    # assign a segment ID
                 end
                 next_id += 1
-                bfs = []
+                bfs = Int[]
             end
         end
     end

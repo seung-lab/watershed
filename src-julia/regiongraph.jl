@@ -1,13 +1,15 @@
-function regiongraph(aff,seg,max_segid)
+using DataStructures
+
+function regiongraph{T}(aff::Array{T,4},seg,max_segid)
     """
     # given a segmentation and an affinity graph, create a region graph
     # edge weight is maximum affinity between two regions
     # self edge weight is maximum affinity within a region
     """
     (xdim,ydim,zdim)=size(seg)
-    edges=[Dict{UInt32,Float64}() for i=1:max_segid]    # Array of Dict
+    edges=Dict{UInt32,T}[Dict{UInt32,T}() for i=1:max_segid]    # Array of Dict
 #    edges=[i => Dict{UInt32,Float64}() for i=1:max_segid]  #Dict of Dict, not sure which is more efficient
-    low = 0  # choose a value lower than any affinity in the region graph
+    low = convert(T,0)  # choose a value lower than any affinity in the region graph
     
     for z=1:zdim
         for y=1:ydim
@@ -33,7 +35,7 @@ function regiongraph(aff,seg,max_segid)
         end
     end
 
-    rg = []
+    rg = Tuple{T,Int,Int}[]
     for id1::UInt32 = 1:max_segid
         for (id2, weight) in edges[id1]
             push!(rg, (weight, id1, id2))
