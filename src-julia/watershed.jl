@@ -12,16 +12,16 @@ aff=h5read("../../out1/out1.affinity.h5","out1")
 println("read affinity graph")
 low = .3
 high = .9
-@time sag=steepestascent(aff,low,high)
+@time sag=steepestascent(aff,low,high);
 println("created steepest ascent graph")
-@time divideplateaus!(sag)
+@time divideplateaus!(sag);
 println("divided plateaus")
-@time (seg, counts, counts0)=findbasins(sag)
+@time (seg, counts, counts0)=findbasins(sag);
 println("found basins")
-@time rg=regiongraph(aff,seg,length(counts))
+@time rg=regiongraph(aff,seg,length(counts));
 println("created region graph")
-@time new_rg=mergeregions(seg,rg,counts,[(256,.3)])
+@time new_rg=mergeregions(seg,rg,counts,[(256,.3)]);
 println("merged regions")
-@time rt=mst(new_rg,length(counts))
+@time rt=mst(new_rg,length(counts));
 println("mst")
 

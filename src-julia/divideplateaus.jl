@@ -11,18 +11,16 @@ Note this is an in-place modification of `sag`
     const idirmask = [0x08, 0x10, 0x20, 0x01, 0x02, 0x04]
 
     # queue all vertices for which a purely outgoing edge exists
-    bfs = []
+    bfs = UInt32[]
     for idx in eachindex(sag)
-        d = 1
-        while d<7
+        for d=1:6
             if (sag[idx] & dirmask[d]) != 0   # outgoing edge exists
                 if (sag[idx+dir[d]] & idirmask[d]) == 0  # no incoming edge
-                    sag[idx] |= 0x40;
-                    push!(bfs,idx);
-                    d = 6; # break;
+                    sag[idx] |= 0x40
+                    push!(bfs,idx)
+                    break
                 end
             end
-            d += 1
         end
     end
 

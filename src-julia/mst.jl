@@ -2,6 +2,8 @@ function mst(rg, max_segid)
     """
     compute maximal spanning tree from weighted graph
     rg - region graph with edges sorted by descending weight
+    each edge is tuple (weight, id1, id2)
+    id2 is unique across edges
     max_segid - largest node ID in graph
     regiontree - maximal spanning tree
     if edges of rg are sorted by ascending weight, will compute minimal spanning tree 
@@ -60,5 +62,5 @@ function mst(rg, max_segid)
         end
     end
         
-    return regiontree, order
+    return regiontree
 end

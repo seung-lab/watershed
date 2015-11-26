@@ -49,8 +49,8 @@ function mergeregions(seg, rg, counts, thresholds, dust_size = 0)
     println("Done with remapping, total: ", (next_id-1), " regions")
 
     # apply remapping to region graph
-    in_rg = [Set() for i=1:next_id-1]
-    new_rg = []
+    in_rg = [Set{UInt32}() for i=1:next_id-1]
+    new_rg = Array{Tuple{Float64,UInt32,UInt32},1}(0)
     for (weight, id1, id2) in rg
         s1 = remaps[find_root(sets,id1)]
         s2 = remaps[find_root(sets,id2)]

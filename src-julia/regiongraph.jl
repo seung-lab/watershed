@@ -5,8 +5,9 @@ function regiongraph(aff,seg,max_segid)
     # self edge weight is maximum affinity within a region
     """
     (xdim,ydim,zdim)=size(seg)
+
+    # adjacency list representation
     edges=[Dict{UInt32,Float64}() for i=1:max_segid]    # Array of Dict
-#    edges=[i => Dict{UInt32,Float64}() for i=1:max_segid]  #Dict of Dict, not sure which is more efficient
     low = 0  # choose a value lower than any affinity in the region graph
     
     for z=1:zdim
@@ -33,16 +34,22 @@ function regiongraph(aff,seg,max_segid)
         end
     end
 
-    rg = []
+    # convert to edge list representation
+    rg = Array{Tuple{Float64,UInt32,UInt32},1}(0)
     for id1::UInt32 = 1:max_segid
         for (id2, weight) in edges[id1]
-            push!(rg, (weight, id1, id2))
+           push!(rg, (weight, id1, id2))
         end
     end
     println("Region graph size: ", length(rg))
 
-    rg = sort!(rg,rev=true)      # sort is slow for unknown reason
+    rg = sort!(rg,rev=true,lt=isless2)      # sort is slow for unknown reason
     println("Sorted")
 
     return rg
+end
+
+# this comparison function gives substantial speedup
+function isless2(x::Tuple{Float64,UInt32,UInt32},y::Tuple{Float64,UInt32,UInt32})
+    return isless(x[1],y[1])
 end
