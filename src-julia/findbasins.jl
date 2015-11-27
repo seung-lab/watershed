@@ -15,8 +15,14 @@ function low_bits(x::Type{UInt64})
     return 0x7FFFFFFFFFFFFFFFLL::UInt64
 end
 
+function findbasins{T}(sag::Array{T,3})
+    seg = copy(sag)
+    (seg, counts, counts0) = findbasins!(seg)
+    return (seg, counts, counts0)
+end
 
-function findbasins{T}(sag::Array{T,3})   # should restrict T to UInt32, UInt64
+# in-place version
+function findbasins!{T}(seg::Array{T,3})   # should restrict T to UInt32, UInt64
     """
     input is the steepest ascent graph
     all paths are unique, except in maximal plateaus
@@ -26,7 +32,6 @@ function findbasins{T}(sag::Array{T,3})   # should restrict T to UInt32, UInt64
     then assign voxels on path to same ID.
     (2) If you run out of voxels, assign voxels on path to new ID.
     """
-    seg=copy(sag)
     counts0 = 0  # number of singleton vertices
 
     (xdim,ydim,zdim) = size(seg) 
