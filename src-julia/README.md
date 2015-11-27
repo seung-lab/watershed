@@ -1,9 +1,12 @@
 Hierarchical watershed segmentation
 =======
 
-* Segment an affinity graph into watershed basins.
-* Merge basins via size-dependent single linkage clustering to create regions.
-* Return region graph and its maximal spanning tree (hierarchical segmentation).
+1. Segment an affinity graph into watershed basins.  
+   This defines a steepest ascent dynamics on the affinity graph, and then finds the basins of attraction. The basins are in one-to-one-correspondence with regional maxima of the affinity graph.
+2. Merge basins via size-dependent single linkage clustering to create regions.  
+Watershed typically results in severe oversegmentation. The watershed basins are merged via single linkage clustering to create larger regions.
+3. Return region graph and its maximal spanning tree (hierarchical segmentation).  
+Regions are vertices of the region graph. The weight of the edge between two regions is defined as the maximum weight of the edges between the two regions in the affinity graph.
 
 `aff` - affinity graph associated with 3D grayscale image.  
     size(aff) = (xdim,ydim,zdim, 3)  
