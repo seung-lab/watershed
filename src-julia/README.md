@@ -17,15 +17,14 @@ The affinity graph is represented by three images, because the number of edges i
 
 In image processing, many watershed implementations identify the ridgelines that separate basins, and assign the label "0" to voxels on ridgelines.  Our watershed does not do this, because the ridgeline between two basins is regarded as being located on edges rather than voxels. However, our watershed can be made to label some voxels as background as follows.  Edges of the graph with affinity below a *low threshold* are removed. After this operation, some voxels become singletons, completely disconnected from the rest of the graph. These background voxels are given a label of "0" to distinguish them from foreground regions.
 
-The algorithm
--------
+Julia translation of Zlateski's C++ code.
 
-1. Segment an affinity graph into watershed basins.  
-   This defines a steepest ascent dynamics on the affinity graph, and then finds the basins of attraction. The basins are in one-to-one-correspondence with regional maxima of the affinity graph.
-2. Merge basins via size-dependent single linkage clustering to create regions.  
-Watershed typically results in severe oversegmentation. The watershed basins are merged via single linkage clustering to create larger regions.
-3. Return region graph and its maximal spanning tree (hierarchical segmentation).  
-Regions are vertices of the region graph. The weight of the edge between two regions is defined as the maximum weight of the edges between the two regions in the affinity graph.
+Functions
+------------
+
+1. [Steepest ascent graph]
+`sag=steepestascent(aff,low,high)`
+Given an affinity graph, compute a new steepest ascent graph `sag` that describes steepest ascent dynamics.
 
 `aff` - affinity graph associated with 3D grayscale image.  
     size(aff) = (xdim,ydim,zdim, 3)  
@@ -38,21 +37,26 @@ Regions are vertices of the region graph. The weight of the edge between two reg
     size(seg)=(xdim,ydim,zdim)  
 `rg` - region graph  
 `rt` - maximal spanning tree
-       
-Julia translation of Zlateski's C++ code for watershed with size-dependent single linkage clustering.
 
-
-Functions
-------------
-
-The algorithm is generally split into 6 stages:
-
-1. [Steepest ascent graph]
 1. [Divide plateaus]
+`divideplateaus!(sag)`
 1. [Find basins]
+`(seg, counts, counts0) = findbasins(sag)`
 1. [Region Graph](#region-graph)
+(w,v)=regiongraph(aff,seg,length(counts))
 1. [Merge Regions](#merge-regions)
+new_rg=mergeregions(seg,w,v,counts,[(256,.3)])
 1. [Maximal Spanning Tree](#maximal-spanning-tree)
+rt=mst(new_rg,length(counts))
+
 
 Usage
 ------------
+low = .3
+high = .9
+sag=steepestascent(aff,low,high);
+divideplateaus!(sag);
+(seg, counts, counts0) = findbasins(sag);
+(w,v)=regiongraph(aff,seg,length(counts));
+new_rg=mergeregions(seg,w,v,counts,[(256,.3)]);
+rt=mst(new_rg,length(counts));
