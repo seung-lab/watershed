@@ -1,15 +1,22 @@
 using DataStructures
 
+"""
+`MST` - compute maximal spanning tree from weighted graph
+
+     regiontree = mst(rg,max_segid)
+
+* `rg` - region graph as list of edges, array of (weight,id1,id2)
+  tuples.  The edges should be presorted so that weights are in
+  descending order.
+* `max_segid` - largest ID in region graph
+* `regiontree` - *maximal* spanning tree of region graph as list of edges, array of (weight,id1,id2) tuples. The vertices in each edge are ordered so that id2 is unique across edges. 
+
+The code should work for general graphs.  If edges of `rg` are
+presorted by ascending weight, the code will compute the *minimal*
+spanning tree rather than the maximal spanning tree.  
+"""
+
 function mst(rg, max_segid)
-    """
-    compute maximal spanning tree from weighted graph
-    rg - region graph with edges sorted by descending weight
-    each edge is tuple (weight, id1, id2)
-    id2 is unique across edges
-    max_segid - largest node ID in graph
-    regiontree - maximal spanning tree
-    if edges of rg are sorted by ascending weight, will compute minimal spanning tree 
-    """
     regiontree = []
     edges=[Set{UInt32}() for i=1:max_segid]    # Array of Sets
 

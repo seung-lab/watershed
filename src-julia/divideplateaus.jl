@@ -1,10 +1,19 @@
-function divideplateaus!(sag)
-    """
+"""
+`DIVIDEPLATEAUS!` - Divide plateaus in steepest ascent graph
+
+     divideplateaus!(sag)
+  
+* `sag`: steepest ascent graph (directed and unweighted). `sag[x,y,z]` contains 6-bit number encoding edges outgoing from (x,y,z)
+
 Modify steepest ascent graph so as to
-(1) Divide non-maximal plateaus into paths that exit as quickly as possible
-(2) Break ties between multiple outgoing edges
+
+1. Divide non-maximal plateaus into paths that exit as quickly as possible
+2. Break ties between multiple outgoing edges
+
 Note this is an in-place modification of `sag`
-    """
+"""
+
+function divideplateaus!(sag)
     (xdim,ydim,zdim) = size(sag) 
     const dir = [-1, -xdim, -xdim*ydim, 1, xdim, xdim*ydim]
     const dirmask  = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20]

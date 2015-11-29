@@ -1,17 +1,26 @@
 using DataStructures
 
-function mergeregions(seg, weights, vertices, counts, thresholds, dust_size = 0)
-    """
-    seg - segmentation.  IDs of foreground segments are 1:length(counts).  ID of background is 0 (modified in place)
-    rg - region graph.  IDs should be same as in seg, except no zeros
-    new_rg - new region graph (output)
-    counts - sizes of regions in `seg` (modified in place)
-    thresholds - sequence of (size_th,weight_th) pairs to be used for merging
-    dust_size - after merging, tiny regions less than dust_size to be eliminated by changing them to background voxels
-    """
+"""
+`MERGEREGIONS` - merge small regions by agglomerative clustering
+
+    new_rg = mergeregions(seg, rg, counts, thresholds, dust_size = 0)
+
+* `seg` - segmentation.  IDs of foreground regions are 1:length(counts).  ID=0 for background.  This is modified in place by the clustering.
+* `rg`: region graph as list of edges, array of (weight,id1,id2) tuples. The edges should be presorted so that weights are in descending order. Region IDs should be consistent with those in `seg`, except no zeros.
+* `new_rg`: new region graph after clustering, same format as `rg`.  
+* `counts`: sizes of regions in `seg` (modified in place)
+* `thresholds`: sequence of (size_th,weight_th) pairs to be used for merging
+* `dust_size`: after merging, tiny regions less than dust_size to be eliminated by changing them to background voxels
+
+Agglomerative clustering proceeds by considering the edges of the region graph in sequence.  If either region has size less than `size_th`, then merge the regions. When the weight of the edge in the region graph is less than or equal to `weight_th`, agglomeration proceeds to the next `(size_th,weight_th)` in `thresholds` or terminates if there is none.
+"""
+
+# to-do: update code to include self-edges in `new_rg`
+
+function mergeregions(seg, rg, counts, thresholds, dust_size = 0)
     sets = IntDisjointSets(length(counts))
     for (size_th,weight_th) in thresholds
-        for (weight,id1,id2) in zip(weights,vertices[1,:],vertices[2,:])
+        for (weight,id1,id2) in rg
             s1 = find_root(sets,id1)
             s2 = find_root(sets,id2)
             if (weight > weight_th) && (s1 != s2)
@@ -53,7 +62,7 @@ function mergeregions(seg, weights, vertices, counts, thresholds, dust_size = 0)
     # apply remapping to region graph
     in_rg = [Set{UInt32}() for i=1:next_id-1]
     new_rg = Array{Tuple{Float64,UInt32,UInt32},1}(0)
-    for (weight, id1, id2) in zip(weights,vertices[1,:],vertices[2,:])
+    for (weight, id1, id2) in rg
         s1 = remaps[find_root(sets,id1)]
         s2 = remaps[find_root(sets,id2)]
         if ( s1 != s2 && s1 !=0 && s2 !=0)  # ignore dust regions

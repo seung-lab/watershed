@@ -17,9 +17,9 @@ println("created steepest ascent graph")
 println("divided plateaus")
 @time (seg, counts, counts0)=findbasins(sag);
 println("found basins")
-@time (w,v)=regiongraph(aff,seg,length(counts));
+@time rg=regiongraph(aff,seg,length(counts));
 println("created region graph")
-@time new_rg=mergeregions(seg,w,v,counts,[(256,.3)]);
+@time new_rg=mergeregions(seg,rg,counts,[(256,.3)]);
 println("merged regions")
 @time rt=mst(new_rg,length(counts));
 println("mst")
