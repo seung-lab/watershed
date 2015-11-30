@@ -1,4 +1,4 @@
-"""
+doc"""
 `REGIONGRAPH` - create region graph by finding maximum affinity between each pair of regions in segmentation
 
      rg = regiongraph(aff,seg,max_segid)

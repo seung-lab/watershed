@@ -1,4 +1,4 @@
-"""
+doc"""
 `STEEPESTASCENT` - Construct steepest ascent graph from affinity graph
 
      sag = steepestascent(aff, low, high)
@@ -14,6 +14,11 @@ in the affinity graph.  Both graphs are for 3D lattice with
 multiple outgoing edges if there are ties in the affinity graph, i.e.,
 if steepest ascent paths are nonunique.
 
+We follow the convention that:
+
+* `aff[x,y,z,1]` is affinity of voxels at [x-1,y,z] and [x,y,z]  
+* `aff[x,y,z,2]` is affinity of voxels at [x,y-1,z] and [x,y,z]  
+* `aff[x,y,z,3]` is affinity of voxels at [x,y,z-1] and [x,y,z]  
 """
 
 function steepestascent{T}(aff::Array{T},low,high)

@@ -1,4 +1,4 @@
-"""
+doc"""
 `DIVIDEPLATEAUS!` - Divide plateaus in steepest ascent graph
 
      divideplateaus!(sag)

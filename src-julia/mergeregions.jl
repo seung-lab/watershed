@@ -1,6 +1,6 @@
 using DataStructures
 
-"""
+doc"""
 `MERGEREGIONS` - merge small regions by agglomerative clustering
 
     new_rg = mergeregions(seg, rg, counts, thresholds, dust_size = 0)

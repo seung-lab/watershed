@@ -1,4 +1,4 @@
-"""
+doc"""
 `FINDBASINS` - find basins of attraction
 
      seg, counts, counts0 = findbasins(sag)
