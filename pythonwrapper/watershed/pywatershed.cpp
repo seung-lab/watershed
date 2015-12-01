@@ -129,12 +129,19 @@ bp::tuple py_watershed(np::ndarray& np_affinity_graph, float lowv, float highv)
          << " ms" << std::endl;
     t1 = chrono::high_resolution_clock::now();
 
-    np::ndarray np_segmentation_counts = np::from_data(
-            reinterpret_cast<void *> (b_segmentation_counts.data()),
-            np::dtype::get_builtin<size_t>(),
-            bp::make_tuple(b_segmentation_counts.size()),
-            bp::make_tuple(sizeof(size_t)),
-            bp::object());
+    bp::list bp_segmentation_counts;
+    for (size_t i = 0; i < b_segmentation_counts.size(); ++i)
+    {
+        bp_segmentation_counts.append(b_segmentation_counts[i]);
+    }
+    /*
+     *np::ndarray np_segmentation_counts = np::from_data(
+     *        reinterpret_cast<void *> (b_segmentation_counts.data()),
+     *        np::dtype::get_builtin<size_t>(),
+     *        bp::make_tuple(b_segmentation_counts.size()),
+     *        bp::make_tuple(sizeof(size_t)),
+     *        bp::object());
+     */
     std::cout << "Finished converting segmentation counts back to ndarray in " <<
        chrono::duration_cast<chrono::milliseconds>( chrono::high_resolution_clock::now() - t1).count() 
        << " ms" << std::endl;
@@ -142,11 +149,11 @@ bp::tuple py_watershed(np::ndarray& np_affinity_graph, float lowv, float highv)
 
     /*
      *std::cout << "new segmentation :: " << std::endl << bp::extract < char const * > (bp::str(np_segmentation_volume)) << std::endl;
-     *std::cout << "new counts :: " << std::endl << bp::extract < char const * > (bp::str(np_segmentation_counts)) << std::endl;
+     *std::cout << "new counts :: " << std::endl << bp::extract < char const * > (bp::str(bp_segmentation_counts)) << std::endl;
      */
 
     // COPY the data here so that the memory doesn't get deallocated
-    return bp::make_tuple(np_segmentation_volume.copy(), np_segmentation_counts.copy());
+    return bp::make_tuple(np_segmentation_volume.copy(), bp_segmentation_counts);
 }
 
 
@@ -212,15 +219,17 @@ bp::list py_region_graph(
 /**
  * Merge segments based on function currently uses const_above_threshold()
  * IN PLACE MERGER
- * @param np_volume this is the segmentation labels of the volume in FORTRAN order (x-y-z)
- * @param counts these are the counts of voxels per segmentId
+ * @param np_segmentation_volume this is the segmentation labels of the 
+ *  volume in FORTRAN order (x-y-z)
+ * @param bp_region_graph_edges list of tuples as edges of the region graph in (weight , id, id)
+ * @param bp_counts python list of counts per segmentation label
  * @param lowt lower size threshold for merge
  * @param min_mult coefficient for upper size threshold thold
  * @param thold upper size threshold for merge
  */
 void py_merge_segments(
-        np::ndarray& np_segmentation_volume, bp::list& region_graph_edges, np::ndarray &counts,
-        size_t lowt, float min_mult, size_t thold)
+        np::ndarray& np_segmentation_volume, bp::list& bp_region_graph_edges,
+        bp::list &bp_counts, size_t lowt, float min_mult, size_t thold)
 {
     chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
     std::size_t x_size = np_segmentation_volume.shape(0);
@@ -233,32 +242,37 @@ void py_merge_segments(
                                boost::extents[x_size][y_size][z_size]
                                ));
     std::cout << "Finished converting segmentation input volume to boost multi_array "  <<
-       chrono::duration_cast<chrono::milliseconds>( chrono::high_resolution_clock::now() - t1).count() 
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
        << " ms" << std::endl;
     t1 = chrono::high_resolution_clock::now();
 
-    std::cout << "Begin converting list of boost tuples to vector of tuples " << bp::len(region_graph_edges) << std::endl;
+    std::cout << "Begin converting list of boost tuples to vector of tuples " 
+        << bp::len(bp_region_graph_edges) << std::endl;
     region_graph_ptr<uint32_t, float> temp_region_graph_ptr(new region_graph<uint32_t, float>);
 
-
-    for (int i=0; i < bp::len(region_graph_edges); i++)
+    for (int i=0; i < bp::len(bp_region_graph_edges); i++)
     {
-        bp::tuple region_graph_edge = bp::extract<bp::tuple>(region_graph_edges[i]);
+        bp::tuple region_graph_edge = bp::extract<bp::tuple>(bp_region_graph_edges[i]);
         temp_region_graph_ptr->emplace_back(
                 bp::extract<float>(region_graph_edge[0]),
                 bp::extract<uint32_t>(region_graph_edge[1]),
                 bp::extract<uint32_t>(region_graph_edge[2]));
     }
     std::cout << "Finished converting region_graph_edges to boost multi_array in "  <<
-       chrono::duration_cast<chrono::milliseconds>( chrono::high_resolution_clock::now() - t1).count() 
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
        << " ms" << std::endl;
-
     t1 = chrono::high_resolution_clock::now();
 
     std::vector<size_t> b_counts;
-    b_counts.assign(counts.get_data(), counts.get_data() + counts.shape(0));
-    std::cout << "Finished converting counts to vector in "  <<
-       chrono::duration_cast<chrono::milliseconds>( chrono::high_resolution_clock::now() - t1).count() 
+    for (int i=0; i < bp::len(bp_counts); i++)
+    {
+        b_counts.emplace_back(bp::extract<uint32_t>(bp_counts[i]));
+    }
+    std::cout << "Finished converting bp_counts to vector in "  <<
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
        << " ms" << std::endl;
     t1 = chrono::high_resolution_clock::now();
 
@@ -267,25 +281,49 @@ void py_merge_segments(
     merge_segments_with_function(b_segmentation_ptr, temp_region_graph_ptr,
             b_counts, const_above_threshold(min_mult, thold), lowt);
     std::cout << "Finished calling merge segments with function in "  <<
-       chrono::duration_cast<chrono::milliseconds>( chrono::high_resolution_clock::now() - t1).count() 
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
        << " ms" << std::endl;
     t1 = chrono::high_resolution_clock::now();
 
     std::cout << "Begin converting region_graph back to ndarray" << std::endl;
-    region_graph_edges = bp::list();
+    while (bp::len(bp_region_graph_edges) > 0)
+    {
+        bp_region_graph_edges.pop();
+    }
+    std::cout << "Finished clearing original region graph list in " <<
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
+       << " ms" << std::endl;
+    t1 = chrono::high_resolution_clock::now();
     for (auto e : *temp_region_graph_ptr )
     {
         float weight = std::get<0>(e);
         uint32_t node1 = std::get<1>(e);
         uint32_t node2 = std::get<2>(e);
         bp::tuple edge = bp::make_tuple(weight, node1, node2);
-        region_graph_edges.append(edge);
+        bp_region_graph_edges.append(edge);
     }
-        std::cout << "edges returned : " << std::endl << bp::len(region_graph_edges) << std::endl;
     std::cout << "Finished converting output region_graph_edges in " <<
-       chrono::duration_cast<chrono::milliseconds>( chrono::high_resolution_clock::now() - t1).count() 
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
        << " ms" << std::endl;
     t1 = chrono::high_resolution_clock::now();
+
+    while (bp::len(bp_counts) > 0)
+    {
+        bp_counts.pop();
+    }
+    std::cout << "Finished clearing original counts graph list in " <<
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
+       << " ms" << std::endl;
+    t1 = chrono::high_resolution_clock::now();
+
+    for (size_t i = 0; i < b_counts.size(); ++i )
+    {
+        bp_counts.append(b_counts[i]);
+    }
 }
 
 
