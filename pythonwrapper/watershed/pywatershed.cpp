@@ -22,6 +22,8 @@
 #include "limit_functions.hpp"
 #include "agglomeration.hpp"
 #include "merge_tree.hpp"
+#include "watershed_full.hpp"
+#include "watershed_config.hpp"
 
 namespace b = boost;
 namespace bp = boost::python;
@@ -29,13 +31,29 @@ namespace bdma = boost::detail::multi_array;
 namespace np = boost::numpy;
 namespace chrono = std::chrono;
 
+//Loops over a bp::dict, and returns a vector of key strings
+// used to define loop in pyopt_to_znnopt
+std::vector<std::string> extract_dict_keys( bp::dict const & layer_dict )
+{
+    std::vector<std::string> res;
+    std::size_t num_keys = bp::extract<std::size_t>( layer_dict.attr("__len__")() );
+
+    for (std::size_t i=0; i < num_keys; i++ )
+    {
+        //fetching the keys through the bp interface...one at a time...
+        res.push_back( bp::extract<std::string>(layer_dict.attr("keys")()[i]) );
+    }
+
+    return res;
+}
+
 /**
  * Calls watershed on the input affinity graph
  * @param np_affinity_graph this is an affinity graph in regular c order (c-z-y-x)
  * @param lowv this is the low threshold when running watershed
  * @param highv this is hte high threshold when running watershed
- * @return a tuple of the segmentation volume and the counts per segmentation.
- *  WARNING: segementation volume is returned in FORTRAN ORDER (x-y-z-c)
+ * @return a tuple of the segmentation volume (ndarray) and the counts(list) per segmentation.
+ *  WARNING: segmentation volume is returned in FORTRAN ORDER (x-y-z)
  *  TODO investigate to change watershed to use c order instead!
  */
 bp::tuple py_watershed(np::ndarray& np_affinity_graph, float lowv, float highv)
@@ -56,55 +74,13 @@ bp::tuple py_watershed(np::ndarray& np_affinity_graph, float lowv, float highv)
        << " ms" << std::endl;
     t1 = chrono::high_resolution_clock::now();
 
-    /*
-     *std::cout << "Original array :: " << std::endl <<
-     *    bp::extract<char const *>(bp::str(np_affinity_graph)) << std::endl;
-     */
     std::cout << "Original dimensions :: " << std::endl <<
         channel_size << "," << z_size << "," << y_size << "," << x_size <<
         " dtype= " << bp::extract<char const *> (bp::str(np_affinity_graph.get_dtype())) <<
         std::endl;
 
-    /*
-     *std::cout << "Input affinity graph :: " << std::endl << bp::extract < char const * > (bp::str(np_affinity_graph)) << std::endl;
-     */
-/*
- *    std::cout << "In c-z-y-x index" << std::endl;
- *    for (int c = 0; c < channel_size; ++c)
- *    {
- *        for (int z = 0; z < z_size; ++z)
- *        {
- *            for (int y = 0; y < y_size; ++y)
- *            {
- *                for (int x = 0; x < x_size; ++x)
- *                {
- *                    std::cout << bp::extract<char const *> (bp::str(np_affinity_graph[c][z][y][x])) << ", ";
- *                }
- *                std::cout << std::endl;
- *            }
- *                std::cout << std::endl;
- *                std::cout << std::endl;
- *        }
- *                std::cout << std::endl;
- *                std::cout << std::endl;
- *                std::cout << std::endl;
- *    }
- *
- */
-    /*
-     *for (int c = 0; c < channel_size; ++c) {
-     *    for (int z = 0; z < z_size; ++z) {
-     *        for (int y = 0; y < y_size; ++y) {
-     *            for (int x = 0; x < x_size; ++x) {
-     *                std::cout << x << "," << y << "," << z << "," << c << " = "
-     *                    << unsigned((*b_affinity_graph_ptr)[x][y][z][c]) << std::endl;
-     *            }
-     *        }
-     *    }
-     *}
-     */
-
     std::cout << "Begin calling watershed" << std::endl;
+
     // Run watershed here!
     std::tuple<volume_ptr<uint32_t>, std::vector<std::size_t>> tuple = watershed<uint32_t>(b_affinity_graph_ptr, lowv, highv);
     std::cout << "Finished calling watershed in " << 
@@ -134,23 +110,10 @@ bp::tuple py_watershed(np::ndarray& np_affinity_graph, float lowv, float highv)
     {
         bp_segmentation_counts.append(b_segmentation_counts[i]);
     }
-    /*
-     *np::ndarray np_segmentation_counts = np::from_data(
-     *        reinterpret_cast<void *> (b_segmentation_counts.data()),
-     *        np::dtype::get_builtin<size_t>(),
-     *        bp::make_tuple(b_segmentation_counts.size()),
-     *        bp::make_tuple(sizeof(size_t)),
-     *        bp::object());
-     */
     std::cout << "Finished converting segmentation counts back to ndarray in " <<
        chrono::duration_cast<chrono::milliseconds>( chrono::high_resolution_clock::now() - t1).count() 
        << " ms" << std::endl;
     t1 = chrono::high_resolution_clock::now();
-
-    /*
-     *std::cout << "new segmentation :: " << std::endl << bp::extract < char const * > (bp::str(np_segmentation_volume)) << std::endl;
-     *std::cout << "new counts :: " << std::endl << bp::extract < char const * > (bp::str(bp_segmentation_counts)) << std::endl;
-     */
 
     // COPY the data here so that the memory doesn't get deallocated
     return bp::make_tuple(np_segmentation_volume.copy(), bp_segmentation_counts);
@@ -162,7 +125,7 @@ bp::tuple py_watershed(np::ndarray& np_affinity_graph, float lowv, float highv)
  * @param np_affinity_graph this is an affinity graph in regular c order (c-z-y-x)
  * @param np_volume this is the segmentation labels of the volume in FORTRAN order (x-y-z-c)
  * @param max_segid this is the maximum value of the segmentation label
- * @return the region graph as a list of edge weights and nodes (Weight, Edge1Id, Edge2Id)
+ * @return the region graph as a list of tuples of weights and nodes (Weight, Edge1Id, Edge2Id)
  */
 bp::list py_region_graph(
         np::ndarray& np_affinity_graph, np::ndarray& np_volume, std::size_t max_segid)
@@ -218,7 +181,7 @@ bp::list py_region_graph(
 
 /**
  * Merge segments based on function currently uses const_above_threshold()
- * IN PLACE MERGER
+ * IN PLACE MODIFICATION of segmentation volume and region_graph_edges
  * @param np_segmentation_volume this is the segmentation labels of the 
  *  volume in FORTRAN order (x-y-z)
  * @param bp_region_graph_edges list of tuples as edges of the region graph in (weight , id, id)
@@ -350,6 +313,7 @@ bp::list py_merge_tree(bp::list region_graph_edges, std::size_t max_segid) {
        << " ms" << std::endl;
     t1 = chrono::high_resolution_clock::now();
 
+    // CALL MERGE_TREE
     std::cout << "Begin call merge_tree to MST" << std::endl;
     region_graph_ptr<uint32_t, float> merged_tree = get_merge_tree(*temp_region_graph_ptr, max_segid);
     std::cout << "Finished calling merge_tree " << 
@@ -375,6 +339,95 @@ bp::list py_merge_tree(bp::list region_graph_edges, std::size_t max_segid) {
     return merge_tree_edges;
 }
 
+bp::tuple py_watershed_full(np::ndarray& np_affinity_graph, bp::dict config)
+{
+    chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
+    std::size_t channel_size = np_affinity_graph.shape(0);
+    std::size_t z_size = np_affinity_graph.shape(1);
+    std::size_t y_size = np_affinity_graph.shape(2);
+    std::size_t x_size = np_affinity_graph.shape(3);
+    std::cout << "Begin Converting input data to boost multi_array"  << std::endl;
+
+    affinity_graph_ptr<float> b_affinityGraph_ptr(new b::multi_array_ref<float, 4> (
+                reinterpret_cast<float *>(np_affinity_graph.get_data()),
+                               boost::extents[x_size][y_size][z_size][channel_size],
+                               boost::fortran_storage_order()));
+    std::cout << "Finished converting affinity_graph to boost multi_array "  <<
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
+       << " ms" << std::endl;
+    t1 = chrono::high_resolution_clock::now();
+
+    // Merge the input configuration into the default configuration
+    ws::Config watershed_config = ws::Config();
+    watershed_config.xSize = x_size;
+    watershed_config.ySize = y_size;
+    watershed_config.zSize = z_size;
+
+    // leverage the command line parser to set up watershed config defaults
+    std::vector<std::string> keys = extract_dict_keys(config);
+    std::vector<std::string> argv_builder;
+    for (size_t k=0; k < keys.size(); k++ )
+    {
+        argv_builder.push_back("--" + keys[k]);
+        argv_builder.push_back(bp::extract<std::string>(bp::str(config.get(keys[k]))));
+    }
+    char *fake_argv[argv_builder.size()];
+    for (size_t i = 0; i < argv_builder.size(); ++i)
+    {
+        fake_argv[i] = const_cast<char *>(argv_builder[i].c_str());
+    }
+
+    ws::config::parseCmdLine(argv_builder.size(), fake_argv, watershed_config, false, false);
+
+    volume_ptr<uint32_t> b_segmentation_volume;
+    region_graph_ptr<uint32_t, float> mst;
+
+    // CALL Watershed full
+    std::cout << "Begin call merge_tree to MST" << std::endl;
+    std::tie(b_segmentation_volume, mst) =
+        watershed_full<uint32_t, float>(b_affinityGraph_ptr, watershed_config);
+    std::cout << "Finished calling watershed full" << 
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
+       << " ms" << std::endl;
+    t1 = chrono::high_resolution_clock::now();
+
+    std::cout << "Begin converting outputs back to python" << std::endl;
+    np::ndarray np_segmentation_volume = np::from_data(
+            reinterpret_cast<void *> (b_segmentation_volume->data()),
+            np::dtype::get_builtin<uint32_t>(),
+            bp::make_tuple(x_size, y_size, z_size),
+            bp::make_tuple(y_size * z_size * sizeof(uint32_t), 
+                z_size * sizeof(uint32_t),
+                sizeof(uint32_t)),
+            bp::object());
+
+    std::cout << "Finished converting segmentation volume back to ndarray in " <<
+        chrono::duration_cast<chrono::milliseconds>(
+                chrono::high_resolution_clock::now() - t1).count() 
+         << " ms" << std::endl;
+    t1 = chrono::high_resolution_clock::now();
+
+    bp::list merge_tree_edges;
+    for (auto e : *mst )
+    {
+        float weight = std::get<0>(e);
+        uint32_t node1 = std::get<1>(e);
+        uint32_t node2 = std::get<2>(e);
+        bp::tuple edge = bp::make_tuple(weight, node1, node2);
+        merge_tree_edges.append(edge);
+    }
+    std::cout << "Finished converting MST" <<
+       chrono::duration_cast<chrono::milliseconds>(
+               chrono::high_resolution_clock::now() - t1).count() 
+       << " ms" << std::endl;
+    t1 = chrono::high_resolution_clock::now();
+
+    return bp::make_tuple(np_segmentation_volume, merge_tree_edges);
+}
+
+
 BOOST_PYTHON_MODULE(PyWatershed) {
     Py_Initialize();
     boost::numpy::initialize();
@@ -382,9 +435,10 @@ BOOST_PYTHON_MODULE(PyWatershed) {
     bp::def("regionGraph", py_region_graph);
     bp::def("mergeSegments", py_merge_segments);
     bp::def("mergeTree", py_merge_tree);
+    bp::def("watershedFull", py_watershed_full);
 }
-
 /*
+ *
  *int main(int argc, char *argv[])
  *{
  *
@@ -407,19 +461,18 @@ BOOST_PYTHON_MODULE(PyWatershed) {
  *
  *        std::cout << "Show results:" << std::endl;
  *        np::ndarray segVolume = bp::extract<np::ndarray>(tuple[0]);
- *        np::ndarray segCounts = bp::extract<np::ndarray>(tuple[1]);
+ *        bp::list segCounts = bp::extract<bp::list>(tuple[1]);
  *
  *        std::cout << "returned segmentation :: " << std::endl << bp::extract < char const * > (bp::str(segVolume)) << std::endl;
  *        std::cout << "returned counts :: " << std::endl << bp::extract < char const * > (bp::str(segCounts)) << std::endl;
  *
  *        // get region graph
- *        bp::list region_graph = py_region_graph(data, segVolume, segCounts.shape(0)-1);
+ *        bp::list region_graph = py_region_graph(data, segVolume, bp::len(segCounts)-1);
  *
  *        std::cout << "returned region counts :: " << std::endl << bp::extract < char const * > (bp::str(region_graph)) << std::endl;
  *
  *        // merge segments
- *        py_merge_segments(segVolume, region_graph, segCounts,
- *                0, .3, 256);
+ *        py_merge_segments(segVolume, region_graph, segCounts, 0, .3, 256);
  *
  *        std::cout << "returned region graph after merge :: " << std::endl << bp::extract < char const * > (bp::str(region_graph)) << std::endl;
  *
@@ -453,4 +506,5 @@ BOOST_PYTHON_MODULE(PyWatershed) {
  *    }
  *    return 0;
  *}
+ *
  */

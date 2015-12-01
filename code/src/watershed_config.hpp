@@ -27,22 +27,45 @@ struct Config
 };
 
 namespace config {
-int parseCmdLine(int argc, char *argv[], ws::Config &config)
+int parseCmdLine(int argc, char *argv[], ws::Config &config, bool require_input_file = true, bool require_size = true)
 {
     po::options_description genericOptions("Generic options");
     genericOptions.add_options()
         ("help", "print help messages");
 
     po::options_description inputOptions("Input options");
-    inputOptions.add_options()
-        ("inputFile", po::value<std::string>(&(config.inputFile))->required(),
+    if (require_input_file)
+    {
+        inputOptions.add_options()
+            ("inputFile", po::value<std::string>(&(config.inputFile))->required(),
             "Filename of affinity graph input file.\n"
             "  Data: \tAffinity graph values\n"
             "  Data Format: \t 4-D float array of [3][xSize][ySize][zSize] *need to confirm this* read in fortran_storage_order"
-        ) // TODO fortran_storage_order should be a configuration option
-        ("xSize", po::value<size_t>(&config.xSize)->required(),"Dimension in X Direction.")
-        ("ySize", po::value<size_t>(&config.ySize)->required(),"Dimension in Y Direction.")
-        ("zSize", po::value<size_t>(&config.zSize)->required(),"Dimension in Z Direction.");
+            ); // TODO fortran_storage_order should be a configuration option
+    }
+    else
+    {
+        inputOptions.add_options()
+            ("inputFile", po::value<std::string>(&(config.inputFile)),
+                "Filename of affinity graph input file.\n"
+                "  Data: \tAffinity graph values\n"
+                "  Data Format: \t 4-D float array of [3][xSize][ySize][zSize] *need to confirm this* read in fortran_storage_order"
+            ); // TODO fortran_storage_order should be a configuration option
+    }
+    if (require_size)
+    {
+        inputOptions.add_options()
+            ("xSize", po::value<size_t>(&config.xSize)->required(),"Dimension in X Direction.")
+            ("ySize", po::value<size_t>(&config.ySize)->required(),"Dimension in Y Direction.")
+            ("zSize", po::value<size_t>(&config.zSize)->required(),"Dimension in Z Direction.");
+    }
+    else
+    {
+        inputOptions.add_options()
+            ("xSize", po::value<size_t>(&config.xSize),"Dimension in X Direction.")
+            ("ySize", po::value<size_t>(&config.ySize),"Dimension in Y Direction.")
+            ("zSize", po::value<size_t>(&config.zSize),"Dimension in Z Direction.");
+    }
 
     po::options_description watershedOptions("Watershed Options");
     watershedOptions.add_options()
