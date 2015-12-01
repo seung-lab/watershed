@@ -1,3 +1,5 @@
+#pragma once
+
 #include "types.hpp"
 #include <zi/disjoint_sets/disjoint_sets.hpp>
 
