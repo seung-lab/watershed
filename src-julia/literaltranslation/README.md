@@ -1,0 +1,1 @@
+More literal translation of Zlateski's C++ code
