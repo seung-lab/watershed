@@ -424,7 +424,7 @@ bp::tuple py_watershed_full(np::ndarray& np_affinity_graph, bp::dict config)
        << " ms" << std::endl;
     t1 = chrono::high_resolution_clock::now();
 
-    return bp::make_tuple(np_segmentation_volume, merge_tree_edges);
+    return bp::make_tuple(np_segmentation_volume.copy(), merge_tree_edges);
 }
 
 
