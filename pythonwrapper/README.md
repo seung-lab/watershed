@@ -21,6 +21,7 @@ Installation
 |[Boost.NumPy](https://github.com/ndarray/Boost.NumPy/)|**N/A**|see installation notes below|
 
 To install Boost.NumPy, try doing:
+
 1. ```sudo apt-get install scons```
 1. Clone Boost.NumPy into your directory ```git clone https://github.com/ndarray/Boost.NumPy/```
 1. Initialize submodule ```SConsChecks``` folder by running ```git submodule update --init --recursive``` from the Boost.NumPy folder
