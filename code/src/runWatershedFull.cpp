@@ -40,7 +40,7 @@ int read_write_watershed(ws::Config &config)
 
     volume_ptr<uint32_t> seg;
     region_graph_ptr<uint32_t, float> mst;
-    std::tie(seg, mst) = watershed_full(aff, config);
+    std::tie(seg, mst) = watershed_full<uint32_t, float>(aff, config);
 
     write_volume(config.outFileSegment, seg);
 
