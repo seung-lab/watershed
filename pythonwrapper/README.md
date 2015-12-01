@@ -15,11 +15,10 @@ Installation
 ------------
 
 ###Required Libraries
-
 |Library|Ubuntu package name|Notes|
-|-------|-------------------||
-|[boost](http://www.boost.org/)|libboost-all-dev|
-|[Boost.NumPy](https://github.com/ndarray/Boost.NumPy/)|*N/A*|see installation notes below|
+|-------|-------------------|-----|
+|[boost](http://www.boost.org/)|libboost-all-dev||
+|[Boost.NumPy](https://github.com/ndarray/Boost.NumPy/)|**N/A**|see installation notes below|
 
 To install Boost.NumPy, try doing:
 1. ```sudo apt-get install scons```
@@ -60,12 +59,6 @@ beginTime = time.time()
 # Example for running each step individually (slower for python conversions)
 print 'done reading in data', data.shape, 'running watershed'
 [segVolume, segCounts] = PyWatershed.watershed(data, .3, .9)
-intermediateOut = 'intermediate.h5'
-if os.path.isfile(intermediateOut):
-    os.remove(intermediateOut)
-f2 = h5py.File(intermediateOut)
-f2.create_dataset('main', data = segVolume)
-f2.close()
 print 'running region graph'
 regionGraph = PyWatershed.regionGraph(data, segVolume, len(segCounts)-1)
 print 'running merge segments'
