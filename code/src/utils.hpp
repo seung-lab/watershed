@@ -40,21 +40,10 @@ read_affinity_graph( const std::string& fname,
                      std::size_t zsize )
 {
     affinity_graph_ptr<T> aff(new affinity_graph<T>
-							  (boost::extents[xsize][ysize][zsize][3],
-							   boost::fortran_storage_order()));
-							  //(boost::extents[3][zsize][ysize][xsize],
-							   //boost::c_storage_order()));
+                          (boost::extents[xsize][ysize][zsize][3],
+                           boost::fortran_storage_order()));
 
     if ( !read_from_file(fname, aff->data(), xsize*ysize*zsize*3) ) throw 0;
-	std::cout<< "HELLO HERE" << std::endl;
-	for ( std::ptrdiff_t c = 0; c < 3; ++c )
-		for ( int z = 0; z < zsize; ++z )
-			for ( int y = 0; y < ysize; ++y )
-				for ( int x = 0; x < xsize; ++x )
-				{
-					//std::cout << x << "," << y << "," << z << "," << c  << " =" << (*aff)[c][z][y][x] << std::endl;
-					std::cout << x << "," << y << "," << z << "," << c  << " =" << (*aff)[x][y][z][c] << std::endl;
-				}
     return aff;
 }
 
