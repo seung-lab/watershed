@@ -9,7 +9,7 @@ Build a python extension to call cpp watershed from python
 The latest version
 ------------
 
-Should be *dev* branch until we start tagging.
+Should be **dev** branch until we start tagging.
 
 Installation
 ------------
