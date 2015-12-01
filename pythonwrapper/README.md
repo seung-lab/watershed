@@ -63,13 +63,7 @@ print 'done reading in data', data.shape, 'running watershed'
 print 'running region graph'
 regionGraph = PyWatershed.regionGraph(data, segVolume, len(segCounts)-1)
 print 'running merge segments'
-print 'before merge we have # segcounts', len(segCounts)
-print 'before merge we have # of segments', len(np.unique(segVolume))
-print 'before merge we have # of edges', len(regionGraph)
 PyWatershed.mergeSegments(segVolume, regionGraph, segCounts, 256, .3, 256);
-print 'the new segcounts', len(segCounts)
-print 'the new segmentation volume has # of labels', len(np.unique(segVolume))
-print 'the new region graph has # of edges', len(regionGraph)
 print 'running MST'
 mergeTree = PyWatershed.mergeTree(regionGraph, len(segCounts)-1)
 
