@@ -1,11 +1,30 @@
+using DataStructures
+
+doc"""
+`MST` - compute maximal spanning tree from weighted graph
+
+     regiontree = mst(rg,max_segid)
+
+* `rg`: region graph as list of edges, array of (weight,id1,id2)
+  tuples.  The edges should be presorted so that weights are in
+  descending order.
+* `max_segid`: largest ID in region graph
+* `regiontree`: *maximal* spanning tree (MST) of region graph as list of edges, array of `(weight,id1,id2)` tuples. The vertices in each edge are ordered so that `id2` is unique across edges. 
+
+The MST effectively represents the dendrogram for single-linkage
+clustering.  Each edge `(weight,id1,id2)` in the MST represents an
+internal vertex of the dendrogram located at height = `weight`, i.e.,
+a merging of two clusters with score `weight`.  The MST contains a bit
+more information than the dendrogram, because `id1` and `id2` are the
+root IDs of the two clusters, i.e., the maximum weight edge between
+the two clusters is between their elements `id1` and `id2`.
+
+The code should work for general graphs.  If edges of `rg` are
+presorted by ascending weight, the code will compute the *minimal*
+spanning tree rather than the maximal spanning tree.  
+"""
+
 function mst(rg, max_segid)
-    """
-    compute maximal spanning tree from weighted graph
-    rg - region graph with edges sorted by descending weight
-    max_segid - largest node ID in graph
-    regiontree - maximal spanning tree
-    if edges of rg are sorted by ascending weight, will compute minimal spanning tree 
-    """
     regiontree = []
     edges=[Set{UInt32}() for i=1:max_segid]    # Array of Sets
 
@@ -27,7 +46,7 @@ function mst(rg, max_segid)
 
     # rest is only necessary for ordering the vertex pairs in each edge
     # bfs (level order) tree traversal
-    order = zeros(max_segid)   # will contain numbering of vertices
+    order = zeros(UInt32,max_segid)   # will contain numbering of vertices
     curr = 1
 
     for i = 1:max_segid
@@ -61,4 +80,4 @@ function mst(rg, max_segid)
     end
         
     return regiontree
-}
+end
