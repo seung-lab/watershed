@@ -49,7 +49,7 @@ struct Config
     float highv;
 	bool enableMerge;
     size_t thold;
-    int lowt;
+    size_t lowt;
     std::string funcName;
     double funcArg1;
     double funcArg2;
@@ -78,7 +78,7 @@ int parseCmdLine(int argc, char *argv[], Config &config)
         ("lowv", po::value<float>(&config.lowv)->default_value(0.3),"Minimum threshold for watershed.")
         ("highv", po::value<float>(&config.highv)->default_value(0.9),"Maximum threshold for watershed.")
         ("enableMerge", po::value<bool>(&config.enableMerge)->default_value(true),"Enable merge region step for single linkage clustering")
-        ("lowt", po::value<size_t>(&config.thold)->default_value(256),"Minimum merge size")
+        ("lowt", po::value<size_t>(&config.lowt)->default_value(256),"Minimum merge size")
         ("thold", po::value<size_t>(&config.thold)->default_value(256),"Maximum merge size (calculated from --func")
         ("funcName", po::value<std::string>(&config.funcName)->default_value("constant"),"Merge thresholding function.\n"
             "** NOT IMPLEMENTED Defaults to const_above_threshold(.3, thold)**\n\t"
