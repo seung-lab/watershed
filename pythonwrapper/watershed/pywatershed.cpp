@@ -384,7 +384,7 @@ bp::tuple py_watershed_full(np::ndarray& np_affinity_graph, bp::dict config)
     region_graph_ptr<uint32_t, float> mst;
 
     // CALL Watershed full
-    std::cout << "Begin call merge_tree to MST" << std::endl;
+    std::cout << "Begin call watershed_full" << std::endl;
     std::tie(b_segmentation_volume, mst) =
         watershed_full<uint32_t, float>(b_affinityGraph_ptr, watershed_config);
     std::cout << "Finished calling watershed full" << 
