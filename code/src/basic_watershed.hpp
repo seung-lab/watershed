@@ -19,9 +19,6 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     std::ptrdiff_t ydim = aff_ptr->shape()[1];
     std::ptrdiff_t zdim = aff_ptr->shape()[2];
 
-	std::cout << "xdim is " << xdim << " ydim is " << ydim << " zdim is " << zdim << std::endl;
-    std::ptrdiff_t size = xdim * ydim * zdim;
-
     std::tuple< volume_ptr<id_t>, std::vector<std::size_t> > result
         ( volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim],
                                            boost::fortran_storage_order())),
