@@ -9,7 +9,7 @@ doc"""
   tuples.  The edges should be presorted so that weights are in
   descending order.
 * `max_segid`: largest ID in region graph
-* `regiontree`: *maximal* spanning tree (MST) of region graph as list of edges, array of `(weight,id1,id2)` tuples. The vertices in each edge are ordered so that `id2` is unique across edges. 
+* `regiontree`: *maximal* spanning tree (MST) of region graph as list of edges, array of `(weight,id1,id2)` tuples. The vertices in each edge are ordered so that `id2` is unique across edges. In other words, id1 and id2 correspond to parent and child in the tree. The code places the root of the tree at segid=1
 
 The MST effectively represents the dendrogram for single-linkage
 clustering.  Each edge `(weight,id1,id2)` in the MST represents an
@@ -26,7 +26,7 @@ spanning tree rather than the maximal spanning tree.
 
 function mst(rg, max_segid)
     regiontree = []
-    edges=[Set{UInt32}() for i=1:max_segid]    # Array of Sets
+    adjacency=[Set{UInt32}() for i=1:max_segid]    # adjacency list
 
     # Kruskal's algorithm
     sets = IntDisjointSets(max_segid)
@@ -39,13 +39,13 @@ function mst(rg, max_segid)
             push!(regiontree,e)
             union!(sets,s1, s2)
 
-            push!(edges[v1],v2)   # only necessary for ordering
-            push!(edges[v2],v1)
+            push!(adjacency[v1],v2)   # only necessary for ordering
+            push!(adjacency[v2],v1)
         end
     end
 
-    # rest is only necessary for ordering the vertex pairs in each edge
-    # bfs (level order) tree traversal
+    # rest of code only necessary for ordering the vertex pairs in each edge
+    # bfs (level order) tree traversal, i.e., topological sort
     order = zeros(UInt32,max_segid)   # will contain numbering of vertices
     curr = 1
 
@@ -60,7 +60,7 @@ function mst(rg, max_segid)
                 x = front(bfs)
                 shift!(bfs)
 
-                for y in edges[x]
+                for y in adjacency[x]
                     if order[y] == 0
                         order[y] = curr
                         curr += 1
@@ -71,7 +71,7 @@ function mst(rg, max_segid)
         end
     end
 
-    # order all edges
+    # order all edges as (weight, parent, child)
     for i in 1:length(regiontree)
         e = regiontree[i]
         if order[e[3]] < order[e[2]]
