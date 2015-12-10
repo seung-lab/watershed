@@ -97,7 +97,7 @@ int parseCmdLine(int argc, char *argv[], ws::Config &config, bool require_input_
         ("outFileDendPairs", po::value<std::string>(&config.outFileDendPairs)->
                 default_value("ws.dend_pairs"),
             "Filename of the MST Dendrogram pairs file. Sorted by weight first as specified in "
-            "the dendValues file.\n"
+            "the dendValues file. Additionally, the child node which is unique will be on the left\n"
             "  Data: \tGraph Edges for MST (weights in another file)\n"
             "  Data Format: \t2-D array of uint32_t pairs i.e. [[SegId1, SegId2][SegId1, SegId3]...]"
         )
