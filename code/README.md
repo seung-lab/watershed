@@ -73,6 +73,7 @@ This function takes the Affinity graph and creates the initial watershed segment
 ### Merge Regions
 `(./bin/mergeRegions)`
 Apply size dependent single linkage clustering to merge regions in a region graph. Merged regions are replaced a single region in the region graph and segmentation. TODO add note about func
+
 ####Inputs
 #####`seg (uint32_t)`
 ######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the segmentId for each voxel
@@ -90,7 +91,7 @@ Apply size dependent single linkage clustering to merge regions in a region grap
 #####`seg (uint32_t)` 
 ######3-Dimensional uint32_t array [xSize][ySize][zSize] representing the new segmentIds
 #####`rg Array<tuple<float, uint32_t, uint32_t>>`  
-######Region graph of nodes and weights *TODO is sort order preserved?*
+######Region graph of nodes and weights
 
 ### Maximal Spanning Tree
 `(./bin/maximalSpanningTree)`
@@ -102,7 +103,7 @@ Given a graph, find the maximal spanning tree.
 ######Maximum segment id
 ####Outputs
 #####`mst Array<tuple<float, uint32_t, uint32_t>>`
-######Graph as a list of edges: weight, nodeId, nodeId.  Sorted by descending weight. Parent node on the left. *TODO confirm this*
+######Graph as a list of edges: weight, nodeId, nodeId.  Sorted by descending weight. The child node is on the left and the parent node is on the right. Because this is an mst, the child node on the left will be unique.
 
 Usage
 -------
