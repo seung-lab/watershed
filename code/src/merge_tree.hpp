@@ -60,7 +60,7 @@ get_merge_tree( const region_graph<ID,F>& rg, std::size_t max_segid )
 
     for ( auto& e: *mt_ptr )
     {
-        if ( order[std::get<2>(e)] < order[std::get<1>(e)] )
+        if ( order[std::get<2>(e)] > order[std::get<1>(e)] )
         {
             std::swap(std::get<2>(e), std::get<1>(e));
         }
