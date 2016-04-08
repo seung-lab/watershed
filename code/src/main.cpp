@@ -73,8 +73,8 @@ void fill_void( ID* arr, std::size_t len )
 }
 
 std::pair<double,double>
-compare_volumes( volume<uint32_t>& gt,
-                 volume<uint32_t>& ws,
+compare_volumes( volume_ref<uint32_t>& gt,
+                 volume_ref<uint32_t>& ws,
                  std::size_t size )
 {
     std::map<uint32_t, std::map<uint32_t, uint32_t>> map;

@@ -25,17 +25,27 @@ template <> struct watershed_traits<uint64_t>
     static const uint64_t dir_mask = 0x000000000000007FLL;
 };
 
+// use multi_array_ref as an interface
+template < typename T >
+using volume_ref = boost::multi_array_ref<T,3>;
+
+// use subclass of multi_array_ref for instantiation
 template < typename T >
 using volume = boost::multi_array<T,3>;
 
+// use multi_array_ref as an interface
+template < typename T >
+using affinity_graph_ref = boost::multi_array_ref<T,4>;
+
+// use subclass of multi_array_ref for instantiation
 template < typename T >
 using affinity_graph = boost::multi_array<T,4>;
 
 template < typename T >
-using volume_ptr = std::shared_ptr<volume<T>>;
+using volume_ptr = std::shared_ptr<volume_ref<T>>;
 
 template < typename T >
-using affinity_graph_ptr = std::shared_ptr<affinity_graph<T>>;
+using affinity_graph_ptr = std::shared_ptr<affinity_graph_ref<T>>;
 
 template< typename ID, typename F >
 using region_graph = std::vector<std::tuple<F,ID,ID>>;

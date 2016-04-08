@@ -29,8 +29,8 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     auto& counts = std::get<1>(result);
     counts[0] = 0;
 
-    affinity_graph<F>& aff = *aff_ptr;
-    volume<id_t>&      seg = *std::get<0>(result);
+    affinity_graph_ref<F>& aff = *aff_ptr;
+    volume_ref<id_t>&      seg = *std::get<0>(result);
 
     id_t* seg_raw = seg.data();
 

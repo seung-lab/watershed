@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <fstream>
 #include <type_traits>
+#include <iostream>
 
 template < typename T >
 inline bool read_from_file( const std::string& fname, T* data, std::size_t n )
@@ -39,8 +40,8 @@ read_affinity_graph( const std::string& fname,
                      std::size_t zsize )
 {
     affinity_graph_ptr<T> aff(new affinity_graph<T>
-                              (boost::extents[xsize][ysize][zsize][3],
-                               boost::fortran_storage_order()));
+                          (boost::extents[xsize][ysize][zsize][3],
+                           boost::fortran_storage_order()));
 
     if ( !read_from_file(fname, aff->data(), xsize*ysize*zsize*3) ) throw 0;
     return aff;

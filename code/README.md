@@ -109,7 +109,7 @@ Usage
 -------
 All steps can be automatically performed with the `./bin/rws` binary. Inputs are as indicated from `--help` option.
 ```
-./bin/runWatershedFull --help
+$ ./bin/runWatershedFull --help
 Basic command to run watershed on affifinity graph with single linkage clustering. Options:
 
 Generic options:
@@ -162,7 +162,9 @@ Watershed Options:
   --outFileDendPairs arg (=ws.dend_pairs)
                                         Filename of the MST Dendrogram pairs 
                                         file. Sorted by weight first as 
-                                        specified in the dendValues file.
+                                        specified in the dendValues file. 
+                                        Additionally, the child node which is 
+                                        unique will be on the left
                                           Data: Graph Edges for MST (weights in
                                                 another file)
                                           Data Format: 2-D array of uint32_t 
