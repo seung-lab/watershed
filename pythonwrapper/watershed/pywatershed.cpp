@@ -323,7 +323,7 @@ bp::list py_merge_tree(bp::list region_graph_edges, std::size_t max_segid) {
 
     std::cout << "Begin converting merge_tree back to ndarray" << std::endl;
     bp::list merge_tree_edges;
-    for (auto e : *temp_region_graph_ptr )
+    for (auto e : *merged_tree )
     {
         float weight = std::get<0>(e);
         uint32_t node1 = std::get<1>(e);
