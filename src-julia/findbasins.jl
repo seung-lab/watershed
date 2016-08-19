@@ -35,7 +35,7 @@ The MSB indicates whether a voxel has been assigned a basin ID.  The MSB definit
 
 function findbasins{T}(sag::Array{T,3})
     seg = copy(sag)
-    (seg, counts, counts0) = findbasins!(seg)
+    (counts, counts0) = findbasins!(seg)
     return (seg, counts, counts0)
 end
 
@@ -100,7 +100,7 @@ function findbasins!{T}(seg::Array{T,3})
         seg[idx] &= low_bits(T)     # clear MSB
     end
 
-    (seg, counts, counts0)
+    (counts, counts0)
 end
 
 # definitions below provided for UInt32, UInt64

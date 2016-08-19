@@ -7,7 +7,7 @@ include("mergeregions.jl")
 include("mst.jl")
 
 using HDF5
-@time aff=h5read("../../out1/out1.affinity.h5","out1")
+@time aff=h5read("../../out1/out1.affinity.h5","out1");
 println("read affinity graph")
 low = .3
 high = .9
